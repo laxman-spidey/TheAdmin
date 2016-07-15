@@ -1,0 +1,78 @@
+package in.yousee.theadmin;
+
+import android.content.ContentValues;
+import android.content.Context;
+
+
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+
+import in.yousee.theadmin.model.CustomException;
+import in.yousee.theadmin.model.Request;
+import in.yousee.theadmin.model.Request;
+
+public abstract class Middleware
+{
+	public static final String TAG_NETWORK_REQUEST_CODE = "requestCode";
+	public static final String TAG_NETWORK_RESULT_CODE = "resultCode";
+	public static final String TAG_USER_ID = "userId";
+	public static final String TAG_PHONE_NUMBER = "phone";
+	public static final String TAG_SESSION_ID = "session_id";
+	protected ContentValues nameValuePairs = new ContentValues();
+
+	protected void addKeyValue(String key, String value)
+	{
+		nameValuePairs.put(key,value);
+	}
+
+	//protected List<NameValuePair> nameValuePairs;
+
+	protected Request request = new Request();
+
+	protected void setRequestCode(int requestCode)
+	{
+		addKeyValue(TAG_NETWORK_REQUEST_CODE, "" + requestCode);
+	}
+
+	protected void addPhoneNumberToPost()
+	{
+		if(SessionHandler.isSessionIdExists(getContext()))
+		{
+			addKeyValue(TAG_PHONE_NUMBER, "" + SessionHandler.getPhoneNumber(getContext()));
+		}
+	}
+	protected void addUserIdToPost()
+	{
+		if (SessionHandler.isSessionIdExists(getContext()))
+		{
+			addKeyValue(TAG_USER_ID, "" + SessionHandler.getUserId(getContext()));
+		}
+	}
+	protected void addSessionIdToPost()
+	{
+		if (SessionHandler.isSessionIdExists(getContext()))
+		{
+			addKeyValue(TAG_SESSION_ID, "" + SessionHandler.getSessionId(getContext()));
+		}
+	}
+
+	public abstract void assembleRequest();
+
+	public void sendRequest() throws CustomException
+	{
+		//request.setParameters(nameValuePairs);
+
+		NetworkConnectionHandler connectionHandler = new NetworkConnectionHandler(getContext(), this);
+		if (NetworkConnectionHandler.isNetworkConnected(getContext()))
+		{
+
+			connectionHandler.execute(request);
+
+		}
+	}
+
+
+	public abstract void serveResponse(String result, int requestCode);
+
+	public abstract Context getContext();
+}
