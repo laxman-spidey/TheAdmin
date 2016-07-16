@@ -8,34 +8,35 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="139dp"
         android:foregroundGravity="center"
-        android:layout_gravity="center"
+        android:layout_gravity="top"
         android:src="@drawable/login"
+        android:layout_marginTop="48dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="92dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#ff0303"
-        android:gravity="center"
-        android:text="Donate Blood to give back life"
+        android:textColor="#50d9ff"
+        android:gravity="bottom|center"
+        android:text="Welcome to Nurse Management system "
         android:textSize="20sp"
-        android:layout_centerHorizontal="true"
         android:textStyle="bold|normal"
-        android:layout_below="@id/imageView"
-        android:id="@+id/textView" />
-
+        android:id="@+id/textView"
+        android:layout_marginTop="72dp"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true" />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageView2"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/logo"
+        android:src="@drawable/uclogo"
+        android:layout_gravity="bottom"
         android:layout_alignParentBottom="true"
-        />
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>
