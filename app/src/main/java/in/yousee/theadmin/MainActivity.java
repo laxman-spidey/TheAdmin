@@ -1,9 +1,15 @@
 package in.yousee.theadmin;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
@@ -16,8 +22,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+
+
+import in.yousee.theadmin.util.LogUtil;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +63,29 @@ public class MainActivity extends AppCompatActivity
 
         Fragment dashboardFragment = new DashboardFragment();
         replaceFragmentOnMainContent(dashboardFragment, "JeevanDaan");
-
+        createPlayServiceInstance();
+        requestLocationPermission();
     }
-    public void replaceFragmentOnMainContent(Fragment fragment, String title)
-    {
+
+
+    private GoogleApiClient mGoogleApiClient;
+
+    public void createPlayServiceInstance() {
+
+        //mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        // Create an instance of GoogleAPIClient.
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+    }
+
+    public void replaceFragmentOnMainContent(Fragment fragment, String title) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_view,fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.content_view, fragment).commit();
         setTitle(title);
     }
 
@@ -116,4 +150,85 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+        LogUtil.print("onconnected()");
+        boolean fineLocation = (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED);
+        boolean coarseLocation = (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED);
+
+        LogUtil.print("fine location = " + fineLocation);
+        LogUtil.print("coarselocation = " + coarseLocation);
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermission();
+            return;
+        }
+        else {
+            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            LogUtil.print("got location");
+            if (mLastLocation != null) {
+
+                LogUtil.print(String.valueOf(mLastLocation.getLatitude()));
+                LogUtil.print(String.valueOf(mLastLocation.getLongitude()));
+            }
+        }
+
+    }
+
+    private static final int REQUEST_ACCESS_LOCATION = 0;
+
+    public boolean requestLocationPermission()
+    {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        if (checkSelfPermission(ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        else
+        {
+            requestPermissions(new String[]{ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION}, REQUEST_ACCESS_LOCATION);
+        }
+        return false;
+    }
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_ACCESS_LOCATION) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                LogUtil.print("Permission granted");
+
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    protected void onStart() {
+        mGoogleApiClient.connect();
+        LogUtil.print("Onstart");
+        super.onStart();
+    }
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
 }
