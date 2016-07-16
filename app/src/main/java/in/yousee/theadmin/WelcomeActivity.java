@@ -1,4 +1,4 @@
-package in.yousee.jeevandaan;
+package in.yousee.theadmin;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,7 +8,9 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
-public class WelcomeActivity extends Activity implements OnResponseRecievedListener
+import in.yousee.theadmin.constants.RequestCodes;
+
+public class WelcomeActivity extends Activity implements OnResponseReceivedListener
 {
 
 	Thread t;
@@ -25,7 +27,7 @@ public class WelcomeActivity extends Activity implements OnResponseRecievedListe
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 		// WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setContentView(R.layout.welcome_activity);
+		setContentView(R.layout.activity_welcome);
 /*
 		gcmHelper = GoogleCloudMessaging.getInstance(context);
 
@@ -58,7 +60,7 @@ public class WelcomeActivity extends Activity implements OnResponseRecievedListe
 		Log.i("tag", "in Show menu activity");
 		Intent intent = new Intent();
 		intent.putExtra("sessionId", sessionId);
-		intent.setClass(this, in.yousee.jeevandaan.LoginActivity.class);
+		intent.setClass(this, LoginActivity.class);
 		startActivity(intent);
 	}
 	/*
@@ -123,13 +125,12 @@ public class WelcomeActivity extends Activity implements OnResponseRecievedListe
 		Log.i("tag", "in Show menu activity");
 		Intent intent = new Intent();
 		intent.putExtra("sessionId", sessionId);
-		intent.setClass(this, in.yousee.jeevandaan.MainActivity.class);
+		intent.setClass(this, MainActivity.class);
 		startActivity(intent);
 	}
 
 	@Override
-	public void onResponseRecieved(Object response, int requestCode)
-	{
+	public void onResponseReceived(Object response, int requestCode) {
 		finish();
 		if(requestCode == RequestCodes.NETWORK_REQUEST_SEND_GCM_ID)
 		{
@@ -143,7 +144,6 @@ public class WelcomeActivity extends Activity implements OnResponseRecievedListe
 				showMainActivity();
 			}
 		}
-		
 	}
 
 	@Override

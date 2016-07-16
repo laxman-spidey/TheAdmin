@@ -135,19 +135,6 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, ResponseB
 	 */
 	private ResponseBody downloadUrl(Request postRequest) throws IOException
 	{
-		InputStream is = null;
-		/*
-		LogUtil.print("download Started" + readIt(postRequest.getEntity().getContent()));
-		Header[] headers = postRequest.getAllHeaders();
-		LogUtil.print("lenght " + headers.length);
-		// headers[i].getValue());
-		for (int i = 0; i < headers.length; i++)
-		{
-			LogUtil.print("request " + headers[i].getName() + " : " + headers[i].getValue());
-		}
-		LogUtil.print(readIt(postRequest.getEntity().getContent()));
-		// httpclient.getCookieStore().addCookie();
-		*/
 		URL url = new URL(postRequest.getUrl());
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 		connection.setRequestMethod("GET");
@@ -157,16 +144,17 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, ResponseB
 		connection.setDoOutput(true);
 		DataOutputStream dStream = new DataOutputStream(connection.getOutputStream());
 
-		String urlParameters = "q=anything";
+		//String urlParameters = "q=anything";
 
+		//printing request parameters before seding request
+		LogUtil.print(postRequest.getParameters());
 
 		dStream.writeBytes(postRequest.getParameters());
 
-		//dStream.writeBytes(urlParameters); //Writes out the string to the underlying output stream as a sequence of bytes
 		dStream.flush(); // Flushes the data output stream.
 		dStream.close();
 
-
+		//After the request is processed by server
 		int responseCode = connection.getResponseCode();
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			String requestCodeString = connection.getHeaderField(Middleware.TAG_NETWORK_REQUEST_CODE);
