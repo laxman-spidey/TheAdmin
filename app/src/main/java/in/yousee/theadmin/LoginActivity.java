@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
 
 
     public void onResponseReceived(Object response, int requestCode) {
-        showProgress(false);
+        //showProgress(false);
         LogUtil.print("onressponse recieved " + requestCode + "  " + response.toString());
         if (requestCode == RequestCodes.NETWORK_REQUEST_VERIFY) {
             if ((Boolean) response == true) {
@@ -233,7 +233,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
             mPhoneView.setError("Invalid Phone number");
             return;
         } else {
-            showProgress(true);
+            //showProgress(true);
             SessionHandler sessionHandler = new SessionHandler(this);
             try {
                 sessionHandler.verifyExec(phoneNumber, this);
