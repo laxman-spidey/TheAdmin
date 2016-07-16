@@ -64,7 +64,8 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
 
     @Override
     public void onLoginFailed() {
-
+        LogUtil.print("login failed");
+        mOtpView.setError("invalid OTP");
     }
 
     public void onLoginSuccess() {

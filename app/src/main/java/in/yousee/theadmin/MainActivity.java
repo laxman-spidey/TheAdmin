@@ -17,7 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,10 +94,14 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.menu_dashboard) {
+            Fragment dashboardFragment = new DashboardFragment();
+            replaceFragmentOnMainContent(dashboardFragment, "Dashboard");
             // Handle the camera action
         } else if (id == R.id.menu_attendance) {
 
         } else if (id == R.id.menu_leave) {
+            Fragment leavesFragment = new LeavesFragment();
+            replaceFragmentOnMainContent(leavesFragment, "My Leaves");
 
         } else if (id == R.id.menu_manage) {
 
