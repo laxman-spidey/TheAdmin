@@ -10,4 +10,7 @@
     <string name="title_activity_main">Admin</string>
     <string name="permission_rationale" />
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Leaves fragment</string>
+
 </resources>
