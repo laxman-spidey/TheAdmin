@@ -1,0 +1,161 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="161dp"
+        android:background="@color/white"
+        android:paddingBottom="5dp"
+        android:orientation="horizontal"
+        android:layout_gravity="top">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Check IN  "
+            android:id="@+id/button"
+            android:background="@drawable/button"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="53dp"
+            android:layout_marginStart="53dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Check OUT"
+            android:id="@+id/button2"
+            android:background="@drawable/button"
+            android:layout_marginEnd="43dp"
+            android:layout_marginRight="43dp"
+            android:layout_alignTop="@+id/button"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="166dp"
+        android:background="@color/white"
+        android:paddingBottom="5dp"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:background="#5c5eff"
+            android:orientation="horizontal"
+            android:layout_alignParentStart="true"
+            android:weightSum="1"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="Leaves "
+                android:textColor="#FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text=""
+                android:textColor="#FFFFFF" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="Leave apply"
+                android:id="@+id/button3"
+                android:background="@drawable/button"
+                android:layout_weight="0.17"
+                android:layout_gravity="fill_horizontal"/>
+        </LinearLayout>
+    </RelativeLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="154dp"
+        android:background="@color/white"
+        android:paddingBottom="5dp"
+        android:orientation="vertical"
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:background="#5e61ff"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:layout_alignParentTop="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="Shift Swapping"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text=""
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="Swaping"
+                android:id="@+id/button4"
+                android:background="@drawable/button"
+                android:layout_weight="0.21" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/donation_bloodbank_name"
+        android:padding="10dp"
+        android:background="#585aff"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="Attendence "
+            android:textColor="#FFFFFF"
+            android:id="@+id/leaves_key" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text=""
+            android:textColor="#FFFFFF"
+            android:id="@+id/leaves_value" />
+
+    </LinearLayout>
+
+</RelativeLayout>
