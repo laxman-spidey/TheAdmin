@@ -229,7 +229,7 @@ public class SessionHandler extends Middleware
 		}
 	}
 
-	public void verifyExec(String phone, OnResponseReceivedListener responseListener) throws CustomException
+	public void verifyExec(String phone, LoginActivity responseListener) throws CustomException
 	{
 		this.responseListener = responseListener;
 
@@ -243,7 +243,7 @@ public class SessionHandler extends Middleware
 
 	}
 
-	public void submitOTP(String phone, String otp, UsesLoginFeature loginFeatureClient) throws CustomException
+	public void submitOTP(String phone, String otp, LoginActivity loginFeatureClient) throws CustomException
 	{
 		request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.LOGIN_EXEC);
 		addKeyValue("phone", phone);
@@ -300,7 +300,7 @@ public class SessionHandler extends Middleware
 				JSONObject json = new JSONObject(result);
 				int statusCode = json.getInt("status_code");
 				if (statusCode == 1) {
-					LogUtil.print("success");
+					LogUtil.print("success -------" );
 					responseListener.onResponseReceived(new Boolean(true), requestCode);
 					return;
 				}
