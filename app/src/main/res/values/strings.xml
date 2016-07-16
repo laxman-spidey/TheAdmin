@@ -8,5 +8,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_main">Admin</string>
+    <string name="permission_rationale" />
 
 </resources>
