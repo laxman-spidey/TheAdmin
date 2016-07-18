@@ -34,7 +34,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import in.yousee.theadmin.util.LogUtil;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, LocationFragment.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +132,8 @@ public class MainActivity extends AppCompatActivity
             replaceFragmentOnMainContent(dashboardFragment, "Dashboard");
             // Handle the camera action
         } else if (id == R.id.menu_attendance) {
+            Fragment locationFragment = new LocationFragment();
+            replaceFragmentOnMainContent(locationFragment, "My location");
 
         } else if (id == R.id.menu_leave) {
             Fragment leavesFragment = new LeavesFragment();

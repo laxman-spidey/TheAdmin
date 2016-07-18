@@ -12,5 +12,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Leaves fragment</string>
-
+    <string name="google_maps_key_debug" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyBN8qDqU63X_Ram_QQGfBtxpO1DMwH4dQk
+    </string>
 </resources>
