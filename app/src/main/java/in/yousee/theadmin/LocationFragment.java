@@ -5,16 +5,21 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -23,6 +28,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -32,12 +39,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
+import java.util.List;
+import java.util.Map;
+
 import in.yousee.theadmin.util.LogUtil;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class LocationFragment extends SupportMapFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class LocationFragment extends DialogFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -47,7 +57,7 @@ public class LocationFragment extends SupportMapFragment implements OnMapReadyCa
     private String mParam1;
     private String mParam2;
 
-
+    private TextView testText;
     private GoogleMap mMap;
     private MapView mapView;
 
@@ -55,7 +65,7 @@ public class LocationFragment extends SupportMapFragment implements OnMapReadyCa
     private OnFragmentInteractionListener mListener;
 
     public LocationFragment() {
-        // Required empty public constructor
+
     }
 
     /**
@@ -69,9 +79,16 @@ public class LocationFragment extends SupportMapFragment implements OnMapReadyCa
     // TODO: Rename and change types and number of parameters
     public static LocationFragment newInstance(String param1, String param2) {
         LocationFragment fragment = new LocationFragment();
+
+        GoogleMapOptions mapOptions = new GoogleMapOptions();
+        mapOptions.zOrderOnTop(true);
+        MapFragment mapFragment = MapFragment.newInstance(mapOptions);
+
         Bundle args = new Bundle();
+
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
+        //fragment.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHI‌​ND);
         fragment.setArguments(args);
         return fragment;
     }
@@ -84,7 +101,47 @@ public class LocationFragment extends SupportMapFragment implements OnMapReadyCa
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         createPlayServiceInstance();
+        //getDialog().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        //getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_DeviceDefault_Light_Dialog);
+        LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermission();
+            return;
+        }
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new android.location.LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                LogUtil.print("location changed :"+location.getLatitude() +" "+ location.getLongitude());
+
+                CameraPosition.Builder cameraPosition = new CameraPosition.Builder(mMap.getCameraPosition());
+                cameraPosition.target(latLng);
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition.build());
+                mMap.animateCamera(cameraUpdate);
+                checkAndChangeColor(latLng);
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        });
+
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,6 +151,8 @@ public class LocationFragment extends SupportMapFragment implements OnMapReadyCa
         View view = inflater.inflate(R.layout.fragment_location, container, false);
         mapView = (MapView) view.findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
+        testText = (TextView) view.findViewById(R.id.testText);
+
         mapView.getMapAsync(this);
         return view;
     }
@@ -169,6 +228,9 @@ public class LocationFragment extends SupportMapFragment implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        GoogleMapOptions mapOptions = new GoogleMapOptions();
+        mapOptions.zOrderOnTop(true);
+
         if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             LogUtil.print("no permission");
         }
@@ -190,9 +252,12 @@ public class LocationFragment extends SupportMapFragment implements OnMapReadyCa
     }
     @Override
     public void onLocationChanged(Location location) {
+        LogUtil.print("location changed");
+
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
         mMap.animateCamera(cameraUpdate);
+        checkAndChangeColor(latLng);
         //locationManager.removeUpdates(this);
     }
 
@@ -235,32 +300,145 @@ public class LocationFragment extends SupportMapFragment implements OnMapReadyCa
                 LogUtil.print(String.valueOf(mLastLocation.getLatitude()));
                 LogUtil.print(String.valueOf(mLastLocation.getLongitude()));
                 LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
                 mMap.animateCamera(cameraUpdate);
+                checkAndChangeColor(latLng);
+
 
             }
         }
     }
 
+    private void checkAndChangeColor(LatLng latLng)
+    {
+        boolean present = pointInPolygon(latLng, polygon);
+
+        if(present == true)
+        {
+            polygon.setStrokeColor(Color.argb(128, 50, 255, 50));
+            polygon.setFillColor(Color.argb(128, 0, 255, 0));
+        }
+        else
+        {
+            polygon.setStrokeColor(Color.argb(128, 255, 50, 50));
+            polygon.setFillColor(Color.argb(128, 255, 0, 0));
+        }
+        testText.setText(""+present);
+
+    }
+
+    Polygon polygon;
     public void addPolyAreaOnMap()
     {
         // Instantiates a new Polygon object and adds points to define a rectangle
+//        PolygonOptions rectOptions = new PolygonOptions()
+//                .add(new LatLng(17.422535, 78.501770),
+//                        new LatLng(17.424829, 78.502028),
+//                        new LatLng(17.424727, 78.503605),
+//                        new LatLng(17.426063, 78.504042),
+//                        new LatLng(17.423995, 78.505869),
+//                        new LatLng(17.422245, 78.504238)
+//                )
+//                .strokeColor(Color.RED)
+//                .fillColor(Color.argb(128, 255, 0, 0))
+//                ;
+//        PolygonOptions rectOptions = new PolygonOptions()
+//                .add(new LatLng(17.319037, 78.527645),
+//                        new LatLng(17.319301, 78.527712),
+//                        new LatLng(17.319268, 78.527892),
+//                        new LatLng(17.319002, 78.527876)
+//                        )
+//                .strokeColor(Color.RED)
+//                .fillColor(Color.argb(128, 255, 0, 0))
+//                ;
+
         PolygonOptions rectOptions = new PolygonOptions()
-                .add(new LatLng(17.422535, 78.501770),
-                        new LatLng(17.424829, 78.502028),
-                        new LatLng(17.424727, 78.503605),
-                        new LatLng(17.426063, 78.504042),
-                        new LatLng(17.423995, 78.505869),
-                        new LatLng(17.422245, 78.504238)
+                .add(new LatLng(17.426084, 78.453917),
+                        new LatLng(17.426178, 78.454073),
+                        new LatLng(17.425977, 78.454150),
+                        new LatLng(17.425905, 78.453998)
                 )
                 .strokeColor(Color.RED)
                 .fillColor(Color.argb(128, 255, 0, 0))
                 ;
 
+
         // Get back the mutable Polygon
-        Polygon polygon = mMap.addPolygon(rectOptions);
+        polygon = mMap.addPolygon(rectOptions);
 
 
+
+
+    }
+
+
+    public boolean pointInPolygon(LatLng point, Polygon polygon) {
+        // ray casting alogrithm http://rosettacode.org/wiki/Ray-casting_algorithm
+        int crossings = 0;
+        List<LatLng> path = polygon.getPoints();
+        path.remove(path.size()-1); //remove the last point that is added automatically by getPoints()
+
+        // for each edge
+        for (int i=0; i < path.size(); i++) {
+            LatLng a = path.get(i);
+            int j = i + 1;
+            //to close the last edge, you have to take the first point of your polygon
+            if (j >= path.size()) {
+                j = 0;
+            }
+            LatLng b = path.get(j);
+            if (rayCrossesSegment(point, a, b)) {
+                crossings++;
+            }
+        }
+
+        // odd number of crossings?
+        return (crossings % 2 == 1);
+    }
+
+    public boolean rayCrossesSegment(LatLng point, LatLng a,LatLng b) {
+        // Ray Casting algorithm checks, for each segment, if the point is 1) to the left of the segment and 2) not above nor below the segment. If these two conditions are met, it returns true
+        double px = point.longitude,
+                py = point.latitude,
+                ax = a.longitude,
+                ay = a.latitude,
+                bx = b.longitude,
+                by = b.latitude;
+        if (ay > by) {
+            ax = b.longitude;
+            ay = b.latitude;
+            bx = a.longitude;
+            by = a.latitude;
+        }
+        // alter longitude to cater for 180 degree crossings
+        if (px < 0 || ax <0 || bx <0) { px += 360; ax+=360; bx+=360; }
+        // if the point has the same latitude as a or b, increase slightly py
+        if (py == ay || py == by) py += 0.00000001;
+
+
+        // if the point is above, below or to the right of the segment, it returns false
+        if ((py > by || py < ay) || (px > Math.max(ax, bx))){
+            return false;
+        }
+        // if the point is not above, below or to the right and is to the left, return true
+        else if (px < Math.min(ax, bx)){
+            return true;
+        }
+        // if the two above conditions are not met, you have to compare the slope of segment [a,b] (the red one here) and segment [a,p] (the blue one here) to see if your point is to the left of segment [a,b] or not
+        else {
+            double red = (ax != bx) ? ((by - ay) / (bx - ax)) : Double.POSITIVE_INFINITY;
+            double blue = (ax != px) ? ((py - ay) / (px - ax)) : Double.POSITIVE_INFINITY;
+            return (blue >= red);
+        }
+
+    }
+
+
+    public boolean isCurrentLocationNearBy(LatLng currentLocation)
+    {
+        float radius = 10;
+
+        return false;
     }
 
 
@@ -289,6 +467,7 @@ public class LocationFragment extends SupportMapFragment implements OnMapReadyCa
         if (requestCode == REQUEST_ACCESS_LOCATION) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 LogUtil.print("Permission granted");
+                onConnected(null);
 
             }
         }

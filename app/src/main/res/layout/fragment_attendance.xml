@@ -1,8 +1,7 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="in.yousee.theadmin.AttendanceFragment">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -46,17 +45,16 @@
         android:visibility="gone">
         <fragment
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_margin="5dp"
             class="in.yousee.theadmin.LocationFragment"
             android:id="@+id/map_container"
             android:layout_gravity="bottom"
-
-            android:layout_weight="37.86"></fragment>
+            ></fragment>
 
     </LinearLayout>
 
 
 
 
-</LinearLayout>
+</FrameLayout>
