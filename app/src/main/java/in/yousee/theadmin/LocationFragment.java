@@ -46,6 +46,7 @@ import in.yousee.theadmin.util.LogUtil;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.CAMERA;
 
 public class LocationFragment extends DialogFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     // TODO: Rename parameter arguments, choose names that match
@@ -104,41 +105,6 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         //getDialog().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         //getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_DeviceDefault_Light_Dialog);
-        LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
-        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestLocationPermission();
-            return;
-        }
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new android.location.LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                LogUtil.print("location changed :"+location.getLatitude() +" "+ location.getLongitude());
-
-                CameraPosition.Builder cameraPosition = new CameraPosition.Builder(mMap.getCameraPosition());
-                cameraPosition.target(latLng);
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition.build());
-                mMap.animateCamera(cameraUpdate);
-                checkAndChangeColor(latLng);
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
-            }
-        });
 
     }
 
@@ -178,16 +144,25 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
     @Override
     public void onStart() {
-
+        if(lm!=null)
+        {
+            implementLocationManager();
+        }
         mGoogleApiClient.connect();
         super.onStart();
         //mapView.onStart
     }
 
+
     @Override
     public void onStop() {
 
         mGoogleApiClient.disconnect();
+        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermission();
+            return;
+        }
+        lm.removeUpdates(listener);
         super.onStop();
 
     }
@@ -240,7 +215,8 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
             addPolyAreaOnMap();
         }
 
-        LogUtil.print("adding markers");
+        LogUtil.print("Map Ready");
+        implementLocationManager();
 //        CameraPosition cameraPosition = new CameraPosition.Builder()
 //                .target()      // Sets the center of the map to Mountain View
 //                .zoom(5)                   // Sets the zoom
@@ -252,12 +228,12 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     }
     @Override
     public void onLocationChanged(Location location) {
-        LogUtil.print("location changed");
-
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
-        mMap.animateCamera(cameraUpdate);
-        checkAndChangeColor(latLng);
+//        LogUtil.print("location changed");
+//
+//        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+//        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
+//        mMap.animateCamera(cameraUpdate);
+//        checkAndChangeColor(latLng);
         //locationManager.removeUpdates(this);
     }
 
@@ -325,6 +301,59 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         }
         testText.setText(""+present);
 
+    }
+    LocationManager lm;
+    LocationListenerImp listener;
+    public void implementLocationManager()
+    {
+         lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermission();
+            return;
+        }
+        listener = new LocationListenerImp();
+
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
+
+    }
+
+    private class LocationListenerImp implements android.location.LocationListener
+    {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            LogUtil.print("location changed :"+location.getLatitude() +" "+ location.getLongitude());
+            CameraUpdate cameraUpdate;
+            if( mMap.getCameraPosition() == null)
+            {
+                cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
+            }
+            else
+            {
+                CameraPosition.Builder cameraPosition = new CameraPosition.Builder(mMap.getCameraPosition());
+                cameraPosition.target(latLng);
+                cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition.build());
+            }
+            mMap.animateCamera(cameraUpdate);
+            checkAndChangeColor(latLng);
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
+        }
     }
 
     Polygon polygon;

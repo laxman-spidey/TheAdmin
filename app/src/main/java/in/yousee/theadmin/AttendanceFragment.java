@@ -74,6 +74,7 @@ public class AttendanceFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_attendance, container, false);
         checkin = (Button) view.findViewById(R.id.checkin_button);
+
         checkin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,6 +84,7 @@ public class AttendanceFragment extends Fragment {
             }
         });
         return view;
+
     }
 
     void showDialog() {
