@@ -1,14 +1,12 @@
 package in.yousee.theadmin;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
-import android.icu.util.TimeZone;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +14,7 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
-import java.util.Locale;
-
-import in.yousee.theadmin.util.LogUtil;
+import java.util.Calendar;
 
 
 /**
@@ -29,7 +25,7 @@ import in.yousee.theadmin.util.LogUtil;
  * Use the {@link LeavesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LeavesFragment extends Fragment implements View.OnClickListener{
+public class LeavesFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -91,9 +87,11 @@ public class LeavesFragment extends Fragment implements View.OnClickListener{
         fromDateEtxt = (EditText) view.findViewById(R.id.fromdate);
         fromDateEtxt.setInputType(InputType.TYPE_NULL);
         fromDateEtxt.requestFocus();
+        fromDateEtxt.setOnClickListener(this);
 
         toDateEtxt = (EditText) view.findViewById(R.id.todate);
         toDateEtxt.setInputType(InputType.TYPE_NULL);
+        toDateEtxt.setOnClickListener(this);
 
         return view;
     }
@@ -124,8 +122,68 @@ public class LeavesFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
-
+        if(view.getId() == R.id.fromdate)
+        {
+            showDialog(fromDateListerner);
+        }
+        else if(view.getId() == R.id.todate)
+        {
+            showDialog(toDateListerner);
+        }
     }
+
+    void showDialog(DatePickerDialog.OnDateSetListener listener) {
+        //mStackLevel++;
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        Calendar calendar = Calendar.getInstance();
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this.getContext(),listener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+
+        datePickerDialog.show();
+    }
+
+    DatePickerDialog.OnDateSetListener fromDateListerner = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            String monthString;
+            if(month <10)
+            {
+                monthString = "0"+month;
+            }
+            else
+            {
+                monthString = ""+month;
+            }
+            fromDateEtxt.setText(year + "-" + monthString +"-"+ day);
+            toDateEtxt.setText(year + "-" + monthString +"-"+ day);
+        }
+    };
+
+    DatePickerDialog.OnDateSetListener toDateListerner = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            String monthString;
+            if(month <10)
+            {
+                monthString = "0"+month;
+            }
+            else
+            {
+                monthString = ""+month;
+            }
+            toDateEtxt.setText(year + "-" + monthString +"-"+ day);
+        }
+    };
 
     /**
      * This interface must be implemented by activities that contain this
