@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -94,7 +94,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            checkStatus = getArguments().getInt(ARG_CHECK_IN);
+            checkStatus = getArguments().getShort(ARG_CHECK_IN);
         }
         createPlayServiceInstance();
         //getDialog().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -165,12 +165,18 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     public void onStop() {
 
         mGoogleApiClient.disconnect();
+        stopListeningToLocationUpdates();
+        super.onStop();
+
+    }
+
+    public void stopListeningToLocationUpdates()
+    {
         if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestLocationPermission();
             return;
         }
         lm.removeUpdates(listener);
-        super.onStop();
 
     }
 
@@ -321,9 +327,12 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
     }
 
+    private boolean insideWorkLocation = false;
+    private LatLng currentLocation;
     private class LocationListenerImp implements android.location.LocationListener
     {
 
+        AuthenticationThread authenticationThread = null;
         @Override
         public void onLocationChanged(Location location) {
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -338,13 +347,79 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 CameraPosition.Builder cameraPosition = new CameraPosition.Builder(mMap.getCameraPosition());
                 cameraPosition.target(latLng);
                 cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition.build());
-            }
+}
             mMap.animateCamera(cameraUpdate);
 
-            boolean inside = pointInPolygon(latLng, polygon);
-            updateMessage(inside);
+            insideWorkLocation = pointInPolygon(latLng, polygon);
+
+
+            if(!isAuthenticationThreadStarted)
+            {
+                authenticationThread =new AuthenticationThread(LocationFragment.this);
+            }
+            if(!insideWorkLocation) // if not inside location
+            {
+                authenticationThread.resetTimeWaited();
+            }
+            updateMessage(insideWorkLocation);
 
         }
+
+        boolean isAuthenticationThreadStarted = false;
+        private class AuthenticationThread implements Runnable
+        {
+            Thread t;
+
+            private final static int TIME_TO_WAIT = 3; //in seconds
+            public  short timeWaited = 0;
+            Fragment fragment;
+            public  AuthenticationThread(Fragment fragment)
+            {
+                t = new Thread(this);
+                this.fragment = fragment;
+                isAuthenticationThreadStarted = true;
+                t.start();
+            }
+            @Override
+            public void run() {
+                while(timeWaited <= TIME_TO_WAIT)
+                {
+                    try {
+                        LogUtil.print("sleeping");
+                        Thread.sleep(1000);
+                        LogUtil.print("waking");
+                        if(insideWorkLocation == false)
+                        {
+                            timeWaited = 0;
+                        }
+                        else
+                        {
+                            timeWaited++;
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                //after TIME_TO_WAIT seconds: authenticated
+                stopListeningToLocationUpdates();
+                //any changes to be updated on UI must run on UI thread.
+                fragment.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        authenticate();
+                    }
+                });
+
+
+            }
+            public void resetTimeWaited()
+            {
+                LogUtil.print("resetting");
+                timeWaited = 0;
+            }
+        }
+
+
 
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {
@@ -362,10 +437,16 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         }
     }
 
+    public  void authenticate()
+    {
+        LogUtil.print("authenticating");
+        testText.setText("authenticating");
+    }
     Polygon polygon;
     public void addPolyAreaOnMap()
     {
         // Instantiates a new Polygon object and adds points to define a rectangle
+        //gandhi
 //        PolygonOptions rectOptions = new PolygonOptions()
 //                .add(new LatLng(17.422535, 78.501770),
 //                        new LatLng(17.424829, 78.502028),
@@ -377,6 +458,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 //                .strokeColor(Color.RED)
 //                .fillColor(Color.argb(128, 255, 0, 0))
 //                ;
+//        //yousee
 //        PolygonOptions rectOptions = new PolygonOptions()
 //                .add(new LatLng(17.319037, 78.527645),
 //                        new LatLng(17.319301, 78.527712),
@@ -387,11 +469,23 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 //                .fillColor(Color.argb(128, 255, 0, 0))
 //                ;
 
+        //meerpet home
+
+//        PolygonOptions rectOptions = new PolygonOptions()
+//                .add(new LatLng(17.426084, 78.453917),
+//                        new LatLng(17.426178, 78.454073),
+//                        new LatLng(17.425977, 78.454150),
+//                        new LatLng(17.425905, 78.453998)
+//                )
+//                .strokeColor(Color.RED)
+//                .fillColor(Color.argb(128, 255, 0, 0))
+//                ;
+        //pochampally home
         PolygonOptions rectOptions = new PolygonOptions()
-                .add(new LatLng(17.426084, 78.453917),
-                        new LatLng(17.426178, 78.454073),
-                        new LatLng(17.425977, 78.454150),
-                        new LatLng(17.425905, 78.453998)
+                .add(new LatLng(17.343039, 78.819420),
+                        new LatLng(17.343073, 78.819514),
+                        new LatLng(17.342953, 78.819593),
+                        new LatLng(17.342871, 78.819406)
                 )
                 .strokeColor(Color.RED)
                 .fillColor(Color.argb(128, 255, 0, 0))
