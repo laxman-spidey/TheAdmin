@@ -1,6 +1,5 @@
 package in.yousee.theadmin;
 
-import android.*;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -13,12 +12,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -29,30 +28,31 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.util.List;
-import java.util.Map;
 
 import in.yousee.theadmin.util.LogUtil;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.Manifest.permission.CAMERA;
 
 public class LocationFragment extends DialogFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    public static final String ARG_CHECK_IN = "CHECK_IN";
+    public static final short CHECK_IN = 1;
+    public static final short CHECK_OUT = 2;
+
+    private int checkStatus;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -73,22 +73,18 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param checkin whether user is checking into or checking out of the work location.
      * @return A new instance of fragment LocationsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LocationFragment newInstance(String param1, String param2) {
+    public static LocationFragment newInstance(short checkin) {
         LocationFragment fragment = new LocationFragment();
 
         GoogleMapOptions mapOptions = new GoogleMapOptions();
         mapOptions.zOrderOnTop(true);
-        MapFragment mapFragment = MapFragment.newInstance(mapOptions);
-
         Bundle args = new Bundle();
 
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putShort(ARG_CHECK_IN, checkin);
         //fragment.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHI‌​ND);
         fragment.setArguments(args);
         return fragment;
@@ -98,8 +94,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            checkStatus = getArguments().getInt(ARG_CHECK_IN);
         }
         createPlayServiceInstance();
         //getDialog().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -108,6 +103,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
     }
 
+    View messageBackground;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -118,9 +114,20 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         mapView = (MapView) view.findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
         testText = (TextView) view.findViewById(R.id.testText);
-
+        messageBackground = (View) view.findViewById(R.id.message_background);
+        setAnimation(messageBackground);
         mapView.getMapAsync(this);
         return view;
+    }
+
+    private void setAnimation(View view)
+    {
+        final Animation animation = new AlphaAnimation(1, 0); // Change alpha from fully visible to invisible
+        animation.setDuration(500); // duration - half a second
+        animation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
+        animation.setRepeatCount(Animation.INFINITE); // Repeat animation infinitely
+        animation.setRepeatMode(Animation.REVERSE); // Reverse animation at the end so the button will fade back in
+        view.setAnimation(animation);
     }
 
     @Override
@@ -203,8 +210,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        GoogleMapOptions mapOptions = new GoogleMapOptions();
-        mapOptions.zOrderOnTop(true);
+        //mMap.setPadding(0,0,0,50);
 
         if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             LogUtil.print("no permission");
@@ -217,14 +223,6 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
         LogUtil.print("Map Ready");
         implementLocationManager();
-//        CameraPosition cameraPosition = new CameraPosition.Builder()
-//                .target()      // Sets the center of the map to Mountain View
-//                .zoom(5)                   // Sets the zoom
-//                //.bearing(90)                // Sets the orientation of the camera to east
-//                //.tilt(30)                   // Sets the tilt of the camera to 30 degrees
-//                .build();                   // Creates a CameraPosition from the builder
-//        //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
     }
     @Override
     public void onLocationChanged(Location location) {
@@ -278,30 +276,35 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
                 mMap.animateCamera(cameraUpdate);
-                checkAndChangeColor(latLng);
-
+                boolean inside = pointInPolygon(latLng, polygon);
+                updateMessage(inside);
 
             }
         }
     }
 
-    private void checkAndChangeColor(LatLng latLng)
+    private void updateMessage(boolean inside)
     {
-        boolean present = pointInPolygon(latLng, polygon);
+        String textViewString = "";
 
-        if(present == true)
+        if(inside == true)
         {
             polygon.setStrokeColor(Color.argb(128, 50, 255, 50));
             polygon.setFillColor(Color.argb(128, 0, 255, 0));
+            textViewString = "Registering your attendance";
+            messageBackground.setBackgroundResource(R.color.green);
         }
         else
         {
             polygon.setStrokeColor(Color.argb(128, 255, 50, 50));
             polygon.setFillColor(Color.argb(128, 255, 0, 0));
+            textViewString = "Please walk into the work location, your attendance will be registered automatically";
+            messageBackground.setBackgroundResource(R.color.red);
         }
-        testText.setText(""+present);
+        testText.setText(""+textViewString);
 
     }
+
     LocationManager lm;
     LocationListenerImp listener;
     public void implementLocationManager()
@@ -337,7 +340,10 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition.build());
             }
             mMap.animateCamera(cameraUpdate);
-            checkAndChangeColor(latLng);
+
+            boolean inside = pointInPolygon(latLng, polygon);
+            updateMessage(inside);
+
         }
 
         @Override
@@ -462,13 +468,6 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
     }
 
-
-    public boolean isCurrentLocationNearBy(LatLng currentLocation)
-    {
-        float radius = 10;
-
-        return false;
-    }
 
 
     private static final int REQUEST_ACCESS_LOCATION = 0;

@@ -2,7 +2,6 @@ package in.yousee.theadmin;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -61,11 +60,6 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
 
     private EditText fromDateEtxt;
     private EditText toDateEtxt;
-
-    private DatePickerDialog fromDatePickerDialog;
-    private DatePickerDialog toDatePickerDialog;
-
-    private SimpleDateFormat dateFormatter;
 
 
 
@@ -128,7 +122,7 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
         }
         else if(view.getId() == R.id.todate)
         {
-            showDialog(toDateListerner);
+            showDialog(toDateListener);
         }
     }
 
@@ -148,7 +142,6 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
         Calendar calendar = Calendar.getInstance();
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this.getContext(),listener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-
         datePickerDialog.show();
     }
 
@@ -169,7 +162,7 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
         }
     };
 
-    DatePickerDialog.OnDateSetListener toDateListerner = new DatePickerDialog.OnDateSetListener() {
+    DatePickerDialog.OnDateSetListener toDateListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
             String monthString;

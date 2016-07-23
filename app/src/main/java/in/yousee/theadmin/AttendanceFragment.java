@@ -101,7 +101,7 @@ public class AttendanceFragment extends Fragment {
         ft.addToBackStack(null);
 
         // Create and show the dialog.
-        LocationFragment newFragment = LocationFragment.newInstance(null, null);
+        LocationFragment newFragment = LocationFragment.newInstance(LocationFragment.CHECK_IN);
 
         newFragment.show(ft, "dialog");
     }
