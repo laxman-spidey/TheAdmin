@@ -1,6 +1,7 @@
 package in.yousee.theadmin;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,7 +20,7 @@ import android.widget.Button;
  * Use the {@link DashboardFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DashboardFragment extends Fragment  implements View.OnClickListener{
+public class DashboardFragment extends Fragment  implements View.OnClickListener, DialogInterface.OnDismissListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -109,6 +110,11 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
                 showLocationDialog(LocationFragment.CHECK_OUT);
             }
         }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+
     }
 
     /**

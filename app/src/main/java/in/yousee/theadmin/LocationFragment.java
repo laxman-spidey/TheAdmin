@@ -349,10 +349,8 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition.build());
 }
             mMap.animateCamera(cameraUpdate);
-
+            currentLocation =  latLng;
             insideWorkLocation = pointInPolygon(latLng, polygon);
-
-
             if(!isAuthenticationThreadStarted)
             {
                 authenticationThread =new AuthenticationThread(LocationFragment.this);
@@ -502,7 +500,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
 
     public boolean pointInPolygon(LatLng point, Polygon polygon) {
-        // ray casting alogrithm http://rosettacode.org/wiki/Ray-casting_algorithm
+        // ray casting algorithm http://rosettacode.org/wiki/Ray-casting_algorithm
         int crossings = 0;
         List<LatLng> path = polygon.getPoints();
         path.remove(path.size()-1); //remove the last point that is added automatically by getPoints()

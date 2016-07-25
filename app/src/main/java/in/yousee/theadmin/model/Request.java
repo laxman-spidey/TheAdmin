@@ -29,6 +29,14 @@ public class Request {
     }
     */
 
+    public int getRequestCode() {
+        return requestCode;
+    }
+
+    public void setRequestCode(int requestCode) {
+        this.requestCode = requestCode;
+    }
+
     public void setParameters(ContentValues parameters) {
 
         this.parameters = parameters;

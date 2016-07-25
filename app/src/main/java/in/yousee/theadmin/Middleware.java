@@ -25,13 +25,20 @@ public abstract class Middleware
 		nameValuePairs.put(key,value);
 	}
 
+	OnResponseReceivedListener listener;
+
+	public Middleware(OnResponseReceivedListener listener)
+	{
+		this.listener = listener;
+	}
+
 	//protected List<NameValuePair> nameValuePairs;
 
 	protected Request request = new Request();
 
 	protected void setRequestCode(int requestCode)
 	{
-		addKeyValue(TAG_NETWORK_REQUEST_CODE, "" + requestCode);
+		request.setRequestCode(requestCode);
 	}
 
 	protected void addPhoneNumberToPost()
@@ -74,5 +81,8 @@ public abstract class Middleware
 
 	public abstract void serveResponse(String result, int requestCode);
 
-	public abstract Context getContext();
+	public Context getContext()
+	{
+		return listener.getContext();
+	}
 }
