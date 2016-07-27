@@ -104,10 +104,13 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
             case R.id.check_in:
             {
                 showLocationDialog(LocationFragment.CHECK_IN);
+                break;
             }
             case R.id.check_out:
             {
                 showLocationDialog(LocationFragment.CHECK_OUT);
+                break;
+
             }
         }
     }

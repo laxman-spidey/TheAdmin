@@ -9,11 +9,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +20,6 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -44,61 +38,47 @@ import in.yousee.theadmin.util.LogUtil;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class LocationFragment extends DialogFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+/**
+ * Created by mittu on 27-07-2016.
+ */
+public class LocationFragmentV2 extends DialogFragment implements OnMapReadyCallback {
 
     public static final String ARG_CHECK_IN = "CHECK_IN";
     public static final short CHECK_IN = 1;
     public static final short CHECK_OUT = 2;
 
-    private int checkStatus;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private TextView testText;
     private GoogleMap mMap;
     private MapView mapView;
 
+    private int checkStatus;
+
 
     private OnFragmentInteractionListener mListener;
 
-    public LocationFragment() {
+    public LocationFragmentV2() {
 
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param checkin whether user is checking into or checking out of the work location.
-     * @return A new instance of fragment LocationsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static LocationFragment newInstance(short checkin) {
-        LogUtil.print("getting new instance");
-        LocationFragment fragment = new LocationFragment();
+    public static LocationFragmentV2 newInstance(short checkin) {
+        LocationFragmentV2 fragment = new LocationFragmentV2();
 
+        GoogleMapOptions mapOptions = new GoogleMapOptions();
+        mapOptions.zOrderOnTop(true);
         Bundle args = new Bundle();
+
         args.putShort(ARG_CHECK_IN, checkin);
+        //fragment.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHI‌​ND);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        LogUtil.print("onCreate()");
-
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             checkStatus = getArguments().getShort(ARG_CHECK_IN);
         }
-        createPlayServiceInstance();
-        //getDialog().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        //getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_DeviceDefault_Light_Dialog);
 
     }
@@ -120,7 +100,8 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         return view;
     }
 
-    private void setAnimation(View view) {
+    private void setAnimation(View view)
+    {
         final Animation animation = new AlphaAnimation(1, 0); // Change alpha from fully visible to invisible
         animation.setDuration(500); // duration - half a second
         animation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
@@ -128,6 +109,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         animation.setRepeatMode(Animation.REVERSE); // Reverse animation at the end so the button will fade back in
         view.setAnimation(animation);
     }
+
 
     @Override
     public void onResume() {
@@ -150,40 +132,13 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
     @Override
     public void onStart() {
-        //if(lm!=null)
-//        {
-//            implementLocationManager();
-//        }
-        mGoogleApiClient.connect();
-
         super.onStart();
-
     }
 
 
     @Override
     public void onStop() {
-
-        mGoogleApiClient.disconnect();
-        stopListeningToLocationUpdates();
         super.onStop();
-
-    }
-
-    public void stopListeningToLocationUpdates() {
-
-        checkPermission();
-        if (lm != null) {
-            lm.removeUpdates(listener);
-        }
-    }
-    public boolean checkPermission()
-    {
-        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestLocationPermission();
-            return true;
-        }
-        return false;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -210,6 +165,22 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         mListener = null;
     }
 
+
+
+
+    public void stopListeningToLocationUpdates()
+    {
+        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermission();
+            return;
+        }
+        if(lm != null)
+        {
+            lm.removeUpdates(listener);
+        }
+    }
+
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -219,119 +190,37 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
-    AuthenticationThread authenticationThread = null;
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         //mMap.setPadding(0,0,0,50);
 
-        if (checkPermission()) {
-        LogUtil.print("no permission");
-        } else {
+        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            LogUtil.print("no permission");
+        }
+        else {
 
             mMap.setMyLocationEnabled(true);
             addPolyAreaOnMap();
         }
 
         LogUtil.print("Map Ready");
-        LatLng latLng = setLastKnownLocation();
         implementLocationManager();
-        authenticationThread =new AuthenticationThread(LocationFragment.this);
-        //insideWorkLocation = pointInPolygon(latLng, polygon);
-
-
-
-
     }
 
-
-
-
-    public LatLng setLastKnownLocation() {
-        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //LogUtil.print("");
-            requestLocationPermission();
-            return null;
-        }
-        else
-        {
-            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-            LogUtil.print("fused location");
-            if (mLastLocation != null) {
-                LogUtil.print("got location");
-                LogUtil.print(String.valueOf(mLastLocation.getLatitude()));
-                LogUtil.print(String.valueOf(mLastLocation.getLongitude()));
-                LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
-                mMap.animateCamera(cameraUpdate);
-                boolean inside = pointInPolygon(latLng, polygon);
-                updateMessage(inside);
-                return latLng;
-            }
-            return null;
-        }
-    }
-
-
-    private GoogleApiClient mGoogleApiClient;
-
-    public void createPlayServiceInstance() {
-
-        //mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        // Create an instance of GoogleAPIClient.
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(getContext())
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
-    }
-
-
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        LogUtil.print("onconnected()");
-        boolean fineLocation = (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED);
-        boolean coarseLocation = (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED);
-
-        LogUtil.print("fine location = " + fineLocation);
-        LogUtil.print("coarselocation = " + coarseLocation);
-
+    LocationManager lm;
+    LocationListenerImp listener;
+    public void implementLocationManager()
+    {
+        lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //LogUtil.print("");
             requestLocationPermission();
             return;
         }
-        else {
-            implementLocationManager();
-            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-            LogUtil.print("got location");
-            if (mLastLocation != null) {
+        listener = new LocationListenerImp();
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
 
-                LogUtil.print(String.valueOf(mLastLocation.getLatitude()));
-                LogUtil.print(String.valueOf(mLastLocation.getLongitude()));
-                LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
-                mMap.animateCamera(cameraUpdate);
-                boolean inside = pointInPolygon(latLng, polygon);
-                updateMessage(inside);
-                insideWorkLocation = pointInPolygon(latLng, polygon);
-
-
-            }
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        LogUtil.print("connectionSuspended()");
     }
 
     private void updateMessage(boolean inside)
@@ -356,32 +245,13 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
     }
 
-    LocationManager lm;
-    LocationListenerImp listener;
-    public void implementLocationManager()
-    {
-         lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
-        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestLocationPermission();
-            return;
-        }
-        listener = new LocationListenerImp();
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
-
-    }
 
     private boolean insideWorkLocation = false;
     private LatLng currentLocation;
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        LogUtil.print("connectionFailed()");
-    }
-
     private class LocationListenerImp implements android.location.LocationListener
     {
 
+        AuthenticationThread authenticationThread = null;
         @Override
         public void onLocationChanged(Location location) {
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -396,11 +266,14 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 CameraPosition.Builder cameraPosition = new CameraPosition.Builder(mMap.getCameraPosition());
                 cameraPosition.target(latLng);
                 cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition.build());
-}
+            }
             mMap.animateCamera(cameraUpdate);
             currentLocation =  latLng;
             insideWorkLocation = pointInPolygon(latLng, polygon);
-
+            if(!isAuthenticationThreadStarted)
+            {
+                authenticationThread =new AuthenticationThread(LocationFragmentV2.this);
+            }
             if(!insideWorkLocation) // if not inside location
             {
                 authenticationThread.resetTimeWaited();
@@ -408,6 +281,61 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
             updateMessage(insideWorkLocation);
 
         }
+
+        boolean isAuthenticationThreadStarted = false;
+        private class AuthenticationThread implements Runnable
+        {
+            Thread t;
+
+            private final static int TIME_TO_WAIT = 3; //in seconds
+            public  short timeWaited = 0;
+            Fragment fragment;
+            public  AuthenticationThread(Fragment fragment)
+            {
+                t = new Thread(this);
+                this.fragment = fragment;
+                isAuthenticationThreadStarted = true;
+                t.start();
+            }
+            @Override
+            public void run() {
+                while(timeWaited <= TIME_TO_WAIT)
+                {
+                    try {
+                        LogUtil.print("sleeping");
+                        Thread.sleep(1000);
+                        LogUtil.print("waking");
+                        if(insideWorkLocation == false)
+                        {
+                            timeWaited = 0;
+                        }
+                        else
+                        {
+                            timeWaited++;
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                //after TIME_TO_WAIT seconds: authenticated
+                stopListeningToLocationUpdates();
+                //any changes to be updated on UI must run on UI thread.
+                fragment.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        authenticate();
+                    }
+                });
+
+
+            }
+            public void resetTimeWaited()
+            {
+                LogUtil.print("resetting");
+                timeWaited = 0;
+            }
+        }
+
 
 
         @Override
@@ -425,58 +353,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
         }
     }
-    private class AuthenticationThread implements Runnable
-    {
-        Thread t;
 
-        private final static int TIME_TO_WAIT = 3; //in seconds
-        public  short timeWaited = 0;
-        Fragment fragment;
-        public  AuthenticationThread(Fragment fragment)
-        {
-            t = new Thread(this);
-            this.fragment = fragment;
-            //isAuthenticationThreadStarted = true;
-            t.start();
-        }
-        @Override
-        public void run() {
-            while(timeWaited <= TIME_TO_WAIT)
-            {
-                try {
-                    LogUtil.print("sleeping");
-                    Thread.sleep(1000);
-                    LogUtil.print("waking");
-                    if(insideWorkLocation == false)
-                    {
-                        timeWaited = 0;
-                    }
-                    else
-                    {
-                        timeWaited++;
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            //after TIME_TO_WAIT seconds: authenticated
-            stopListeningToLocationUpdates();
-            //any changes to be updated on UI must run on UI thread.
-            fragment.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    authenticate();
-                }
-            });
-
-
-        }
-        public void resetTimeWaited()
-        {
-            LogUtil.print("resetting");
-            timeWaited = 0;
-        }
-    }
 
     public  void authenticate()
     {
@@ -505,7 +382,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                         new LatLng(17.319301, 78.527712),
                         new LatLng(17.319268, 78.527892),
                         new LatLng(17.319002, 78.527876)
-                        )
+                )
                 .strokeColor(Color.RED)
                 .fillColor(Color.argb(128, 255, 0, 0))
                 ;
@@ -604,7 +481,6 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     }
 
 
-
     private static final int REQUEST_ACCESS_LOCATION = 100;
 
     public boolean requestLocationPermission()
@@ -618,7 +494,6 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         else
         {
             LogUtil.print("requesting permission = "+REQUEST_ACCESS_LOCATION);
-            permissionRequestMadeToUser = true;
             requestPermissions(new String[]{ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION}, REQUEST_ACCESS_LOCATION);
         }
         return false;
@@ -626,23 +501,13 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     /**
      * Callback received when a permissions request has been completed.
      */
-    boolean permissionRequestMadeToUser = false;
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         LogUtil.print("onRequestPermissionResult = "+requestCode);
         if (requestCode == REQUEST_ACCESS_LOCATION) {
-            if(permissionRequestMadeToUser){
-                LogUtil.print("accesrequest");
-                LogUtil.print("Permission granted");
-                setLastKnownLocation();
-                implementLocationManager();
-                permissionRequestMadeToUser = false;
-            }
-            else
-            {
-                LogUtil.print("permission already granted");
-            }
+            LogUtil.print("accesrequest");
+            LogUtil.print("Permission granted");
             //onConnected(null);
 
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -653,28 +518,6 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         }
     }
 
-
-//    @Override
-//    public void onConnectionSuspended(int i) {
-//
-//    }
-//
-//    @Override
-//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-//
-//    }
-
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

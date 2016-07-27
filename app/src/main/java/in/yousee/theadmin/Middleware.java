@@ -4,11 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 
 
-import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 import in.yousee.theadmin.model.CustomException;
-import in.yousee.theadmin.model.Request;
 import in.yousee.theadmin.model.Request;
 
 public abstract class Middleware

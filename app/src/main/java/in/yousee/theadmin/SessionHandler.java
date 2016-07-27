@@ -40,6 +40,7 @@ public class SessionHandler extends Middleware
 
 	public SessionHandler(OnResponseReceivedListener responseListener)
 	{
+		super(responseListener);
 		this.context = responseListener.getContext();
 		this.responseListener = responseListener;
 	}
