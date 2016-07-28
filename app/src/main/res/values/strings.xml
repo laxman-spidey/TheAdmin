@@ -10,4 +10,17 @@
     <string name="title_activity_main">Admin</string>
     <string name="permission_rationale" />
 
+    <string name="hello_blank_fragment">Leaves fragment</string>
+    <string name="apply">Apply Leave Here</string>
+    <string name="Submit">Apply</string>
+    <string name="from">From Date</string>
+    <string name="to">To Date</string>
+    <string name="reason">Enter reason for leave..</string>
+    <string name="typeofleave" >Earned Leave</string>
+
+
+    <!-- Google maps debug key-->
+    <string name="google_maps_key_debug" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyBN8qDqU63X_Ram_QQGfBtxpO1DMwH4dQk
+    </string>
 </resources>

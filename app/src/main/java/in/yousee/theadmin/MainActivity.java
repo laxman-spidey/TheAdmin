@@ -16,8 +16,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, LocationFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, LocationFragmentV2.OnFragmentInteractionListener  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +47,12 @@ public class MainActivity extends AppCompatActivity
 
         Fragment dashboardFragment = new DashboardFragment();
         replaceFragmentOnMainContent(dashboardFragment, "JeevanDaan");
-
     }
-    public void replaceFragmentOnMainContent(Fragment fragment, String title)
-    {
+
+
+    public void replaceFragmentOnMainContent(Fragment fragment, String title) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_view,fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.content_view, fragment).commit();
         setTitle(title);
     }
 
@@ -94,10 +95,20 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.menu_dashboard) {
+            Fragment dashboardFragment = new DashboardFragment();
+            replaceFragmentOnMainContent(dashboardFragment, "Dashboard");
             // Handle the camera action
         } else if (id == R.id.menu_attendance) {
+            Fragment attendanceFragment = new AttendanceFragment();
+            replaceFragmentOnMainContent(attendanceFragment , "My Attendance");
+
+
+//            Fragment locationFragment = new LocationFragment();
+//            replaceFragmentOnMainContent(locationFragment, "My location");
 
         } else if (id == R.id.menu_leave) {
+            Fragment leavesFragment = new LeavesFragment();
+            replaceFragmentOnMainContent(leavesFragment, "My Leaves");
 
         } else if (id == R.id.menu_manage) {
 
@@ -112,4 +123,14 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
 }

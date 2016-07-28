@@ -7,8 +7,12 @@ import android.util.Log;
  */
 public class LogUtil {
 
+    static boolean debugMode = true;
     public static void print(String text)
     {
-        Log.i("bloodbank_tag",text);
+
+        if(debugMode == true) {
+            Log.i("bloodbank_tag", text);
+        }
     }
 }

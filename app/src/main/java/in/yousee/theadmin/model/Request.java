@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by mittu on 14-07-2016.
+ * Created by Laxman on 14-07-2016.
  */
 public class Request {
     private String url;
@@ -28,6 +28,14 @@ public class Request {
         return parameters;
     }
     */
+
+    public int getRequestCode() {
+        return requestCode;
+    }
+
+    public void setRequestCode(int requestCode) {
+        this.requestCode = requestCode;
+    }
 
     public void setParameters(ContentValues parameters) {
 

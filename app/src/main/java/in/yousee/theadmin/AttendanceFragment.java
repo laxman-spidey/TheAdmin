@@ -1,7 +1,6 @@
 package in.yousee.theadmin;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,12 +14,12 @@ import android.widget.Button;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link DashboardFragment.OnFragmentInteractionListener} interface
+ * {@link AttendanceFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link DashboardFragment#newInstance} factory method to
+ * Use the {@link AttendanceFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DashboardFragment extends Fragment  implements View.OnClickListener, DialogInterface.OnDismissListener{
+public class AttendanceFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -32,7 +31,7 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
 
     private OnFragmentInteractionListener mListener;
 
-    public DashboardFragment() {
+    public AttendanceFragment() {
         // Required empty public constructor
     }
 
@@ -42,11 +41,11 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment DashboardFragment.
+     * @return A new instance of fragment AttendanceFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static DashboardFragment newInstance(String param1, String param2) {
-        DashboardFragment fragment = new DashboardFragment();
+    public static AttendanceFragment newInstance(String param1, String param2) {
+        AttendanceFragment fragment = new AttendanceFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -63,14 +62,43 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         }
     }
 
+    Button checkin;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
-        Button signInButton = (Button) view.findViewById(R.id.check_in);
-        signInButton.setOnClickListener(this);
+        View view = inflater.inflate(R.layout.fragment_attendance, container, false);
+        checkin = (Button) view.findViewById(R.id.checkin_button);
+
+        checkin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //mapLayout.setVisibility(View.VISIBLE);
+                showDialog();
+
+            }
+        });
         return view;
+
+    }
+
+    void showDialog() {
+        //mStackLevel++;
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        LocationFragment newFragment = LocationFragment.newInstance(LocationFragment.CHECK_IN);
+
+        newFragment.show(ft, "dialog");
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -97,29 +125,6 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         mListener = null;
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId())
-        {
-            case R.id.check_in:
-            {
-                showLocationDialog(LocationFragment.CHECK_IN);
-                break;
-            }
-            case R.id.check_out:
-            {
-                showLocationDialog(LocationFragment.CHECK_OUT);
-                break;
-
-            }
-        }
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialogInterface) {
-
-    }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -134,25 +139,4 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
-    void showLocationDialog(short checkin) {
-        //mStackLevel++;
-
-        // DialogFragment.show() will take care of adding the fragment
-        // in a transaction.  We also want to remove any currently showing
-        // dialog, so make our own transaction and take care of that here.
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-
-        // Create and show the dialog.
-        LocationFragment newFragment = LocationFragment.newInstance(checkin);
-
-        newFragment.show(ft, "dialog");
-    }
-
 }
