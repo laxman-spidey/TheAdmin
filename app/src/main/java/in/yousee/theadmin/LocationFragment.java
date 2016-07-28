@@ -1,6 +1,8 @@
 package in.yousee.theadmin;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -8,11 +10,13 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -166,6 +170,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
         mGoogleApiClient.disconnect();
         stopListeningToLocationUpdates();
+        authenticationThread.stopThread();
         super.onStop();
 
     }
@@ -219,6 +224,36 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+
+    private void promptUserToTurnGpsOn()
+    {
+        LocationManager manager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            //Ask the user to enable GPS
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Location Manager");
+            builder.setMessage("Would you like to enable GPS?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Launch settings, allowing user to make a change
+                    Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(i);
+                    setLastKnownLocation();
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //No location service, no Activity
+
+                }
+            });
+            builder.create().show();
+        }
+    }
+
+
     AuthenticationThread authenticationThread = null;
 
 
@@ -235,6 +270,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         if (checkPermission()) {
             LogUtil.print("no permission");
         } else {
+            promptUserToTurnGpsOn();
             mMap.setMyLocationEnabled(true);
             LogUtil.print("Map Ready");
             LatLng latLng = setLastKnownLocation();
@@ -427,6 +463,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
         private final static int TIME_TO_WAIT = 3; //in seconds
         public  short timeWaited = 0;
+        public boolean threadStoppedManually = false;
         Fragment fragment;
         public  AuthenticationThread(Fragment fragment)
         {
@@ -437,7 +474,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         }
         @Override
         public void run() {
-            while(timeWaited <= TIME_TO_WAIT)
+            while(timeWaited <= TIME_TO_WAIT && threadStoppedManually == false)
             {
                 try {
                     //LogUtil.print("sleeping");
@@ -455,17 +492,25 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                     e.printStackTrace();
                 }
             }
-            //after TIME_TO_WAIT seconds: authenticated
-            stopListeningToLocationUpdates();
-            //any changes to be updated on UI must run on UI thread.
-            fragment.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    authenticate();
-                }
-            });
+            if(timeWaited > 3)
+            {
+                LogUtil.print("timeWaited > 3 - stopping service");
+                //after TIME_TO_WAIT seconds: authenticated
+                stopListeningToLocationUpdates();
+                //any changes to be updated on UI must run on UI thread.
+                fragment.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        authenticate();
+                    }
+                });
+            }
 
 
+        }
+        public void stopThread()
+        {
+            threadStoppedManually = true;
         }
         public void resetTimeWaited()
         {
@@ -650,17 +695,6 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
             }
         }
     }
-
-
-//    @Override
-//    public void onConnectionSuspended(int i) {
-//
-//    }
-//
-//    @Override
-//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-//
-//    }
 
 
     /**
