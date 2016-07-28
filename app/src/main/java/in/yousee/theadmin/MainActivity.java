@@ -18,7 +18,7 @@ import android.view.MenuItem;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, LocationFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, LocationFragmentV2.OnFragmentInteractionListener  {
+        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, LocationFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, SwapsFragment.OnFragmentInteractionListener, LocationFragmentV2.OnFragmentInteractionListener  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,8 +110,9 @@ public class MainActivity extends AppCompatActivity
             Fragment leavesFragment = new LeavesFragment();
             replaceFragmentOnMainContent(leavesFragment, "My Leaves");
 
-        } else if (id == R.id.menu_manage) {
-
+        } else if (id == R.id.menu_swap) {
+            Fragment swapsFragment = new SwapsFragment();
+            replaceFragmentOnMainContent(swapsFragment, "My Swaps");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

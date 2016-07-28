@@ -148,6 +148,7 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
     DatePickerDialog.OnDateSetListener fromDateListerner = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
+            month=month+1;
             String monthString;
             if(month <10)
             {
