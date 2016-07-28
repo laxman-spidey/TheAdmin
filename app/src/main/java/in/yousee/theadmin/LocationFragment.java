@@ -224,33 +224,26 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        LogUtil.print("onMapReady()");
         mMap = googleMap;
         //mMap.setPadding(0,0,0,50);
 
-        if (checkPermission()) {
-        LogUtil.print("no permission");
-        } else {
-
-            mMap.setMyLocationEnabled(true);
-            addPolyAreaOnMap();
-        }
-
-        LogUtil.print("Map Ready");
-        LatLng latLng = setLastKnownLocation();
-        implementLocationManager();
+        addPolyAreaOnMap();
         authenticationThread =new AuthenticationThread(LocationFragment.this);
-        //insideWorkLocation = pointInPolygon(latLng, polygon);
 
-
-
-
+        if (checkPermission()) {
+            LogUtil.print("no permission");
+        } else {
+            mMap.setMyLocationEnabled(true);
+            LogUtil.print("Map Ready");
+            LatLng latLng = setLastKnownLocation();
+            implementLocationManager();
+        }
     }
 
-
-
-
     public LatLng setLastKnownLocation() {
-        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (checkPermission()) {
             //LogUtil.print("");
             requestLocationPermission();
             return null;
@@ -303,7 +296,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         LogUtil.print("coarselocation = " + coarseLocation);
 
 
-        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (checkPermission()) {
             //LogUtil.print("");
             requestLocationPermission();
             return;
@@ -362,12 +355,15 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     {
          lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (checkPermission()) {
             requestLocationPermission();
             return;
         }
-        listener = new LocationListenerImp();
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
+        else
+        {
+            listener = new LocationListenerImp();
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
+        }
 
     }
 
@@ -396,7 +392,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 CameraPosition.Builder cameraPosition = new CameraPosition.Builder(mMap.getCameraPosition());
                 cameraPosition.target(latLng);
                 cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition.build());
-}
+            }
             mMap.animateCamera(cameraUpdate);
             currentLocation =  latLng;
             insideWorkLocation = pointInPolygon(latLng, polygon);
@@ -444,9 +440,9 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
             while(timeWaited <= TIME_TO_WAIT)
             {
                 try {
-                    LogUtil.print("sleeping");
+                    //LogUtil.print("sleeping");
                     Thread.sleep(1000);
-                    LogUtil.print("waking");
+                    //LogUtil.print("waking");
                     if(insideWorkLocation == false)
                     {
                         timeWaited = 0;
@@ -634,9 +630,8 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         if (requestCode == REQUEST_ACCESS_LOCATION) {
             if(permissionRequestMadeToUser){
                 LogUtil.print("accesrequest");
-                LogUtil.print("Permission granted");
-                setLastKnownLocation();
-                implementLocationManager();
+                //LogUtil.print("Permission granted");
+                //
                 permissionRequestMadeToUser = false;
             }
             else
@@ -644,9 +639,12 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 LogUtil.print("permission already granted");
             }
             //onConnected(null);
-
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                LogUtil.print("Permission granted");
+            LogUtil.print("results.length = " +grantResults.length  );
+            if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                LogUtil.print("Permission granted -------------");
+                onMapReady(mMap);
+                setLastKnownLocation();
+                implementLocationManager();
                 //onConnected(null);
 
             }
