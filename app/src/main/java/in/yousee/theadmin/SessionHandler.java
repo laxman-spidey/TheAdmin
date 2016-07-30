@@ -235,8 +235,8 @@ public class SessionHandler extends Middleware
 		this.responseListener = responseListener;
 
 		request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.VERIFY_EXEC);
+		setRequestCode(RequestCodes.NETWORK_REQUEST_VERIFY);
 		addKeyValue("phone", phone);
-		super.setRequestCode(RequestCodes.NETWORK_REQUEST_VERIFY);
 		this.phone = phone;
 		setPhoneNumber(phone);
 		request.setParameters(nameValuePairs);

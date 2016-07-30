@@ -38,14 +38,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
+import java.util.Date;
 import java.util.List;
 
+import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.util.LogUtil;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class LocationFragment extends DialogFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LocationFragment extends DialogFragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnResponseReceivedListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -411,6 +413,11 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         LogUtil.print("connectionFailed()");
     }
 
+    @Override
+    public void onResponseReceived(Object response, int requestCode) {
+
+    }
+
     private class LocationListenerImp implements android.location.LocationListener
     {
 
@@ -523,6 +530,13 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     {
         LogUtil.print("authenticating");
         testText.setText("authenticating");
+        LocationMiddleware locationMiddleware = new LocationMiddleware(this);
+        try {
+            locationMiddleware.checkin(new Date(),"dsfa","sdfs");
+        } catch (CustomException e) {
+            //TODO: show dialogbox
+        }
+
     }
     Polygon polygon;
     public void addPolyAreaOnMap()
