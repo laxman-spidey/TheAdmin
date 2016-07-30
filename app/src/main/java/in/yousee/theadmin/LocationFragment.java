@@ -17,7 +17,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,12 +27,10 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -178,8 +175,10 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     public void stopListeningToLocationUpdates() {
 
         checkPermission();
-        if (lm != null) {
+        if (lm != null && listener != null) {
+            LogUtil.print("stopListeningToLocationUpdates()");
             lm.removeUpdates(listener);
+
         }
     }
     public boolean checkPermission()
@@ -389,6 +388,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     LocationListenerImp listener;
     public void implementLocationManager()
     {
+        LogUtil.print("implementLocationManager()");
          lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         if (checkPermission()) {
@@ -540,28 +540,28 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 //                .strokeColor(Color.RED)
 //                .fillColor(Color.argb(128, 255, 0, 0))
 //                ;
-//        //yousee
-        PolygonOptions rectOptions = new PolygonOptions()
-                .add(new LatLng(17.319037, 78.527645),
-                        new LatLng(17.319301, 78.527712),
-                        new LatLng(17.319268, 78.527892),
-                        new LatLng(17.319002, 78.527876)
-                        )
-                .strokeColor(Color.RED)
-                .fillColor(Color.argb(128, 255, 0, 0))
-                ;
-
-        //Yousee
-
+//        //meerpet
 //        PolygonOptions rectOptions = new PolygonOptions()
-//                .add(new LatLng(17.426084, 78.453917),
-//                        new LatLng(17.426178, 78.454073),
-//                        new LatLng(17.425977, 78.454150),
-//                        new LatLng(17.425905, 78.453998)
-//                )
+//                .add(new LatLng(17.319037, 78.527645),
+//                        new LatLng(17.319301, 78.527712),
+//                        new LatLng(17.319268, 78.527892),
+//                        new LatLng(17.319002, 78.527876)
+//                        )
 //                .strokeColor(Color.RED)
 //                .fillColor(Color.argb(128, 255, 0, 0))
 //                ;
+
+        //Yousee
+
+        PolygonOptions rectOptions = new PolygonOptions()
+                .add(new LatLng(17.426084, 78.453917),
+                        new LatLng(17.426178, 78.454073),
+                        new LatLng(17.425977, 78.454150),
+                        new LatLng(17.425905, 78.453998)
+                )
+                .strokeColor(Color.RED)
+                .fillColor(Color.argb(128, 255, 0, 0))
+                ;
         //pochampally home
 //        PolygonOptions rectOptions = new PolygonOptions()
 //                .add(new LatLng(17.343039, 78.819420),
