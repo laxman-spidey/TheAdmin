@@ -40,6 +40,7 @@ public class SessionHandler extends Middleware
 
 	public SessionHandler(OnResponseReceivedListener responseListener)
 	{
+		super(responseListener);
 		this.context = responseListener.getContext();
 		this.responseListener = responseListener;
 	}
@@ -304,6 +305,11 @@ public class SessionHandler extends Middleware
 					responseListener.onResponseReceived(new Boolean(true), requestCode);
 					return;
 				}
+				else
+				{
+					responseListener.onResponseReceived(new Boolean(false), requestCode);
+
+				}
 			} catch (Exception e) {
 
 			}
@@ -332,7 +338,10 @@ public class SessionHandler extends Middleware
 				loginFeatureClient.onLoginSuccess();
 				//this.responseListener.onResponseRecieved(new Boolean(true), requestCode);
 			}
-
+			else
+			{
+				loginFeatureClient.onLoginFailed();
+			}
 			/*
 			if (sessionData.isSuccess())
 			{
