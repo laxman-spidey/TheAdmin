@@ -1,6 +1,8 @@
 package in.yousee.theadmin;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -8,12 +10,13 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,12 +27,10 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -166,6 +167,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
         mGoogleApiClient.disconnect();
         stopListeningToLocationUpdates();
+        authenticationThread.stopThread();
         super.onStop();
 
     }
@@ -173,8 +175,10 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     public void stopListeningToLocationUpdates() {
 
         checkPermission();
-        if (lm != null) {
+        if (lm != null && listener != null) {
+            LogUtil.print("stopListeningToLocationUpdates()");
             lm.removeUpdates(listener);
+
         }
     }
     public boolean checkPermission()
@@ -219,38 +223,62 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+
+    private void promptUserToTurnGpsOn()
+    {
+        LocationManager manager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            //Ask the user to enable GPS
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Location Manager");
+            builder.setMessage("Would you like to enable GPS?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Launch settings, allowing user to make a change
+                    Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(i);
+                    setLastKnownLocation();
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //No location service, no Activity
+
+                }
+            });
+            builder.create().show();
+        }
+    }
+
+
     AuthenticationThread authenticationThread = null;
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        LogUtil.print("onMapReady()");
         mMap = googleMap;
         //mMap.setPadding(0,0,0,50);
 
-        if (checkPermission()) {
-        LogUtil.print("no permission");
-        } else {
-
-            mMap.setMyLocationEnabled(true);
-            addPolyAreaOnMap();
-        }
-
-        LogUtil.print("Map Ready");
-        LatLng latLng = setLastKnownLocation();
-        implementLocationManager();
+        addPolyAreaOnMap();
         authenticationThread =new AuthenticationThread(LocationFragment.this);
-        //insideWorkLocation = pointInPolygon(latLng, polygon);
 
-
-
-
+        if (checkPermission()) {
+            LogUtil.print("no permission");
+        } else {
+            promptUserToTurnGpsOn();
+            mMap.setMyLocationEnabled(true);
+            LogUtil.print("Map Ready");
+            LatLng latLng = setLastKnownLocation();
+            implementLocationManager();
+        }
     }
 
-
-
-
     public LatLng setLastKnownLocation() {
-        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (checkPermission()) {
             //LogUtil.print("");
             requestLocationPermission();
             return null;
@@ -303,7 +331,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         LogUtil.print("coarselocation = " + coarseLocation);
 
 
-        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (checkPermission()) {
             //LogUtil.print("");
             requestLocationPermission();
             return;
@@ -360,14 +388,18 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     LocationListenerImp listener;
     public void implementLocationManager()
     {
+        LogUtil.print("implementLocationManager()");
          lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (checkPermission()) {
             requestLocationPermission();
             return;
         }
-        listener = new LocationListenerImp();
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
+        else
+        {
+            listener = new LocationListenerImp();
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
+        }
 
     }
 
@@ -396,7 +428,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 CameraPosition.Builder cameraPosition = new CameraPosition.Builder(mMap.getCameraPosition());
                 cameraPosition.target(latLng);
                 cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition.build());
-}
+            }
             mMap.animateCamera(cameraUpdate);
             currentLocation =  latLng;
             insideWorkLocation = pointInPolygon(latLng, polygon);
@@ -431,6 +463,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
         private final static int TIME_TO_WAIT = 3; //in seconds
         public  short timeWaited = 0;
+        public boolean threadStoppedManually = false;
         Fragment fragment;
         public  AuthenticationThread(Fragment fragment)
         {
@@ -441,12 +474,12 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         }
         @Override
         public void run() {
-            while(timeWaited <= TIME_TO_WAIT)
+            while(timeWaited <= TIME_TO_WAIT && threadStoppedManually == false)
             {
                 try {
-                    LogUtil.print("sleeping");
+                    //LogUtil.print("sleeping");
                     Thread.sleep(1000);
-                    LogUtil.print("waking");
+                    //LogUtil.print("waking");
                     if(insideWorkLocation == false)
                     {
                         timeWaited = 0;
@@ -459,17 +492,25 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                     e.printStackTrace();
                 }
             }
-            //after TIME_TO_WAIT seconds: authenticated
-            stopListeningToLocationUpdates();
-            //any changes to be updated on UI must run on UI thread.
-            fragment.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    authenticate();
-                }
-            });
+            if(timeWaited > 3)
+            {
+                LogUtil.print("timeWaited > 3 - stopping service");
+                //after TIME_TO_WAIT seconds: authenticated
+                stopListeningToLocationUpdates();
+                //any changes to be updated on UI must run on UI thread.
+                fragment.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        authenticate();
+                    }
+                });
+            }
 
 
+        }
+        public void stopThread()
+        {
+            threadStoppedManually = true;
         }
         public void resetTimeWaited()
         {
@@ -499,28 +540,28 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 //                .strokeColor(Color.RED)
 //                .fillColor(Color.argb(128, 255, 0, 0))
 //                ;
-//        //yousee
-        PolygonOptions rectOptions = new PolygonOptions()
-                .add(new LatLng(17.319037, 78.527645),
-                        new LatLng(17.319301, 78.527712),
-                        new LatLng(17.319268, 78.527892),
-                        new LatLng(17.319002, 78.527876)
-                        )
-                .strokeColor(Color.RED)
-                .fillColor(Color.argb(128, 255, 0, 0))
-                ;
-
-        //Yousee
-
+//        //meerpet
 //        PolygonOptions rectOptions = new PolygonOptions()
-//                .add(new LatLng(17.426084, 78.453917),
-//                        new LatLng(17.426178, 78.454073),
-//                        new LatLng(17.425977, 78.454150),
-//                        new LatLng(17.425905, 78.453998)
-//                )
+//                .add(new LatLng(17.319037, 78.527645),
+//                        new LatLng(17.319301, 78.527712),
+//                        new LatLng(17.319268, 78.527892),
+//                        new LatLng(17.319002, 78.527876)
+//                        )
 //                .strokeColor(Color.RED)
 //                .fillColor(Color.argb(128, 255, 0, 0))
 //                ;
+
+        //Yousee
+
+        PolygonOptions rectOptions = new PolygonOptions()
+                .add(new LatLng(17.426084, 78.453917),
+                        new LatLng(17.426178, 78.454073),
+                        new LatLng(17.425977, 78.454150),
+                        new LatLng(17.425905, 78.453998)
+                )
+                .strokeColor(Color.RED)
+                .fillColor(Color.argb(128, 255, 0, 0))
+                ;
         //pochampally home
 //        PolygonOptions rectOptions = new PolygonOptions()
 //                .add(new LatLng(17.343039, 78.819420),
@@ -634,9 +675,8 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         if (requestCode == REQUEST_ACCESS_LOCATION) {
             if(permissionRequestMadeToUser){
                 LogUtil.print("accesrequest");
-                LogUtil.print("Permission granted");
-                setLastKnownLocation();
-                implementLocationManager();
+                //LogUtil.print("Permission granted");
+                //
                 permissionRequestMadeToUser = false;
             }
             else
@@ -644,25 +684,17 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 LogUtil.print("permission already granted");
             }
             //onConnected(null);
-
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                LogUtil.print("Permission granted");
+            LogUtil.print("results.length = " +grantResults.length  );
+            if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                LogUtil.print("Permission granted -------------");
+                onMapReady(mMap);
+                setLastKnownLocation();
+                implementLocationManager();
                 //onConnected(null);
 
             }
         }
     }
-
-
-//    @Override
-//    public void onConnectionSuspended(int i) {
-//
-//    }
-//
-//    @Override
-//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-//
-//    }
 
 
     /**
