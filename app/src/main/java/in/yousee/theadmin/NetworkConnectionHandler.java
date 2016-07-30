@@ -35,7 +35,7 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, ResponseB
 	// web service URL
 	//public static final String DOMAIN = "https://jeevandaan-mittu-spidey.c9users.io/index.php";
 	//public static final String DOMAIN = "http://192.168.0.4/jeevandaan/index.php";
-	public static final String DOMAIN = "http://health4all.online/jeevandaan";
+	public static final String DOMAIN = "http://health4all.online/jeevandaan/";
 	// DownloadWebpageTask downloadwebContent;
 	Request postRequest;
 	Middleware listener;
