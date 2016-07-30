@@ -1,7 +1,9 @@
 package in.yousee.theadmin;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,8 +12,10 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -60,6 +64,9 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
 
     private EditText fromDateEtxt;
     private EditText toDateEtxt;
+    private EditText typeOfLeave;
+    private EditText reasonForLeave;
+    private Button apply;
 
 
 
@@ -86,6 +93,12 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
         toDateEtxt = (EditText) view.findViewById(R.id.todate);
         toDateEtxt.setInputType(InputType.TYPE_NULL);
         toDateEtxt.setOnClickListener(this);
+
+        typeOfLeave = (EditText) view.findViewById(R.id.leaveType);
+        reasonForLeave = (EditText) view.findViewById(R.id.reason);
+
+        apply = (Button) view.findViewById(R.id.apply);
+        apply.setOnClickListener(this);
 
         return view;
     }
@@ -124,6 +137,47 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
         {
             showDialog(toDateListener);
         }
+        else if(view.getId() == R.id.apply){
+            displayAlertDialog();
+        }
+    }
+
+    private void displayAlertDialog() {
+
+        Context context = getActivity();
+        String title = "Confirmation Box";
+        String message = "Are you sure want to proceed ?";
+        String button1String = "Proceed";
+        String button2String = "Cancel";
+
+        AlertDialog.Builder ad = new AlertDialog.Builder(context);
+        ad.setTitle(title);
+        ad.setMessage(message);
+
+        ad.setPositiveButton(
+                button1String,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int arg1) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "You pressed proceed.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+
+        ad.setNegativeButton(
+                button2String,
+                new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int arg1) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "You pressed cancel button.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+
+        //
+        ad.show();
     }
 
     void showDialog(DatePickerDialog.OnDateSetListener listener) {
@@ -166,6 +220,7 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
     DatePickerDialog.OnDateSetListener toDateListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
+            month=month+1;
             String monthString;
             if(month <10)
             {

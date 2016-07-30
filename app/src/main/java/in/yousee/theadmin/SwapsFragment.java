@@ -1,7 +1,9 @@
 package in.yousee.theadmin;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -100,7 +102,7 @@ public class SwapsFragment extends Fragment implements View.OnClickListener {
 
         listView = (ListView) view.findViewById(R.id.listView1);
 
-        myButton = (Button) view.findViewById(R.id.findSelected);
+        myButton = (Button) view.findViewById(R.id.send);
         myButton.setOnClickListener(this);
 
         displayListView();
@@ -143,9 +145,47 @@ public class SwapsFragment extends Fragment implements View.OnClickListener {
             listView.setVisibility(View.VISIBLE);
             myButton.setVisibility(View.VISIBLE);
         }
-        else if(view.getId() == R.id.findSelected){
-            checkButtonClick();
+        else if(view.getId() == R.id.send){
+            displayAlertDialog();
         }
+    }
+
+    private void displayAlertDialog() {
+
+        Context context = getActivity();
+        String title = "Confirmation Box";
+        String message = "Are you sure want to send request ?";
+        String button1String = "Proceed";
+        String button2String = "Cancel";
+
+        AlertDialog.Builder ad = new AlertDialog.Builder(context);
+        ad.setTitle(title);
+        ad.setMessage(message);
+
+        ad.setPositiveButton(
+                button1String,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int arg1) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "You pressed proceed.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+
+        ad.setNegativeButton(
+                button2String,
+                new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int arg1) {
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "You pressed cancel button.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+
+        //
+        ad.show();
     }
 
     void showDialog(DatePickerDialog.OnDateSetListener listener) {
@@ -248,20 +288,7 @@ public class SwapsFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    private void checkButtonClick() {
-        StringBuffer responseText = new StringBuffer();
-        responseText.append("The following were selected...\n");
 
-        ArrayList<Shiftlist> shiftList = dataAdapter.shiftList;
-        for (int i = 0; i < shiftList.size(); i++) {
-            Shiftlist shift = shiftList.get(i);
-            if (shift.isSelected()) {
-                responseText.append("\n" + shift.getName());
-            }
-        }
-        Toast.makeText(getActivity().getApplicationContext(),
-                responseText, Toast.LENGTH_LONG).show();
-    }
 
     public class MyCustomAdapter extends ArrayAdapter<Shiftlist> {
 
