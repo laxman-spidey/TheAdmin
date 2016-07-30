@@ -30,9 +30,9 @@
             android:text="Check OUT"
             android:id="@+id/button2"
             android:background="@drawable/button"
-            android:layout_marginEnd="43dp"
-            android:layout_marginRight="43dp"
-            android:layout_alignTop="@+id/button"
+            android:layout_marginEnd="75dp"
+            android:layout_marginRight="75dp"
+            android:layout_alignTop="@+id/checkin_button"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
 
