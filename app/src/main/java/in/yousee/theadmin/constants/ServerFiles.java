@@ -8,4 +8,6 @@ public class ServerFiles
 	public static final String GET_LOCATIONS = "/bloodbank/get_locations";
 	public static final String LOGOUT = "/device/logout";
 	public static final String STORE_GCM_ID = "/device/register";
+	public static final String LEAVE_APPLY = "/device/leave";
+	public static final String SWAP_DATE = "/device/swapdate";
 }

@@ -22,4 +22,7 @@ public class RequestCodes
 	public static final int NETWORK_REQUEST_OTP_SUBMIT = 208;
 	public static final int NETWORK_REQUEST_GET_SUMMARY = 209;
 
+	public static final int ACTIVITY_LEAVE_APPLY = 211;
+	public static final int ACTIVITY_SWAP_DATE = 212;
+
 }
