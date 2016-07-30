@@ -15,7 +15,7 @@
             android:icon="@drawable/ic_menu_leave"
             android:title="Leaves" />
         <item
-            android:id="@+id/menu_manage"
+            android:id="@+id/menu_swap"
             android:icon="@drawable/ic_menu_swaping"
             android:title="Shift Swapping" />
     </group>

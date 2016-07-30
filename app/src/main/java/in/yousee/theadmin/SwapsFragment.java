@@ -9,26 +9,33 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LeavesFragment.OnFragmentInteractionListener} interface
+ * {@link SwapsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link LeavesFragment#newInstance} factory method to
+ * Use the {@link SwapsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LeavesFragment extends Fragment implements View.OnClickListener {
+public class SwapsFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -40,7 +47,7 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
 
     private OnFragmentInteractionListener mListener;
 
-    public LeavesFragment() {
+    public SwapsFragment() {
         // Required empty public constructor
     }
 
@@ -50,11 +57,11 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment LeavesFragment.
+     * @return A new instance of fragment SwapsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LeavesFragment newInstance(String param1, String param2) {
-        LeavesFragment fragment = new LeavesFragment();
+    public static SwapsFragment newInstance(String param1, String param2) {
+        SwapsFragment fragment = new SwapsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -62,45 +69,46 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
         return fragment;
     }
 
-    private EditText fromDateEtxt;
-    private EditText toDateEtxt;
-    private EditText typeOfLeave;
-    private EditText reasonForLeave;
-    private Button apply;
-
-
+    MyCustomAdapter dataAdapter = null;
+    Button apply;
+    private EditText DateEtxt;
+    ListView listView;
+    Button myButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_swaps, container, false);
+        DateEtxt = (EditText) view.findViewById(R.id.date);
+        DateEtxt.setInputType(InputType.TYPE_NULL);
+        DateEtxt.requestFocus();
+        DateEtxt.setOnClickListener(this);
 
-        View view = inflater.inflate(R.layout.fragment_leaves, container, false);
-        fromDateEtxt = (EditText) view.findViewById(R.id.fromdate);
-        fromDateEtxt.setInputType(InputType.TYPE_NULL);
-        fromDateEtxt.requestFocus();
-        fromDateEtxt.setOnClickListener(this);
-
-        toDateEtxt = (EditText) view.findViewById(R.id.todate);
-        toDateEtxt.setInputType(InputType.TYPE_NULL);
-        toDateEtxt.setOnClickListener(this);
-
-        typeOfLeave = (EditText) view.findViewById(R.id.leaveType);
-        reasonForLeave = (EditText) view.findViewById(R.id.reason);
-
-        apply = (Button) view.findViewById(R.id.apply);
+        apply = (Button) view.findViewById(R.id.button);
         apply.setOnClickListener(this);
 
+        listView = (ListView) view.findViewById(R.id.listView1);
+
+        myButton = (Button) view.findViewById(R.id.send);
+        myButton.setOnClickListener(this);
+
+        displayListView();
+
         return view;
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -129,15 +137,15 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.fromdate)
+        if(view.getId() == R.id.date)
         {
-            showDialog(fromDateListerner);
+            showDialog(DateListerner);
         }
-        else if(view.getId() == R.id.todate)
-        {
-            showDialog(toDateListener);
+        else if(view.getId() == R.id.button){
+            listView.setVisibility(View.VISIBLE);
+            myButton.setVisibility(View.VISIBLE);
         }
-        else if(view.getId() == R.id.apply){
+        else if(view.getId() == R.id.send){
             displayAlertDialog();
         }
     }
@@ -146,7 +154,7 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
 
         Context context = getActivity();
         String title = "Confirmation Box";
-        String message = "Are you sure want to proceed ?";
+        String message = "Are you sure want to send request ?";
         String button1String = "Proceed";
         String button2String = "Cancel";
 
@@ -198,11 +206,9 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this.getContext(),listener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
-
-    DatePickerDialog.OnDateSetListener fromDateListerner = new DatePickerDialog.OnDateSetListener() {
+    DatePickerDialog.OnDateSetListener DateListerner = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            month=month+1;
             String monthString;
             if(month <10)
             {
@@ -212,34 +218,19 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
             {
                 monthString = ""+month;
             }
-            fromDateEtxt.setText(year + "-" + monthString +"-"+ day);
-            toDateEtxt.setText(year + "-" + monthString +"-"+ day);
+            DateEtxt.setText(year + "-" + monthString +"-"+ day);
+
         }
     };
 
-    DatePickerDialog.OnDateSetListener toDateListener = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            month=month+1;
-            String monthString;
-            if(month <10)
-            {
-                monthString = "0"+month;
-            }
-            else
-            {
-                monthString = ""+month;
-            }
-            toDateEtxt.setText(year + "-" + monthString +"-"+ day);
-        }
-    };
+
 
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
@@ -247,5 +238,115 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+     }
+
+    private void displayListView() {
+
+
+        ArrayList<Shiftlist> shiftList = new ArrayList<Shiftlist>();
+        Shiftlist shift = new Shiftlist("spy", "Laxman", false);
+        shiftList.add(shift);
+        shift = new Shiftlist("Romeo", "Raj", false);
+        shiftList.add(shift);
+        shift = new Shiftlist("kesana", "Sowjanya", false);
+        shiftList.add(shift);
+        shift = new Shiftlist("vvns", "Raja rao", false);
+        shiftList.add(shift);
+        shift = new Shiftlist("Siriki", "Prasad", false);
+        shiftList.add(shift);
+        shift = new Shiftlist("Chinta", "Kishore", false);
+        shiftList.add(shift);
+        shift = new Shiftlist("Tummala", "Madhu", false);
+        shiftList.add(shift);
+        shift = new Shiftlist("Allu", "Arjun", false);
+        shiftList.add(shift);
+        shift = new Shiftlist("Allu", "Naidu", false);
+        shiftList.add(shift);
+        shift = new Shiftlist("Ch", "Sravani", false);
+        shiftList.add(shift);
+        shift = new Shiftlist("Kavs", "Kavya", false);
+        shiftList.add(shift);
+        shift = new Shiftlist("Gollapudi", "Gowthami", false);
+        shiftList.add(shift);
+
+        // create an ArrayAdaptar from the String Array
+        dataAdapter = new MyCustomAdapter(R.layout.check_info,shiftList);
+        // Assign adapter to ListView
+        listView.setAdapter(dataAdapter);
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // When clicked, show a toast with the TextView text
+                Shiftlist shift = (Shiftlist) parent.getItemAtPosition(position);
+               Toast.makeText(getActivity().getApplicationContext(),
+                        "Clicked on Row: " + shift.getName(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+
+
+    public class MyCustomAdapter extends ArrayAdapter<Shiftlist> {
+
+        private ArrayList<Shiftlist> shiftList;
+
+        public MyCustomAdapter(int textViewResourceId,
+                               ArrayList<Shiftlist> shiftList) {
+            super(getActivity(), textViewResourceId, shiftList);
+            this.shiftList = new ArrayList<Shiftlist>();
+            this.shiftList.addAll(shiftList);
+        }
+
+        public class ViewHolder {
+            TextView code;
+            CheckBox name;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            ViewHolder holder = null;
+            Log.v("ConvertView", String.valueOf(position));
+
+            if (convertView == null) {
+                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(
+                        Context.LAYOUT_INFLATER_SERVICE);
+                convertView = vi.inflate(R.layout.check_info, null);
+
+                holder = new ViewHolder();
+                holder.code = (TextView) convertView.findViewById(R.id.code);
+                holder.name = (CheckBox) convertView.findViewById(R.id.checkBox1);
+                convertView.setTag(holder);
+
+                holder.name.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        CheckBox cb = (CheckBox) v;
+                        Shiftlist shift = (Shiftlist) cb.getTag();
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                "Clicked on Checkbox: " + cb.getText() +
+                                        " is " + cb.isChecked(),
+                                Toast.LENGTH_LONG).show();
+                        shift.setSelected(cb.isChecked());
+                    }
+                });
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            Shiftlist shift = shiftList.get(position);
+            holder.code.setText(" (" + shift.getCode() + ")");
+            holder.name.setText(shift.getName());
+            holder.name.setChecked(shift.isSelected());
+            holder.name.setTag(shift);
+
+            return convertView;
+
+        }
+
     }
 }
+
