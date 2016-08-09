@@ -21,13 +21,13 @@ public class LocationMiddleware extends Middleware{
 
     }
 
-    public void checkin(Date date, String phone, String time) throws  CustomException
+    public void checkin(String date, String phone, String time) throws  CustomException
     {
         request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.CHECKIN);
         setRequestCode(RequestCodes.NETWORK_REQUEST_CHECK_IN);
-        addKeyValue("date", date.toString());
+        addKeyValue("date", date);
         addKeyValue("phone", phone);
-        addKeyValue("checkin",time);
+        addKeyValue("timein",time);
         request.setParameters(nameValuePairs);
         sendRequest();
     }

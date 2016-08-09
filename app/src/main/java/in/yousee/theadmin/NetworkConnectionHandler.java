@@ -34,8 +34,8 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, ResponseB
 
 	// web service URL
 	//public static final String DOMAIN = "https://jeevandaan-mittu-spidey.c9users.io/index.php";
-	//public static final String DOMAIN = "http://192.168.0.4/jeevandaan/index.php";
-	public static final String DOMAIN = "http://health4all.online/jeevandaan/";
+	public static final String DOMAIN = "https://phpmysql-mittu-spidey.c9users.io/TheAdmin/index.php/";
+	//public static  String DOMAIN;
 	// DownloadWebpageTask downloadwebContent;
 	Request postRequest;
 	Middleware listener;
@@ -44,18 +44,13 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, ResponseB
 	public static boolean isExecuting = false;
 	public String toastString = null;
 
-	public NetworkConnectionHandler(Context context)
-	{
-		LogUtil.print("networkConnection created");
-		this.context = context;
-	}
 
 	public NetworkConnectionHandler(Context context, Middleware listener)
 	{
 		LogUtil.print("networkConnection created");
 		this.listener = listener;
 		this.context = context;
-
+		//DOMAIN = context.getString(R.string.SERVER_DOMAIN);
 	}
 
 	/**

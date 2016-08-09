@@ -17,6 +17,7 @@
     <string name="to">To Date</string>
     <string name="reason">Enter reason for leave..</string>
     <string name="typeofleave" >Earned Leave</string>
+    <string name="SERVER_DOMAIN" >https://phpmysql-mittu-spidey.c9users.io/TheAdmin/index.php/</string>
 
 
     <!-- Google maps debug key-->

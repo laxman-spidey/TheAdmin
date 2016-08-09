@@ -29,6 +29,8 @@ public class AttendanceFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private int checkType;
+
     private OnFragmentInteractionListener mListener;
 
     public AttendanceFragment() {
@@ -74,17 +76,18 @@ public class AttendanceFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //mapLayout.setVisibility(View.VISIBLE);
-                showDialog();
+                showDialog(LocationFragment.CHECK_IN);
 
             }
         });
+
         return view;
 
     }
 
-    void showDialog() {
+    void showDialog(int checkType) {
         //mStackLevel++;
-
+        this.checkType = checkType;
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
         // dialog, so make our own transaction and take care of that here.
@@ -95,8 +98,16 @@ public class AttendanceFragment extends Fragment {
         }
         ft.addToBackStack(null);
 
+        LocationFragment newFragment = null;
         // Create and show the dialog.
-        LocationFragment newFragment = LocationFragment.newInstance(LocationFragment.CHECK_IN);
+        if(checkType == LocationFragment.CHECK_IN)
+        {
+            newFragment = LocationFragment.newInstance(LocationFragment.CHECK_IN);
+        }
+        else if(checkType == LocationFragment.CHECK_OUT)
+        {
+            newFragment = LocationFragment.newInstance(LocationFragment.CHECK_OUT);
+        }
 
         newFragment.show(ft, "dialog");
     }

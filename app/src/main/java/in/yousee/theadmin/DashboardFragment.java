@@ -11,6 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import in.yousee.theadmin.model.CustomException;
+import in.yousee.theadmin.util.LogUtil;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,7 +27,7 @@ import android.widget.Button;
  * Use the {@link DashboardFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DashboardFragment extends Fragment  implements View.OnClickListener, DialogInterface.OnDismissListener{
+public class DashboardFragment extends Fragment  implements View.OnClickListener, DialogInterface.OnDismissListener, OnResponseReceivedListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -118,10 +125,29 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
 
+        LogUtil.print("onDismiss -  in parent fragment");
+
+        LocationMiddleware locationMiddleware = new LocationMiddleware(this);
+        try {
+            Date datetime = Calendar.getInstance().getTime();
+            //datetime.
+            String dateString = new SimpleDateFormat("yyyy-MM-dd").format(datetime);
+            String timeString = new SimpleDateFormat("HH:mm:ss").format(datetime);
+            locationMiddleware.checkin(dateString,"9505878984",timeString);
+        } catch (CustomException e) {
+            //TODO: show dialogbox
+        }
+
+
+    }
+
+    @Override
+    public void onResponseReceived(Object response, int requestCode) {
+        LogUtil.print("onresponserecieved()");
     }
 
     /**
-     * This interface must be implemented by activities that contain this
+     * This interface must be implementeog by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
@@ -149,9 +175,19 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         }
         ft.addToBackStack(null);
 
-        // Create and show the dialog.
-        LocationFragment newFragment = LocationFragment.newInstance(checkin);
 
+        LocationFragment newFragment = null;
+
+        // Create and show the dialog.
+        if(checkin == LocationFragment.CHECK_IN)
+        {
+            newFragment = LocationFragment.newInstance(LocationFragment.CHECK_IN);
+        }
+        else if(checkin == LocationFragment.CHECK_OUT)
+        {
+            newFragment = LocationFragment.newInstance(LocationFragment.CHECK_OUT);
+        }
+        newFragment.setTargetFragment(this,1);
         newFragment.show(ft, "dialog");
     }
 
