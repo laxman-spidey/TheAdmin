@@ -157,6 +157,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
     @Override
     public void onStart() {
+        LogUtil.print("onStart()");
         //if(lm!=null)
 //        {
 //            implementLocationManager();
@@ -171,6 +172,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     @Override
     public void onStop() {
 
+        LogUtil.print("onStop()");
         mGoogleApiClient.disconnect();
         stopListeningToLocationUpdates();
         authenticationThread.stopThread();
@@ -179,12 +181,20 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     }
 
     public void stopListeningToLocationUpdates() {
-
+        LogUtil.print("stopListeningToLocationUpdates");
         checkPermission();
-        if (lm != null && listener != null) {
-            LogUtil.print("stopListeningToLocationUpdates()");
-            lm.removeUpdates(listener);
-            lm =null;
+        if(lm == null)
+        {
+            LogUtil.print("location manager is null");
+        }
+        if(locationListener == null)
+        {
+            LogUtil.print("listener is null");
+        }
+        if (lm != null && locationListener != null) {
+            LogUtil.print("stopping");
+            lm.removeUpdates(locationListener);
+            //lm =null;
 
         }
     }
@@ -380,7 +390,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     }
 
     LocationManager lm;
-    LocationListenerImp listener;
+    LocationListenerImp locationListener;
     public void implementLocationManager()
     {
         LogUtil.print("implementLocationManager()");
@@ -392,8 +402,17 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         }
         else
         {
-            listener = new LocationListenerImp();
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, listener);
+            if(locationListener == null)
+            {
+                LogUtil.print("creating listener");
+                locationListener= new LocationListenerImp();
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
+            }
+            else
+            {
+                LogUtil.print("listener already added");
+            }
+
         }
 
     }
@@ -712,6 +731,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     @Override
     public void onDismiss(DialogInterface dialog) {
         LogUtil.print("onDismiss()");
+        stopListeningToLocationUpdates();
         //Fragment parentFragment = getParentFragment();
         DialogInterface.OnDismissListener parentFragment = (DialogInterface.OnDismissListener) this.getTargetFragment();
 
