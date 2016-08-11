@@ -42,6 +42,7 @@
             android:orientation="vertical"
             >
             <EditText
+                android:drawableRight="@drawable/calendar"
                 android:id="@+id/fromdate"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
@@ -51,6 +52,7 @@
                 android:layout_marginTop="30dp"/>
 
             <EditText
+                android:drawableRight="@drawable/calendar"
                 android:id="@+id/todate"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
