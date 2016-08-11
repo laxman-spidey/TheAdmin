@@ -26,6 +26,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import in.yousee.theadmin.model.CustomException;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,7 +37,7 @@ import java.util.Calendar;
  * Use the {@link SwapsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SwapsFragment extends Fragment implements View.OnClickListener {
+public class SwapsFragment extends Fragment implements View.OnClickListener, OnResponseReceivedListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -166,9 +168,12 @@ public class SwapsFragment extends Fragment implements View.OnClickListener {
                 button1String,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int arg1) {
-                        Toast.makeText(getActivity().getApplicationContext(),
-                                "You pressed proceed.",
-                                Toast.LENGTH_LONG).show();
+                        SwapsMiddleware swapsMiddleware = new SwapsMiddleware(SwapsFragment.this);
+                        try {
+                            swapsMiddleware.sendSwapdate(DateEtxt.toString());
+                        } catch (CustomException e) {
+                            //TODO: show dialog
+                        }
                     }
                 }
         );
@@ -223,6 +228,10 @@ public class SwapsFragment extends Fragment implements View.OnClickListener {
         }
     };
 
+    @Override
+    public void onResponseReceived(Object response, int requestCode) {
+
+    }
 
 
     /**
