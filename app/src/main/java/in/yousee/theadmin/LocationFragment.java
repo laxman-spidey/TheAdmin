@@ -281,7 +281,8 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         //mMap.setPadding(0,0,0,50);
 
         addPolyAreaOnMap();
-        authenticationThread =new AuthenticationThread(LocationFragment.this);
+        authenticationThread = AuthenticationThread.getInstance(LocationFragment.this);
+
 
         if (checkPermission()) {
             LogUtil.print("no permission");
@@ -315,6 +316,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 mMap.animateCamera(cameraUpdate);
                 LogUtil.print("updating camera");
                 boolean inside = pointInPolygon(latLng, polygon);
+                AuthenticationThread.getInstance(this).insideWorkLocation = inside;
                 updateMessage(inside);
                 return latLng;
             }
@@ -451,11 +453,8 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
             mMap.animateCamera(cameraUpdate);
             currentLocation =  latLng;
             insideWorkLocation = pointInPolygon(latLng, polygon);
+            authenticationThread.insideWorkLocation = insideWorkLocation;
 
-            if(!insideWorkLocation) // if not inside location
-            {
-                authenticationThread.resetTimeWaited();
-            }
             updateMessage(insideWorkLocation);
 
         }
@@ -476,21 +475,25 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
         }
     }
-    private class AuthenticationThread implements Runnable
+    /*
+    public class AuthenticationThread implements Runnable
     {
         Thread t;
+
 
         private final static int TIME_TO_WAIT = 0; //in seconds
         public  short timeWaited = 3;
         public boolean threadStoppedManually = false;
         Fragment fragment;
-        public  AuthenticationThread(Fragment fragment)
+        private AuthenticationThread(Fragment fragment)
         {
             t = new Thread(this);
             this.fragment = fragment;
             //isAuthenticationThreadStarted = true;
             t.start();
         }
+
+
         @Override
         public void run() {
             while(timeWaited >= 0 && threadStoppedManually == false)
@@ -547,6 +550,11 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
             LogUtil.print("resetting");
             timeWaited = 0;
         }
+    }
+    */
+    public void setMsgText(String text)
+    {
+        testText.setText(text);
     }
 
     public  void authenticate()
