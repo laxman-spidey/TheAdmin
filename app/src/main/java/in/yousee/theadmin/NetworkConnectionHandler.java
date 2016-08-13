@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -132,19 +133,20 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, ResponseB
 	{
 		URL url = new URL(postRequest.getUrl());
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-		connection.setRequestMethod("GET");
+		connection.setRequestMethod("POST");
 		connection.setRequestProperty("USER-AGENT", "Mozilla/5.0");
 		connection.setRequestProperty("USER-AGENT", "Mozilla/5.0");
 		connection.setRequestProperty("ACCEPT-LANGUAGE", "en-US,en;0.5");
+		connection.setRequestProperty(Middleware.TAG_NETWORK_REQUEST_CODE, ""+postRequest.getRequestCode());
 		connection.setDoOutput(true);
 		DataOutputStream dStream = new DataOutputStream(connection.getOutputStream());
 
 		//String urlParameters = "q=anything";
 
 		//printing request parameters before seding request
-		LogUtil.print(postRequest.getParameters());
+		LogUtil.print(postRequest.getAllParameters());
 
-		dStream.writeBytes(postRequest.getParameters());
+		dStream.writeBytes(postRequest.getAllParameters());
 
 		dStream.flush(); // Flushes the data output stream.
 		dStream.close();
@@ -153,12 +155,13 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, ResponseB
 		int responseCode = connection.getResponseCode();
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			String requestCodeString = connection.getHeaderField(Middleware.TAG_NETWORK_REQUEST_CODE);
+			LogUtil.print("requestCode = "+requestCodeString);
 			if(requestCodeString != null)
 			{
 				InputStream inputStream = connection.getInputStream();
 				String contentAsString = readIt(inputStream);
 				ResponseBody responseBody = new ResponseBody();
-				int requestCode = new Integer(requestCodeString).intValue();
+				int requestCode = Integer.valueOf(requestCodeString);
 				responseBody.setRequestCode(requestCode);
 				responseBody.setResponseString(contentAsString);
 				LogUtil.print(contentAsString);
@@ -173,7 +176,11 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, ResponseB
 		}
 		else
 		{
-			toastString = "error: 102 - Something went wrong, Please report the issue to the developer.";
+			InputStream inputStream = connection.getInputStream();
+			String contentAsString = readIt(inputStream);
+			LogUtil.print(contentAsString);
+			toastString = "error: 102 - Something went wrong, Please report the issue to the developer. - "+ responseCode;
+			LogUtil.print(toastString);
 		}
 		return null;
 

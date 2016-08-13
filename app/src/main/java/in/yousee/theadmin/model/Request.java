@@ -3,10 +3,16 @@ package in.yousee.theadmin.model;
 import android.content.ContentValues;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
+
+import in.yousee.theadmin.util.LogUtil;
 
 /**
  * Created by Laxman on 14-07-2016.
@@ -14,8 +20,13 @@ import java.util.Map;
 public class Request {
     private String url;
     private int requestCode;
-    private ContentValues parameters;
+    //private ContentValues parameters;
+    private JSONObject parameters;
 
+    public Request()
+    {
+        parameters = new JSONObject();
+    }
     public String getUrl() {
         return url;
     }
@@ -23,38 +34,27 @@ public class Request {
     public void setUrl(String url) {
         this.url = url;
     }
-    /*
-    public List<NameValuePair> getParameters() {
-        return parameters;
-    }
-    */
 
     public int getRequestCode() {
+
+        LogUtil.print("getting requestCode = "+requestCode);
         return requestCode;
+    }
+    public void put(String key, String value)
+    {
+        try {
+            parameters.put(key, value);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getAllParameters()
+    {
+        return parameters.toString();
     }
 
     public void setRequestCode(int requestCode) {
         this.requestCode = requestCode;
-    }
-
-    public void setParameters(ContentValues parameters) {
-
-        this.parameters = parameters;
-    }
-    public String getParameters() throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-
-        for (Map.Entry<String, Object> entry : parameters.valueSet()) {
-            if (first)
-                first = false;
-            else
-                result.append("&");
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue().toString(), "UTF-8"));
-        }
-
-        return result.toString();
     }
 }

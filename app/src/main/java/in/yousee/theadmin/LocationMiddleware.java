@@ -24,11 +24,10 @@ public class LocationMiddleware extends Middleware{
     public void checkin(String date, String phone, String time) throws  CustomException
     {
         request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.CHECKIN);
-        setRequestCode(RequestCodes.NETWORK_REQUEST_CHECK_IN);
-        addKeyValue("date", date);
-        addKeyValue("phone", phone);
-        addKeyValue("timein",time);
-        request.setParameters(nameValuePairs);
+        request.setRequestCode(RequestCodes.NETWORK_REQUEST_CHECK_IN);
+        request.put("date", date);
+        request.put("phone", phone);
+        request.put("timein",time);
         sendRequest();
     }
 

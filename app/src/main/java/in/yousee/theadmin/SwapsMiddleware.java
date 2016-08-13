@@ -19,9 +19,8 @@ public class SwapsMiddleware extends Middleware {
     }
     public void sendSwapdate(String date) throws CustomException {
         request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.SWAP_DATE);
-        setRequestCode(RequestCodes.ACTIVITY_SWAP_DATE);
-        addKeyValue("date", date);
-        request.setParameters(nameValuePairs);
+        request.setRequestCode(RequestCodes.ACTIVITY_SWAP_DATE);
+        request.put("date", date);
         sendRequest();
     }
 

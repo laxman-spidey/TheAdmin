@@ -20,12 +20,12 @@ public class LeavesMiddleware extends Middleware {
 
     public void applyLeave(String fromDate, String toDate, String typeOfLeave, String reasonForLeave){
         request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.LEAVE_APPLY);
-        addKeyValue("formdate", fromDate);
-        addKeyValue("todate", toDate);
-        addKeyValue("leavetype", typeOfLeave);
-        addKeyValue("reason", reasonForLeave);
-        super.setRequestCode(RequestCodes.ACTIVITY_LEAVE_APPLY);
-        request.setParameters(nameValuePairs);
+        request.put("formdate", fromDate);
+        request.put("todate", toDate);
+        request.put("leavetype", typeOfLeave);
+        request.put("reason", reasonForLeave);
+        request.setRequestCode(RequestCodes.ACTIVITY_LEAVE_APPLY);
+
         try {
             sendRequest();
         } catch (CustomException e) {
