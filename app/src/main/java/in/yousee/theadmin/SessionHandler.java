@@ -235,11 +235,10 @@ public class SessionHandler extends Middleware
 		this.responseListener = responseListener;
 
 		request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.VERIFY_EXEC);
-		setRequestCode(RequestCodes.NETWORK_REQUEST_VERIFY);
-		addKeyValue("phone", phone);
+		request.setRequestCode(RequestCodes.NETWORK_REQUEST_VERIFY);
+		request.put("phone", phone);
 		this.phone = phone;
 		setPhoneNumber(phone);
-		request.setParameters(nameValuePairs);
 		sendRequest();
 
 	}
@@ -247,11 +246,10 @@ public class SessionHandler extends Middleware
 	public void submitOTP(String phone, String otp, LoginActivity loginFeatureClient) throws CustomException
 	{
 		request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.LOGIN_EXEC);
-		addKeyValue("phone", phone);
-		addKeyValue("otp", otp);
-		super.setRequestCode(RequestCodes.NETWORK_REQUEST_OTP_SUBMIT);
+		request.put("phone", phone);
+		request.put("otp", otp);
+		request.setRequestCode(RequestCodes.NETWORK_REQUEST_OTP_SUBMIT);
 		setPhoneNumber(phone);
-		request.setParameters(nameValuePairs);
 		this.loginFeatureClient = loginFeatureClient;
 		this.phone = phone;
 		sendRequest();
@@ -264,10 +262,9 @@ public class SessionHandler extends Middleware
 		this.username = username;
 		this.password = password;
 		request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.LOGIN_EXEC);
-		addKeyValue("username", username);
-		addKeyValue("password", password);
-		super.setRequestCode(RequestCodes.NETWORK_REQUEST_LOGIN);
-		request.setParameters(nameValuePairs);
+		request.put("username", username);
+		request.put("password", password);
+		request.setRequestCode(RequestCodes.NETWORK_REQUEST_LOGIN);
 		sendRequest();
 
 	}

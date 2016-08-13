@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import in.yousee.theadmin.model.AttendanceHistory;
 import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.util.LogUtil;
 
@@ -38,6 +39,7 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -77,9 +79,20 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         View view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
         Button signInButton = (Button) view.findViewById(R.id.check_in);
         signInButton.setOnClickListener(this);
+        getAttendanceHistory();
         return view;
     }
 
+    private void getAttendanceHistory()
+    {
+        DashboardMiddleware dashboardMiddleware = new DashboardMiddleware(this);
+        try {
+            dashboardMiddleware.getDashboardData();
+        } catch (CustomException e) {
+            e.printStackTrace();
+        }
+
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -144,6 +157,8 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
     @Override
     public void onResponseReceived(Object response, int requestCode) {
         LogUtil.print("onresponserecieved()");
+        AttendanceHistory attendanceHistory = (AttendanceHistory) response;
+
     }
 
     /**
