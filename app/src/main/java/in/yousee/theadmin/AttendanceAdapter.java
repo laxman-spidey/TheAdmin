@@ -21,11 +21,13 @@ import in.yousee.theadmin.util.LogUtil;
 public class AttendanceAdapter extends ArrayAdapter<AttendanceHistoryRecord> {
 
     private ArrayList<AttendanceHistoryRecord> historyRecords;
+    private Context context;
 
     public AttendanceAdapter(Context context, int resource,
                            ArrayList<AttendanceHistoryRecord> objects) {
         super(context, resource, objects);
-        this.historyRecords = new ArrayList<AttendanceHistoryRecord>();
+        this.context = context;
+        this.historyRecords = new ArrayList<>();
         this.historyRecords.addAll(objects);
     }
 
@@ -59,7 +61,7 @@ public class AttendanceAdapter extends ArrayAdapter<AttendanceHistoryRecord> {
         Log.v("ConvertView", String.valueOf(position));
 
         if (convertView == null) {
-            LayoutInflater inflator = (LayoutInflater) getContext().getSystemService(
+            LayoutInflater inflator = (LayoutInflater) context.getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflator.inflate(R.layout.attendance_row, parent,false);
             holder = new ViewHolder();

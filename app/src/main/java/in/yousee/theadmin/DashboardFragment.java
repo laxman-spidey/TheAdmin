@@ -161,10 +161,14 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
     @Override
     public void onResponseReceived(Object response, int requestCode) {
         LogUtil.print("onresponserecieved()");
-        AttendanceHistory attendanceHistory = (AttendanceHistory) response;
-        AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getContext(), R.layout.attendance_row, attendanceHistory.historyRecords);
-        listView.setAdapter(attendanceAdapter);
-        Utils.setListViewHeightBasedOnChildren(listView);
+
+        if(this.isVisible())
+        {
+            AttendanceHistory attendanceHistory = (AttendanceHistory) response;
+            AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getActivity(), R.layout.attendance_row, attendanceHistory.historyRecords);
+            listView.setAdapter(attendanceAdapter);
+            Utils.setListViewHeightBasedOnChildren(listView);
+        }
 
     }
 
