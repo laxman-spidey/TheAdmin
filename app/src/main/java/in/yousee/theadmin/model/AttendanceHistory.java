@@ -6,6 +6,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import in.yousee.theadmin.util.LogUtil;
+
 /**
  * Created by mittu on 13-08-2016.
  */
@@ -45,7 +47,7 @@ public class AttendanceHistory implements JSONParsable {
             {
                 JSONObject item = (JSONObject) array.get(i);
                 this.historyRecords.add(new AttendanceHistoryRecord(item));
-
+                LogUtil.print("adding "+i);
             }
 
         } catch (JSONException e)

@@ -61,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/attendanceHeader"
                 android:orientation="horizontal"
+                android:id="@+id/attendanceButtonsLayout"
                 android:weightSum="1">
                 <Button
                     android:layout_width="0dp"
@@ -81,6 +82,14 @@
                     android:background="@drawable/button"
                     />
             </LinearLayout>
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_below="@id/attendanceButtonsLayout"
+                android:id="@+id/attendanceListView"
+                >
+
+            </ListView>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 

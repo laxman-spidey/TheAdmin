@@ -21,6 +21,7 @@ public class AttendanceHistoryRecord implements JSONParsable {
         try
         {
             JSONObject object = new JSONObject(string);
+
             parseJSON(object);
         }
         catch (Exception e)

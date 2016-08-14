@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,6 +19,7 @@ import java.util.Date;
 import in.yousee.theadmin.model.AttendanceHistory;
 import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.util.LogUtil;
+import in.yousee.theadmin.util.Utils;
 
 
 /**
@@ -39,7 +41,7 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
+    ListView listView;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -72,12 +74,14 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
         Button signInButton = (Button) view.findViewById(R.id.check_in);
+        listView = (ListView) view.findViewById(R.id.attendanceListView);
         signInButton.setOnClickListener(this);
         getAttendanceHistory();
         return view;
@@ -158,11 +162,15 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
     public void onResponseReceived(Object response, int requestCode) {
         LogUtil.print("onresponserecieved()");
         AttendanceHistory attendanceHistory = (AttendanceHistory) response;
+        AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getContext(), R.layout.attendance_row, attendanceHistory.historyRecords);
+        listView.setAdapter(attendanceAdapter);
+        Utils.setListViewHeightBasedOnChildren(listView);
 
     }
 
+
     /**
-     * This interface must be implementeog by activities that contain this
+     * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
