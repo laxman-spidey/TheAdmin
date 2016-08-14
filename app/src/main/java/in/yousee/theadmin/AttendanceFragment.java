@@ -1,6 +1,7 @@
 package in.yousee.theadmin;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import in.yousee.theadmin.model.CustomException;
+import in.yousee.theadmin.util.LogUtil;
 
 
 /**
@@ -19,7 +27,7 @@ import android.widget.Button;
  * Use the {@link AttendanceFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AttendanceFragment extends Fragment {
+public class AttendanceFragment extends Fragment implements DialogInterface.OnDismissListener, OnResponseReceivedListener, View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -56,6 +64,24 @@ public class AttendanceFragment extends Fragment {
     }
 
     @Override
+    public void onClick(View view) {
+        switch (view.getId())
+        {
+            case R.id.check_in:
+            {
+                showLocationDialog(LocationFragment.CHECK_IN);
+                break;
+            }
+            case R.id.check_out:
+            {
+                showLocationDialog(LocationFragment.CHECK_OUT);
+                break;
+
+            }
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -76,7 +102,7 @@ public class AttendanceFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //mapLayout.setVisibility(View.VISIBLE);
-                showDialog(LocationFragment.CHECK_IN);
+                showLocationDialog(LocationFragment.CHECK_IN);
 
             }
         });
@@ -85,9 +111,28 @@ public class AttendanceFragment extends Fragment {
 
     }
 
-    void showDialog(int checkType) {
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+
+        LogUtil.print("onDismiss -  in parent fragment");
+
+        LocationMiddleware locationMiddleware = new LocationMiddleware(this);
+        try {
+            Date datetime = Calendar.getInstance().getTime();
+            //datetime.
+            String dateString = new SimpleDateFormat("yyyy-MM-dd").format(datetime);
+            String timeString = new SimpleDateFormat("HH:mm:ss").format(datetime);
+            locationMiddleware.checkin(dateString,"9505878984",timeString);
+        } catch (CustomException e) {
+            //TODO: show dialogbox
+        }
+
+
+    }
+
+    void showLocationDialog(short checkin) {
         //mStackLevel++;
-        this.checkType = checkType;
+
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.  We also want to remove any currently showing
         // dialog, so make our own transaction and take care of that here.
@@ -98,19 +143,22 @@ public class AttendanceFragment extends Fragment {
         }
         ft.addToBackStack(null);
 
+
         LocationFragment newFragment = null;
+
         // Create and show the dialog.
-        if(checkType == LocationFragment.CHECK_IN)
+        if(checkin == LocationFragment.CHECK_IN)
         {
             newFragment = LocationFragment.newInstance(LocationFragment.CHECK_IN);
         }
-        else if(checkType == LocationFragment.CHECK_OUT)
+        else if(checkin == LocationFragment.CHECK_OUT)
         {
             newFragment = LocationFragment.newInstance(LocationFragment.CHECK_OUT);
         }
-
+        newFragment.setTargetFragment(this,1);
         newFragment.show(ft, "dialog");
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -134,6 +182,11 @@ public class AttendanceFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onResponseReceived(Object response, int requestCode) {
+
     }
 
     /**

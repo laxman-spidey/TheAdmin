@@ -43,14 +43,6 @@
         android:id="@+id/map_layout"
         android:orientation="vertical"
         android:visibility="gone">
-        <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            class="in.yousee.theadmin.LocationFragment"
-            android:id="@+id/map_container"
-            android:layout_gravity="bottom"
-            ></fragment>
 
     </LinearLayout>
 
