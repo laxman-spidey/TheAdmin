@@ -147,10 +147,11 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         LocationMiddleware locationMiddleware = new LocationMiddleware(this);
         try {
             Date datetime = Calendar.getInstance().getTime();
-            //datetime.
+            //datetime.ee
             String dateString = new SimpleDateFormat("yyyy-MM-dd").format(datetime);
             String timeString = new SimpleDateFormat("HH:mm:ss").format(datetime);
             locationMiddleware.checkin(dateString,"9505878984",timeString);
+            
         } catch (CustomException e) {
             //TODO: show dialogbox
         }

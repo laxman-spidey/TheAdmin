@@ -36,7 +36,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="test-----"
+            android:text="waiting for GPS.. If it's taking too long, press back and checkin again."
             android:id="@+id/testText"
             android:textSize="15sp"
             android:padding="5dp"

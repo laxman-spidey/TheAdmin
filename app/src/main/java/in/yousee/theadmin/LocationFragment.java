@@ -263,6 +263,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 public void onClick(DialogInterface dialog, int which) {
                     //No location service, no Activity
 
+
                 }
             });
             builder.create().show();
@@ -319,6 +320,10 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 AuthenticationThread.getInstance(this).insideWorkLocation = inside;
                 updateMessage(inside);
                 return latLng;
+            }
+            else
+            {
+                LogUtil.print("lastlocation is null");
             }
             return null;
         }
@@ -462,16 +467,18 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {
-
+            LogUtil.print("onStatusChanged()");
         }
 
         @Override
         public void onProviderEnabled(String s) {
+            LogUtil.print("onProviderEnabled()");
 
         }
 
         @Override
         public void onProviderDisabled(String s) {
+            LogUtil.print("onProviderDisabled()");
 
         }
     }
@@ -561,6 +568,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     {
         LogUtil.print("authenticating");
         testText.setText("authenticating");
+        onStop();
         this.dismiss();
 
     }
@@ -742,12 +750,16 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         stopListeningToLocationUpdates();
         //Fragment parentFragment = getParentFragment();
         DialogInterface.OnDismissListener parentFragment = (DialogInterface.OnDismissListener) this.getTargetFragment();
-
         parentFragment.onDismiss(dialog);
 //        if (parentFragment instanceof DialogInterface.OnDismissListener) {
 //            LogUtil.print("if instance og fragment = Dismisslistner");
 //            ((DialogInterface.OnDismissListener) parentFragment).onDismiss(dialog);
 //        }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
     }
 
     /**

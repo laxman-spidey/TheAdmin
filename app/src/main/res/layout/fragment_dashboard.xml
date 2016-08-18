@@ -50,7 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
-                    android:text="Attendence"
+                    android:text="Attendance"
                     android:textColor="#FFFFFF"
                     android:id="@+id/leaves_key"
                     />
@@ -70,9 +70,10 @@
                     android:id="@+id/check_in"
                     android:textColor="#585aff"
                     android:layout_weight="0.5"
-                    style="@style/Widget.AppCompat.Button.white"
+                    android:background="@drawable/button"
                     />
 
+                <!--style="@style/Widget.AppCompat.Button.white"-->
                 <Button
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
