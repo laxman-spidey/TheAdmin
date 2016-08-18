@@ -1,22 +1,29 @@
 package in.yousee.theadmin;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ListView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import in.yousee.theadmin.model.AttendanceHistory;
 import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.util.LogUtil;
+import in.yousee.theadmin.util.Utils;
 
 
 /**
@@ -38,6 +45,13 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
     private String mParam2;
 
     private int checkType;
+
+    private EditText fromDateEtxt;
+    private EditText toDateEtxt;
+    ListView listView;
+
+    private Calendar fromDate;
+    private Calendar toDate;
 
     private OnFragmentInteractionListener mListener;
 
@@ -76,10 +90,65 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
             {
                 showLocationDialog(LocationFragment.CHECK_OUT);
                 break;
-
+            }
+            case R.id.fromdate:
+            {
+                showDatePickerDialog(fromDateListener, fromDate, true);
+                break;
+            }
+            case R.id.todate:
+            {
+                showDatePickerDialog(toDateListener, toDate, false);
+                break;
             }
         }
     }
+    DatePickerDialog.OnDateSetListener fromDateListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            fromDate.set(year,month,day);
+            fromDateEtxt.setText(Utils.getDisplayDateString(fromDate));
+        }
+    };
+
+    DatePickerDialog.OnDateSetListener toDateListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            toDate.set(year,month,day);
+            toDateEtxt.setText(Utils.getDisplayDateString(toDate));
+        }
+    };
+
+
+
+    void showDatePickerDialog(DatePickerDialog.OnDateSetListener listener, Calendar selection, boolean fromto) {
+        //mStackLevel++;
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        Calendar calendar = Calendar.getInstance();
+
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this.getContext(),listener, selection.get(Calendar.YEAR), selection.get(Calendar.MONTH), selection.get(Calendar.DAY_OF_MONTH));
+        if(fromto == true)
+        {
+            datePickerDialog.getDatePicker().setMaxDate(toDate.getTimeInMillis());
+        }
+        else
+        {
+            datePickerDialog.getDatePicker().setMinDate(fromDate.getTimeInMillis());
+        }
+        datePickerDialog.show();
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,25 +160,41 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
     }
 
     Button checkin;
+    Button checkout;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_attendance, container, false);
-        checkin = (Button) view.findViewById(R.id.checkin_button);
+        checkin = (Button) view.findViewById(R.id.check_in);
+        checkout = (Button) view.findViewById(R.id.check_out);
 
-        checkin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //mapLayout.setVisibility(View.VISIBLE);
-                showLocationDialog(LocationFragment.CHECK_IN);
+        checkin.setOnClickListener(this);
+        checkout.setOnClickListener(this);
 
-            }
-        });
+        fromDateEtxt = (EditText) view.findViewById(R.id.fromdate);
+        fromDateEtxt.setInputType(InputType.TYPE_NULL);
+        fromDateEtxt.requestFocus();
+        fromDateEtxt.setOnClickListener(this);
+        fromDate = Utils.getFirstOfMonth();
+        fromDateEtxt.setText(Utils.getDisplayDateString(fromDate));
+
+        toDateEtxt = (EditText) view.findViewById(R.id.todate);
+        toDateEtxt.setInputType(InputType.TYPE_NULL);
+        toDateEtxt.setOnClickListener(this);
+        toDate = Calendar.getInstance();
+        toDateEtxt.setText(Utils.getDisplayDateString(toDate));
+        listView = (ListView) view.findViewById(R.id.attendanceListView);
+
+        getAttendanceHistory();
+
+
 
         return view;
 
     }
+
+
 
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
@@ -127,6 +212,31 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
             //TODO: show dialogbox
         }
 
+
+    }
+
+
+    private void getAttendanceHistory()
+    {
+        DashboardMiddleware dashboardMiddleware = new DashboardMiddleware(this);
+        try {
+            dashboardMiddleware.getDashboardData();
+        } catch (CustomException e) {
+            e.printStackTrace();
+        }
+
+    }
+    @Override
+    public void onResponseReceived(Object response, int requestCode) {
+        LogUtil.print("onresponserecieved()");
+
+        if(this.isVisible())
+        {
+            AttendanceHistory attendanceHistory = (AttendanceHistory) response;
+            AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getActivity(), R.layout.attendance_row, attendanceHistory.historyRecords);
+            listView.setAdapter(attendanceAdapter);
+            Utils.setListViewHeightBasedOnChildren(listView);
+        }
 
     }
 
@@ -182,11 +292,6 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public void onResponseReceived(Object response, int requestCode) {
-
     }
 
     /**
