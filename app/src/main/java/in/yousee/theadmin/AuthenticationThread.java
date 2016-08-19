@@ -91,12 +91,7 @@ public class AuthenticationThread implements Runnable {
                 //LogUtil.print("waking");
                 if(insideWorkLocation)
                 {
-                    fragment.getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            fragment.setMsgText("authenticating in "+timeWaited+"s");
-                        }
-                    });
+                    setMsg("authenticating in "+timeWaited+"s");
                     timeWaited--;
                 }
                 else
@@ -113,17 +108,32 @@ public class AuthenticationThread implements Runnable {
             //after TIME_TO_WAIT seconds: authenticated
             fragment.stopListeningToLocationUpdates();
             //any changes to be updated on UI must run on UI thread.
-            fragment.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    fragment.authenticate();
-                }
-            });
+            if(fragment.isVisible()) {
+                fragment.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        fragment.authenticate();
+                    }
+                });
+            }
         }
         instance = null;
         LogUtil.print("Thread finished :( ");
 
 
+    }
+    public void setMsg(final String string)
+    {
+        if(fragment.isVisible())
+        {
+            fragment.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    fragment.setMsgText(string);
+                }
+            });
+        }
     }
 
     public void stopThread()
