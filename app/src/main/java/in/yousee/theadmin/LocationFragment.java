@@ -748,17 +748,28 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     public void onDismiss(DialogInterface dialog) {
         LogUtil.print("onDismiss()");
         stopListeningToLocationUpdates();
-        //Fragment parentFragment = getParentFragment();
-        DialogInterface.OnDismissListener parentFragment = (DialogInterface.OnDismissListener) this.getTargetFragment();
-        parentFragment.onDismiss(dialog);
+
+        if(onCancelled)
+        {
+            return;
+        }
+        else
+        {
+            DialogInterface.OnDismissListener parentFragment = (DialogInterface.OnDismissListener) this.getTargetFragment();
+            parentFragment.onDismiss(dialog);
+        }
+
 //        if (parentFragment instanceof DialogInterface.OnDismissListener) {
 //            LogUtil.print("if instance og fragment = Dismisslistner");
 //            ((DialogInterface.OnDismissListener) parentFragment).onDismiss(dialog);
 //        }
     }
 
+    private boolean onCancelled = false;
     @Override
     public void onCancel(DialogInterface dialog) {
+        onCancelled = true;
+        LogUtil.print("cancelling");
         super.onCancel(dialog);
     }
 
