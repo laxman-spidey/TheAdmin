@@ -26,7 +26,7 @@ public class AttendanceMiddleware extends Middleware {
     public void getAttendanceHistoryData(Calendar from, Calendar to) throws CustomException
     {
         request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.GET_ATTENDANCE_HISTORY);
-        setRequestCode(RequestCodes.NETWORK_REQUEST_DASHBOARD);
+        setRequestCode(RequestCodes.NETWORK_REQUEST_ATTENDANCE_HISTORY);
         request.put("staffId", "6");
         request.put("limit", "10");
         request.put("from", Utils.getSqlDateString(from));
@@ -38,7 +38,7 @@ public class AttendanceMiddleware extends Middleware {
     @Override
     public void serveResponse(String result, int requestCode) {
         LogUtil.print("serving response - "+requestCode);
-        if(requestCode == RequestCodes.NETWORK_REQUEST_DASHBOARD)
+        if(requestCode == RequestCodes.NETWORK_REQUEST_ATTENDANCE_HISTORY)
         {
             AttendanceHistory attendanceHistory = new AttendanceHistory(result);
             listener.onResponseReceived(attendanceHistory, requestCode);

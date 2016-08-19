@@ -101,6 +101,10 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
                 showDatePickerDialog(toDateListener, toDate, false);
                 break;
             }
+            case R.id.getHistoryButton:
+            {
+                getAttendanceHistory();
+            }
         }
     }
     DatePickerDialog.OnDateSetListener fromDateListener = new DatePickerDialog.OnDateSetListener() {
@@ -161,6 +165,7 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
 
     Button checkin;
     Button checkout;
+    Button getDataButton;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -168,9 +173,11 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
         View view = inflater.inflate(R.layout.fragment_attendance, container, false);
         checkin = (Button) view.findViewById(R.id.check_in);
         checkout = (Button) view.findViewById(R.id.check_out);
+        getDataButton = (Button) view.findViewById(R.id.getHistoryButton);
 
         checkin.setOnClickListener(this);
         checkout.setOnClickListener(this);
+        getDataButton.setOnClickListener(this);
 
         fromDateEtxt = (EditText) view.findViewById(R.id.fromdate);
         fromDateEtxt.setInputType(InputType.TYPE_NULL);
@@ -218,9 +225,9 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
 
     private void getAttendanceHistory()
     {
-        DashboardMiddleware dashboardMiddleware = new DashboardMiddleware(this);
+        AttendanceMiddleware attendanceMiddleware = new AttendanceMiddleware(this);
         try {
-            dashboardMiddleware.getDashboardData();
+            attendanceMiddleware.getAttendanceHistoryData(fromDate, toDate);
         } catch (CustomException e) {
             e.printStackTrace();
         }
