@@ -31,32 +31,9 @@ public class Utils {
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        LogUtil.print("-------"+params.height);
         listView.setLayoutParams(params);
         listView.requestLayout();
-    }
-    public static void setDateInEditText(EditText editText, int year, int month, int day)
-    {
-
-        month=month+1;
-        String monthString;
-        String dayString;
-        if(day < 10)
-        {
-            dayString = "0"+day;
-        }
-        else
-        {
-            dayString = ""+day;
-        }
-        if(month <10)
-        {
-            monthString = "0"+month;
-        }
-        else
-        {
-            monthString = ""+month;
-        }
-        editText.setText(year + "-" + monthString +"-"+ dayString );
     }
 
     public static String getDisplayDateString(Calendar calendar)
@@ -67,7 +44,7 @@ public class Utils {
     }
     public static String getSqlDateString(Calendar calendar)
     {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = calendar.getTime();
         return format.format(date);
     }
