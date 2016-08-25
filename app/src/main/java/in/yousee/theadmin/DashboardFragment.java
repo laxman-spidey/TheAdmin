@@ -18,6 +18,7 @@ import java.util.Date;
 
 import in.yousee.theadmin.model.AttendanceHistory;
 import in.yousee.theadmin.model.CustomException;
+import in.yousee.theadmin.model.RoasterData;
 import in.yousee.theadmin.util.LogUtil;
 import in.yousee.theadmin.util.Utils;
 
@@ -83,7 +84,8 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         Button signInButton = (Button) view.findViewById(R.id.check_in);
         listView = (ListView) view.findViewById(R.id.attendanceListView);
         signInButton.setOnClickListener(this);
-        getAttendanceHistory();
+        //getAttendanceHistory();
+        onResponseReceived(null, 0);
         return view;
     }
 
@@ -161,17 +163,22 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
 
     @Override
     public void onResponseReceived(Object response, int requestCode) {
-        LogUtil.print("onresponserecieved()");
+        LogUtil.print("onresponserecieved()"+this.isVisible());
 
-        if(this.isVisible())
+        //if(this.isVisible())
         {
-            AttendanceHistory attendanceHistory = (AttendanceHistory) response;
-            AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getActivity(), R.layout.attendance_row, attendanceHistory.historyRecords);
-            listView.setAdapter(attendanceAdapter);
+//            AttendanceHistory attendanceHistory = (AttendanceHistory) response;
+//            AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getActivity(), R.layout.attendance_row, attendanceHistory.historyRecords);
+//            listView.setAdapter(attendanceAdapter);
+            LogUtil.print("roaster----------");
+            RoasterAdapter roasterAdapter = new RoasterAdapter(this.getActivity(), R.layout.attendance_row, RoasterData.getDummyData().roasterRecords);
+            listView.setAdapter(roasterAdapter);
             Utils.setListViewHeightBasedOnChildren(listView);
+
         }
 
     }
+
 
 
     /**

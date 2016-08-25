@@ -29,6 +29,17 @@ public class DashboardMiddleware extends Middleware {
         sendRequest();
     }
 
+    public void getFutureRoaster(int staffId, int limit) throws CustomException
+    {
+
+        request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.GET_FUTURE_ROASTER);
+        setRequestCode(RequestCodes.NETWORK_REQUEST_FUTURE_ROASTER);
+        request.put("staffId", "6");
+        request.put("limit", "3");
+        LogUtil.print("request code---"+request.getRequestCode());
+        sendRequest();
+    }
+
     @Override
     public void serveResponse(String result, int requestCode) {
         LogUtil.print("serving response - "+requestCode);

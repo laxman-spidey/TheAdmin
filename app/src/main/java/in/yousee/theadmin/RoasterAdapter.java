@@ -13,42 +13,47 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import in.yousee.theadmin.model.AttendanceHistoryRecord;
+import in.yousee.theadmin.model.RoasterData;
 import in.yousee.theadmin.util.LogUtil;
 
+
 /**
- * Created by mittu on 14-08-2016.
+ * Created by mittu on 24-08-2016.
  */
-public class AttendanceAdapter extends ArrayAdapter<AttendanceHistoryRecord> {
-
+public class RoasterAdapter extends ArrayAdapter{
+    /**
+     * Created by mittu on 14-08-2016.
+     */
     private Context context;
-    private ArrayList<AttendanceHistoryRecord> historyRecords;
+    private ArrayList<RoasterData.Record> roasterRecords;
 
-    public AttendanceAdapter(Context context, int resource,
-                           ArrayList<AttendanceHistoryRecord> objects) {
+    public RoasterAdapter(Context context, int resource,
+                             ArrayList<RoasterData.Record> objects) {
         super(context, resource, objects);
         this.context = context;
-        this.historyRecords = new ArrayList<>();
-        this.historyRecords.addAll(objects);
+        this.roasterRecords = new ArrayList<>();
+        this.roasterRecords.addAll(objects);
     }
 
     public int getCount()
     {
         int count = 0;
-        if(historyRecords !=null)
+        if(roasterRecords !=null)
         {
-            count = historyRecords.size();
+            count = roasterRecords.size();
         }
 
         LogUtil.print("count = "+count);
         return count;
 
     }
-    public AttendanceHistoryRecord getItem(int position)
+    public RoasterData.Record getItem(int position)
     {
-        return historyRecords.get(position);
+        return roasterRecords.get(position);
     }
     public class ViewHolder {
         TextView date;
+        TextView shiftDec;
         TextView timeIn;
         TextView timeOut;
 
@@ -84,7 +89,7 @@ public class AttendanceAdapter extends ArrayAdapter<AttendanceHistoryRecord> {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        AttendanceHistoryRecord record = historyRecords.get(position);
+        RoasterData.Record record = roasterRecords.get(position);
         holder.date.setText(record.date);
         holder.timeIn.setText(record.timeIn);
         holder.timeOut.setText(record.timeOut);
@@ -92,6 +97,5 @@ public class AttendanceAdapter extends ArrayAdapter<AttendanceHistoryRecord> {
         return convertView;
 
     }
-
 
 }
