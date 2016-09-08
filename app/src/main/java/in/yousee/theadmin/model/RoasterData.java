@@ -40,6 +40,9 @@ public class RoasterData extends ModelObject {
             record.timeOut = "17:00";
             roasterData.roasterRecords.add(record);
         }
+        roasterData.roasterRecords.get(0).date = "Today";
+        roasterData.roasterRecords.get(1).date = "Tomorrow";
+        roasterData.roasterRecords.get(2).date = "Day after Tomorrow";
         return roasterData;
     }
 

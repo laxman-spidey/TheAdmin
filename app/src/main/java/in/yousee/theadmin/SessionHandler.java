@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -236,7 +237,7 @@ public class SessionHandler extends Middleware
 
 		request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.VERIFY_EXEC);
 		request.setRequestCode(RequestCodes.NETWORK_REQUEST_VERIFY);
-		request.put("phone", phone);
+		request.put("phoneNumber", phone);
 		this.phone = phone;
 		setPhoneNumber(phone);
 		sendRequest();
@@ -293,20 +294,24 @@ public class SessionHandler extends Middleware
 		if (requestCode == RequestCodes.NETWORK_REQUEST_VERIFY) {
 			
 			//setPhoneNumber(this.phone);
-
+			LogUtil.print("request success -- " + result);
 			try {
 				JSONObject json = new JSONObject(result);
-				int statusCode = json.getInt("status_code");
-				if (statusCode == 1) {
-					LogUtil.print("success -------" );
-					responseListener.onResponseReceived(new Boolean(true), requestCode);
-					return;
-				}
-				else
-				{
-					responseListener.onResponseReceived(new Boolean(false), requestCode);
 
-				}
+				String msg = json.getString("msg");
+				Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+				LogUtil.print(msg);
+				//int statusCode = json.getInt("status_code");
+//				if (statusCode == 1) {
+//					LogUtil.print("success -------" );
+//					responseListener.onResponseReceived(new Boolean(true), requestCode);
+//					return;
+//				}
+//				else
+//				{
+//					responseListener.onResponseReceived(new Boolean(false), requestCode);
+//
+//				}
 			} catch (Exception e) {
 
 			}

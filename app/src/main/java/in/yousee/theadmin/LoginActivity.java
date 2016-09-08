@@ -140,6 +140,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.phone);
         mPhoneView = (AutoCompleteTextView) findViewById(R.id.phone);
+        mPhoneView.setText("9505878984");
         populateAutoComplete();
 
         mOtpView = (EditText) findViewById(R.id.otp);
@@ -234,6 +235,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
             return;
         } else {
             //showProgress(true);
+            LogUtil.print("sending request");
             SessionHandler sessionHandler = new SessionHandler(this);
             try {
                 sessionHandler.verifyExec(phoneNumber, this);

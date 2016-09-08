@@ -41,6 +41,7 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
     private String mParam1;
     private String mParam2;
 
+
     private OnFragmentInteractionListener mListener;
     ListView listView;
 
@@ -81,9 +82,13 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
-        Button signInButton = (Button) view.findViewById(R.id.check_in);
+        Button checkinButton = (Button) view.findViewById(R.id.check_in);
+        Button checkoutButton = (Button) view.findViewById(R.id.check_out);
+
         listView = (ListView) view.findViewById(R.id.attendanceListView);
-        signInButton.setOnClickListener(this);
+        checkinButton.setOnClickListener(this);
+        checkoutButton.setOnClickListener(this);
+
         //getAttendanceHistory();
         onResponseReceived(null, 0);
         return view;
@@ -152,7 +157,14 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
             //datetime.ee
             String dateString = new SimpleDateFormat("yyyy-MM-dd").format(datetime);
             String timeString = new SimpleDateFormat("HH:mm:ss").format(datetime);
-            locationMiddleware.checkin(dateString,"9505878984",timeString);
+            if(checkInOut == LocationFragment.CHECK_IN)
+            {
+                locationMiddleware.checkin(dateString,"9505878984",timeString);
+            }
+            else if(checkInOut == LocationFragment.CHECK_OUT)
+            {
+                locationMiddleware.checkout(dateString,"9505878984",timeString);
+            }
             
         } catch (CustomException e) {
             //TODO: show dialogbox
@@ -196,7 +208,7 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         void onFragmentInteraction(Uri uri);
     }
 
-
+    private short checkInOut;
     void showLocationDialog(short checkin) {
         //mStackLevel++;
 
@@ -210,8 +222,9 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         }
         ft.addToBackStack(null);
 
-
+        checkInOut = checkin;
         LocationFragment newFragment = null;
+
 
         // Create and show the dialog.
         if(checkin == LocationFragment.CHECK_IN)
