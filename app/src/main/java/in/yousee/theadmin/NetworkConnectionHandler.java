@@ -35,7 +35,7 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, ResponseB
 
 	// web service URL
 	//public static final String DOMAIN = "https://jeevandaan-mittu-spidey.c9users.io/index.php";
-	public static final String DOMAIN = "https://phpmysql-mittu-spidey.c9users.io/TheAdmin/index.php/";
+	public static final String DOMAIN = "https://phpmysql-mittu-spidey.c9users.io/TheAdmin-server/index.php/";
 	//public static  String DOMAIN;
 	// DownloadWebpageTask downloadwebContent;
 	Request postRequest;
@@ -120,7 +120,7 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, ResponseB
 		LogUtil.print("onPostExecute()");
 		if (responseBody != null) {
 			LogUtil.print("response body !=  null");
-			listener.serveResponse(responseBody.getResponseString(), responseBody.getRequestCode());
+			listener.serveResponse(responseBody.responseString, responseBody.requestCode, responseBody.resultCode);
 		}
 	}
 
@@ -155,15 +155,18 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, ResponseB
 		int responseCode = connection.getResponseCode();
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			String requestCodeString = connection.getHeaderField(Middleware.TAG_NETWORK_REQUEST_CODE);
+			String resultCodeString = connection.getHeaderField(Middleware.TAG_NETWORK_RESULT_CODE);
 			LogUtil.print("requestCode = "+requestCodeString);
-			if(requestCodeString != null)
+			if(requestCodeString != null && resultCodeString !=null)
 			{
 				InputStream inputStream = connection.getInputStream();
 				String contentAsString = readIt(inputStream);
 				ResponseBody responseBody = new ResponseBody();
 				int requestCode = Integer.valueOf(requestCodeString);
-				responseBody.setRequestCode(requestCode);
-				responseBody.setResponseString(contentAsString);
+				int resultCode = Integer.valueOf(resultCodeString);
+				responseBody.requestCode = requestCode;
+				responseBody.responseString = contentAsString;
+				responseBody.resultCode = resultCode;
 				LogUtil.print(contentAsString);
 				return responseBody;
 
