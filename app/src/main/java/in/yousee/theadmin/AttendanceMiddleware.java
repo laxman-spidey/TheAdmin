@@ -36,7 +36,7 @@ public class AttendanceMiddleware extends Middleware {
 
 
     @Override
-    public void serveResponse(String result, int requestCode) {
+    public void serveResponse(String result, int requestCode, int resultCode) {
         LogUtil.print("serving response - "+requestCode);
         if(requestCode == RequestCodes.NETWORK_REQUEST_ATTENDANCE_HISTORY)
         {

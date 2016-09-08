@@ -27,7 +27,7 @@ public class SwapsMiddleware extends Middleware {
     //public void sendselectedlist(String  ) throws CustomException
 
     @Override
-    public void serveResponse(String result, int requestCode) {
+    public void serveResponse(String result, int requestCode, int resultCode) {
 
     }
 }

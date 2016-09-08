@@ -283,7 +283,7 @@ public class SessionHandler extends Middleware
 	}
 
 	@Override
-	public void serveResponse(String result, int requestCode)
+	public void serveResponse(String result, int requestCode, int resultCode)
 	{
 		//this.responseListner.onResponseRecieved(result, requestCode);
 		//this.loginFeatureClient.onLoginSuccess();

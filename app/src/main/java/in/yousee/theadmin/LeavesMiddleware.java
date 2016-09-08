@@ -34,7 +34,7 @@ public class LeavesMiddleware extends Middleware {
     }
 
     @Override
-    public void serveResponse(String result, int requestCode) {
+    public void serveResponse(String result, int requestCode, int resultCode) {
 
     }
 }
