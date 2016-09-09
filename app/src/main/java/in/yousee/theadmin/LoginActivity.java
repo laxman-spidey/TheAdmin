@@ -43,6 +43,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.Bind;
 import in.yousee.theadmin.constants.RequestCodes;
+import in.yousee.theadmin.constants.ResultCodes;
 import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.util.LogUtil;
 
@@ -76,12 +77,13 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
     }
 
 
-    public void onResponseReceived(Object response, int requestCode) {
+    public void onResponseReceived(Object response, int requestCode, int resultCode) {
         //showProgress(false);
         LogUtil.print("onressponse recieved " + requestCode + "  " + response.toString());
         if (requestCode == RequestCodes.NETWORK_REQUEST_VERIFY) {
-            if ((Boolean) response == true) {
+            if (resultCode == ResultCodes.NETWORK_VERIFY_PHONE_SUCCESS) {
                 promptOtp();
+                LogUtil.print("prompt otp");
                 //onLoginSuccess();
             } else {
                 mPhoneView.setError("Mobile number is not registered");
@@ -258,7 +260,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
             mPhoneView.setError("Invalid Phone number");
             error = true;
         }
-        if (otp.length() != 4) {
+        if (otp.length() != 6) {
             mOtpView.setError("invlid OTP");
             error = true;
         }

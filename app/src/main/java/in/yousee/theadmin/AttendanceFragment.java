@@ -234,7 +234,7 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
 
     }
     @Override
-    public void onResponseReceived(Object response, int requestCode) {
+    public void onResponseReceived(Object response, int requestCode, int resultCode) {
         LogUtil.print("onresponserecieved()");
 
         if(this.isVisible())

@@ -229,7 +229,7 @@ public class SwapsFragment extends Fragment implements View.OnClickListener, OnR
     };
 
     @Override
-    public void onResponseReceived(Object response, int requestCode) {
+    public void onResponseReceived(Object response, int requestCode, int resultCode) {
 
     }
 

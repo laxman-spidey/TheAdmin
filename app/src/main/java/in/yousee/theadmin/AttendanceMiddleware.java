@@ -41,7 +41,7 @@ public class AttendanceMiddleware extends Middleware {
         if(requestCode == RequestCodes.NETWORK_REQUEST_ATTENDANCE_HISTORY)
         {
             AttendanceHistory attendanceHistory = new AttendanceHistory(result);
-            listener.onResponseReceived(attendanceHistory, requestCode);
+            listener.onResponseReceived(attendanceHistory, requestCode, resultCode);
         }
 
     }

@@ -235,7 +235,7 @@ public class LeavesFragment extends Fragment implements View.OnClickListener, On
     };
 
     @Override
-    public void onResponseReceived(Object response, int requestCode) {
+    public void onResponseReceived(Object response, int requestCode, int resultCode) {
 
     }
 

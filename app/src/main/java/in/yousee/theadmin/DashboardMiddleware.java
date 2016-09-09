@@ -46,7 +46,7 @@ public class DashboardMiddleware extends Middleware {
         if(requestCode == RequestCodes.NETWORK_REQUEST_DASHBOARD)
         {
             AttendanceHistory attendanceHistory = new AttendanceHistory(result);
-            listener.onResponseReceived(attendanceHistory, requestCode);
+            listener.onResponseReceived(attendanceHistory, requestCode, resultCode);
         }
 
     }

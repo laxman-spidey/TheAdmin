@@ -157,6 +157,7 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, ResponseB
 			String requestCodeString = connection.getHeaderField(Middleware.TAG_NETWORK_REQUEST_CODE);
 			String resultCodeString = connection.getHeaderField(Middleware.TAG_NETWORK_RESULT_CODE);
 			LogUtil.print("requestCode = "+requestCodeString);
+			LogUtil.print("resultCode = "+resultCodeString);
 			if(requestCodeString != null && resultCodeString !=null)
 			{
 				InputStream inputStream = connection.getInputStream();

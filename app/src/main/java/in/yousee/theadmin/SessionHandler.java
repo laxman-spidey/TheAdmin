@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import in.yousee.theadmin.constants.RequestCodes;
+import in.yousee.theadmin.constants.ResultCodes;
 import in.yousee.theadmin.constants.ServerFiles;
 import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.util.LogUtil;
@@ -299,8 +300,8 @@ public class SessionHandler extends Middleware
 				JSONObject json = new JSONObject(result);
 
 				String msg = json.getString("msg");
-				Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
 				LogUtil.print(msg);
+				listener.onResponseReceived(msg,requestCode, resultCode);
 				//int statusCode = json.getInt("status_code");
 //				if (statusCode == 1) {
 //					LogUtil.print("success -------" );
@@ -313,7 +314,7 @@ public class SessionHandler extends Middleware
 //
 //				}
 			} catch (Exception e) {
-
+				e.printStackTrace();
 			}
 		}
 		else if(requestCode == RequestCodes.NETWORK_REQUEST_OTP_SUBMIT)

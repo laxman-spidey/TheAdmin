@@ -433,7 +433,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     }
 
     @Override
-    public void onResponseReceived(Object response, int requestCode) {
+    public void onResponseReceived(Object response, int requestCode, int resultCode) {
 
     }
 

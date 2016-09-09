@@ -90,7 +90,7 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         checkoutButton.setOnClickListener(this);
 
         //getAttendanceHistory();
-        onResponseReceived(null, 0);
+        onResponseReceived(null, 0, 0);
         return view;
     }
 
@@ -174,7 +174,7 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
     }
 
     @Override
-    public void onResponseReceived(Object response, int requestCode) {
+    public void onResponseReceived(Object response, int requestCode, int resultCode) {
         LogUtil.print("onresponserecieved()"+this.isVisible());
 
         //if(this.isVisible())
