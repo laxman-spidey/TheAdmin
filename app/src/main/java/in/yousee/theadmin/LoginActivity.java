@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         startActivity(intent);
     }
 
-
+    @Override
     public void onResponseReceived(Object response, int requestCode, int resultCode) {
         //showProgress(false);
         LogUtil.print("onressponse recieved " + requestCode + "  " + response.toString());
@@ -90,11 +90,22 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
             }
         }
         if (requestCode == RequestCodes.NETWORK_REQUEST_OTP_SUBMIT) {
-            if ((Boolean) response == true) {
-                showMainActivity();
-                //onLoginSuccess();
-            } else {
-                mOtpView.setError("OTP invalid");
+            String msg = (String) response;
+            if(resultCode == ResultCodes.NETWORK_VALIDATE_OTP_SUCCESS)
+            {
+                LogUtil.print("success");
+                onLoginSuccess();
+                Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+            }
+            else if(resultCode == ResultCodes.NETWORK_VALIDATE_OTP_INVALID)
+            {
+                LogUtil.print("biscuit");
+                mOtpView.setText(msg);
+            }
+            else if(resultCode == ResultCodes.NETWORK_VALIDATE_OTP_UPDATE_FAILED)
+            {
+                LogUtil.print("biscuit 1");
+                Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -110,6 +121,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
 
     private void promptOtp() {
         mOtpLayout.setVisibility(View.VISIBLE);
+        mPhoneView.setEnabled(false);
 
     }
 

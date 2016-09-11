@@ -26,6 +26,8 @@ public class SessionHandler extends Middleware
 	private UsesLoginFeature loginFeatureClient;
 	private OnResponseReceivedListener responseListener;
 	private static final String SESSION_DEBUG_TAG = "session_tag";
+	private static final String TAG_RESPONSE_MSG= "msg";
+
 	public static boolean isLoggedIn = false;
 	private String username = "";
 	private String password = "";
@@ -248,7 +250,7 @@ public class SessionHandler extends Middleware
 	public void submitOTP(String phone, String otp, LoginActivity loginFeatureClient) throws CustomException
 	{
 		request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.LOGIN_EXEC);
-		request.put("phone", phone);
+		request.put("phoneNumber", phone);
 		request.put("otp", otp);
 		request.setRequestCode(RequestCodes.NETWORK_REQUEST_OTP_SUBMIT);
 		setPhoneNumber(phone);
@@ -290,9 +292,10 @@ public class SessionHandler extends Middleware
 		//this.loginFeatureClient.onLoginSuccess();
 		//Log.i(SESSION_DEBUG_TAG, result);
 
-		LogUtil.print("serving response = " + requestCode);
+		LogUtil.print("serving response ==---- " + requestCode);
 
-		if (requestCode == RequestCodes.NETWORK_REQUEST_VERIFY) {
+		if (requestCode == RequestCodes.NETWORK_REQUEST_VERIFY)
+		{
 			
 			//setPhoneNumber(this.phone);
 			LogUtil.print("request success -- " + result);
@@ -319,60 +322,23 @@ public class SessionHandler extends Middleware
 		}
 		else if(requestCode == RequestCodes.NETWORK_REQUEST_OTP_SUBMIT)
 		{
-
+			LogUtil.print("OTP submit");
 			JSONObject json;
 			int statusCode = 0;
 			String sessionId = "";
+			String msg = "";
 			try
 			{
 				json = new JSONObject(result);
-				statusCode = json.getInt("status_code");
-				sessionId = json.getString("session_id");
-
+				//statusCode = json.getInt("status_code");
+				msg = json.getString(TAG_RESPONSE_MSG);
+				LogUtil.print(msg);
 			} catch (Exception e) {
 				LogUtil.print(e.getMessage());
 			}
-			if (statusCode == 1) {
-				LogUtil.print("success");
-				//SessionData sessionData = new SessionData(result);
-				setSessionId(sessionId);
-				//setPhoneNumber(phone);
-				//LogUtil.print("test" + loginFeatureClient.toString());
-				loginFeatureClient.onLoginSuccess();
-				//this.responseListener.onResponseRecieved(new Boolean(true), requestCode);
-			}
-			else
-			{
-				loginFeatureClient.onLoginFailed();
-			}
-			/*
-			if (sessionData.isSuccess())
-			{
-
-				Log.i(SESSION_DEBUG_TAG, "login success");
-				//setLoginCredentials(username, password);
-
-				Log.i(SESSION_DEBUG_TAG, "login data set");
-				setSessionId(sessionData.getSessionId());
-				Log.i(SESSION_DEBUG_TAG, "setting session id");
-				setUserId(sessionData.getUserId());
-				String sessionId = null;
-
-				if (isSessionIdExists(context))
-				{
-					Log.i(SESSION_DEBUG_TAG, "viewing session id");
-
-				}
-
-				getLoginCredentials(username, password);
-				loginFeatureClient.onLoginSuccess();
-			}
-			else
-			{
-				loginFeatureClient.onLoginFailed();
-			}
-			*/
+			listener.onResponseReceived(msg,requestCode,resultCode);
 		}
+		/*
 		else if (requestCode == RequestCodes.NETWORK_REQUEST_LOGOUT)
 		{
 			Log.i(SESSION_DEBUG_TAG, "logging out");
@@ -383,6 +349,7 @@ public class SessionHandler extends Middleware
 			//logoutListener.onResponseRecieved(null, requestCode);
 
 		}
+		*/
 	}
 
 	@Override
