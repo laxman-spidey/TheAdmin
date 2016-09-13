@@ -21,19 +21,28 @@ public class LocationMiddleware extends Middleware{
 
     }
 
-    public void checkin(Date date, String phone, String time) throws  CustomException
+    public void checkin(String date, String phone, String time) throws  CustomException
     {
-        request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.CHECKIN);
-        setRequestCode(RequestCodes.NETWORK_REQUEST_CHECK_IN);
-        addKeyValue("date", date.toString());
-        addKeyValue("phone", phone);
-        addKeyValue("checkin",time);
-        request.setParameters(nameValuePairs);
+        request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.CHECK_IN);
+        request.setRequestCode(RequestCodes.NETWORK_REQUEST_CHECK_IN);
+        request.put("date", date);
+        request.put("phone", phone);
+        request.put("timein",time);
+        sendRequest();
+    }
+
+    public void checkout(String date, String phone, String time) throws  CustomException
+    {
+        request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.CHECK_OUT);
+        request.setRequestCode(RequestCodes.NETWORK_REQUEST_CHECK_IN);
+        request.put("date", date);
+        request.put("phone", phone);
+        request.put("timein",time);
         sendRequest();
     }
 
     @Override
-    public void serveResponse(String result, int requestCode) {
+    public void serveResponse(String result, int requestCode, int resultCode) {
 
     }
 }

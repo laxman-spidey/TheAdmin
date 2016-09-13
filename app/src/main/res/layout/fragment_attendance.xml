@@ -6,55 +6,106 @@
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="161dp"
+        android:layout_height="match_parent"
         android:background="@color/white"
         android:paddingBottom="5dp"
         android:orientation="horizontal"
         android:layout_gravity="top">
 
-        <Button
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Check IN  "
-            android:id="@+id/checkin_button"
-            android:background="@drawable/button"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="53dp"
-            android:layout_marginStart="53dp" />
+            android:orientation="horizontal"
+            android:id="@+id/attendanceButtonsLayout"
+            android:weightSum="1">
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="CHECK IN"
+                android:id="@+id/check_in"
+                android:textColor="#585aff"
+                android:layout_weight="0.5"
+                android:background="@drawable/button"
+                />
 
-        <Button
-            android:layout_width="wrap_content"
+            <!--style="@style/Widget.AppCompat.Button.white"-->
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Check OUT"
+                android:id="@+id/check_out"
+                android:layout_weight="0.5"
+                android:background="@drawable/button"
+                />
+        </LinearLayout>
+
+        <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Check OUT"
-            android:id="@+id/button2"
-            android:background="@drawable/button"
-            android:layout_marginEnd="43dp"
-            android:layout_marginRight="43dp"
-            android:layout_alignTop="@+id/button"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:background="@color/white"
+            card_view:cardCornerRadius="4dp"
+            card_view:cardElevation="3dp"
+            android:id="@+id/attendanceCard"
+            android:layout_below="@id/attendanceButtonsLayout"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp">
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingBottom="5dp"
+                android:orientation="horizontal"
+                android:id="@+id/attendanceLayout"
+                android:layout_gravity="top">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="1"
+                    android:background="#585aff"
+                    android:orientation="horizontal"
+                    android:id="@+id/dateRangePickerLayout"
+                    android:paddingTop="8dp">
+                    <EditText
+                        android:id="@+id/fromdate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:inputType="date"
+                        android:textColorHint="@color/white"
+                        android:hint="@string/from"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="0.47"/>
+
+                    <EditText
+                        android:id="@+id/todate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:inputType="date"
+                        android:textColorHint="@color/white"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:hint="@string/to"
+                        android:layout_weight="0.47"/>
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="GET >"
+                        android:id="@+id/getHistoryButton"
+                        />
+                </LinearLayout>
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:id="@+id/attendanceListView"
+                    android:layout_below="@+id/dateRangePickerLayout">
+                </ListView>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
 
     </RelativeLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/map_layout"
-        android:orientation="vertical"
-        android:visibility="gone">
-        <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            class="in.yousee.theadmin.LocationFragment"
-            android:id="@+id/map_container"
-            android:layout_gravity="bottom"
-            ></fragment>
-
-    </LinearLayout>
-
-
-
 
 </FrameLayout>

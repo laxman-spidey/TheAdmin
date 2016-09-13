@@ -7,6 +7,7 @@ import android.content.Context;
 
 import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.model.Request;
+import in.yousee.theadmin.util.LogUtil;
 
 public abstract class Middleware
 {
@@ -69,7 +70,7 @@ public abstract class Middleware
 		NetworkConnectionHandler connectionHandler = new NetworkConnectionHandler(getContext(), this);
 		if (NetworkConnectionHandler.isNetworkConnected(getContext()))
 		{
-
+			LogUtil.print("sending request");
 			connectionHandler.execute(request);
 
 		}
@@ -77,7 +78,7 @@ public abstract class Middleware
 	}
 
 
-	public abstract void serveResponse(String result, int requestCode);
+	public abstract void serveResponse(String result, int requestCode, int resultCode);
 
 	public Context getContext()
 	{

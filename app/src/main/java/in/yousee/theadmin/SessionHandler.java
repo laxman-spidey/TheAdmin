@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import in.yousee.theadmin.constants.RequestCodes;
+import in.yousee.theadmin.constants.ResultCodes;
 import in.yousee.theadmin.constants.ServerFiles;
 import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.util.LogUtil;
@@ -24,6 +26,8 @@ public class SessionHandler extends Middleware
 	private UsesLoginFeature loginFeatureClient;
 	private OnResponseReceivedListener responseListener;
 	private static final String SESSION_DEBUG_TAG = "session_tag";
+	private static final String TAG_RESPONSE_MSG= "msg";
+
 	public static boolean isLoggedIn = false;
 	private String username = "";
 	private String password = "";
@@ -235,11 +239,10 @@ public class SessionHandler extends Middleware
 		this.responseListener = responseListener;
 
 		request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.VERIFY_EXEC);
-		setRequestCode(RequestCodes.NETWORK_REQUEST_VERIFY);
-		addKeyValue("phone", phone);
+		request.setRequestCode(RequestCodes.NETWORK_REQUEST_VERIFY);
+		request.put("phoneNumber", phone);
 		this.phone = phone;
 		setPhoneNumber(phone);
-		request.setParameters(nameValuePairs);
 		sendRequest();
 
 	}
@@ -247,11 +250,10 @@ public class SessionHandler extends Middleware
 	public void submitOTP(String phone, String otp, LoginActivity loginFeatureClient) throws CustomException
 	{
 		request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.LOGIN_EXEC);
-		addKeyValue("phone", phone);
-		addKeyValue("otp", otp);
-		super.setRequestCode(RequestCodes.NETWORK_REQUEST_OTP_SUBMIT);
+		request.put("phoneNumber", phone);
+		request.put("otp", otp);
+		request.setRequestCode(RequestCodes.NETWORK_REQUEST_OTP_SUBMIT);
 		setPhoneNumber(phone);
-		request.setParameters(nameValuePairs);
 		this.loginFeatureClient = loginFeatureClient;
 		this.phone = phone;
 		sendRequest();
@@ -264,10 +266,9 @@ public class SessionHandler extends Middleware
 		this.username = username;
 		this.password = password;
 		request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.LOGIN_EXEC);
-		addKeyValue("username", username);
-		addKeyValue("password", password);
-		super.setRequestCode(RequestCodes.NETWORK_REQUEST_LOGIN);
-		request.setParameters(nameValuePairs);
+		request.put("username", username);
+		request.put("password", password);
+		request.setRequestCode(RequestCodes.NETWORK_REQUEST_LOGIN);
 		sendRequest();
 
 	}
@@ -285,91 +286,59 @@ public class SessionHandler extends Middleware
 	}
 
 	@Override
-	public void serveResponse(String result, int requestCode)
+	public void serveResponse(String result, int requestCode, int resultCode)
 	{
 		//this.responseListner.onResponseRecieved(result, requestCode);
 		//this.loginFeatureClient.onLoginSuccess();
 		//Log.i(SESSION_DEBUG_TAG, result);
 
-		LogUtil.print("serving response = " + requestCode);
+		LogUtil.print("serving response ==---- " + requestCode);
 
-		if (requestCode == RequestCodes.NETWORK_REQUEST_VERIFY) {
+		if (requestCode == RequestCodes.NETWORK_REQUEST_VERIFY)
+		{
 			
 			//setPhoneNumber(this.phone);
-
+			LogUtil.print("request success -- " + result);
 			try {
 				JSONObject json = new JSONObject(result);
-				int statusCode = json.getInt("status_code");
-				if (statusCode == 1) {
-					LogUtil.print("success -------" );
-					responseListener.onResponseReceived(new Boolean(true), requestCode);
-					return;
-				}
-				else
-				{
-					responseListener.onResponseReceived(new Boolean(false), requestCode);
 
-				}
+				String msg = json.getString("msg");
+				LogUtil.print(msg);
+				listener.onResponseReceived(msg,requestCode, resultCode);
+				//int statusCode = json.getInt("status_code");
+//				if (statusCode == 1) {
+//					LogUtil.print("success -------" );
+//					responseListener.onResponseReceived(new Boolean(true), requestCode);
+//					return;
+//				}
+//				else
+//				{
+//					responseListener.onResponseReceived(new Boolean(false), requestCode);
+//
+//				}
 			} catch (Exception e) {
-
+				e.printStackTrace();
 			}
 		}
 		else if(requestCode == RequestCodes.NETWORK_REQUEST_OTP_SUBMIT)
 		{
-
+			LogUtil.print("OTP submit");
 			JSONObject json;
 			int statusCode = 0;
 			String sessionId = "";
+			String msg = "";
 			try
 			{
 				json = new JSONObject(result);
-				statusCode = json.getInt("status_code");
-				sessionId = json.getString("session_id");
-
+				//statusCode = json.getInt("status_code");
+				msg = json.getString(TAG_RESPONSE_MSG);
+				LogUtil.print(msg);
 			} catch (Exception e) {
 				LogUtil.print(e.getMessage());
 			}
-			if (statusCode == 1) {
-				LogUtil.print("success");
-				//SessionData sessionData = new SessionData(result);
-				setSessionId(sessionId);
-				//setPhoneNumber(phone);
-				//LogUtil.print("test" + loginFeatureClient.toString());
-				loginFeatureClient.onLoginSuccess();
-				//this.responseListener.onResponseRecieved(new Boolean(true), requestCode);
-			}
-			else
-			{
-				loginFeatureClient.onLoginFailed();
-			}
-			/*
-			if (sessionData.isSuccess())
-			{
-
-				Log.i(SESSION_DEBUG_TAG, "login success");
-				//setLoginCredentials(username, password);
-
-				Log.i(SESSION_DEBUG_TAG, "login data set");
-				setSessionId(sessionData.getSessionId());
-				Log.i(SESSION_DEBUG_TAG, "setting session id");
-				setUserId(sessionData.getUserId());
-				String sessionId = null;
-
-				if (isSessionIdExists(context))
-				{
-					Log.i(SESSION_DEBUG_TAG, "viewing session id");
-
-				}
-
-				getLoginCredentials(username, password);
-				loginFeatureClient.onLoginSuccess();
-			}
-			else
-			{
-				loginFeatureClient.onLoginFailed();
-			}
-			*/
+			listener.onResponseReceived(msg,requestCode,resultCode);
 		}
+		/*
 		else if (requestCode == RequestCodes.NETWORK_REQUEST_LOGOUT)
 		{
 			Log.i(SESSION_DEBUG_TAG, "logging out");
@@ -380,6 +349,7 @@ public class SessionHandler extends Middleware
 			//logoutListener.onResponseRecieved(null, requestCode);
 
 		}
+		*/
 	}
 
 	@Override

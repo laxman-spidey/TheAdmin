@@ -10,6 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import in.yousee.theadmin.model.AttendanceHistory;
+import in.yousee.theadmin.model.CustomException;
+import in.yousee.theadmin.model.RoasterData;
+import in.yousee.theadmin.util.LogUtil;
+import in.yousee.theadmin.util.Utils;
 
 
 /**
@@ -20,7 +31,7 @@ import android.widget.Button;
  * Use the {@link DashboardFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DashboardFragment extends Fragment  implements View.OnClickListener, DialogInterface.OnDismissListener{
+public class DashboardFragment extends Fragment  implements View.OnClickListener, DialogInterface.OnDismissListener, OnResponseReceivedListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -30,7 +41,9 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
     private String mParam1;
     private String mParam2;
 
+
     private OnFragmentInteractionListener mListener;
+    ListView listView;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -63,16 +76,34 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
-        Button signInButton = (Button) view.findViewById(R.id.check_in);
-        signInButton.setOnClickListener(this);
+        Button checkinButton = (Button) view.findViewById(R.id.check_in);
+        Button checkoutButton = (Button) view.findViewById(R.id.check_out);
+
+        listView = (ListView) view.findViewById(R.id.attendanceListView);
+        checkinButton.setOnClickListener(this);
+        checkoutButton.setOnClickListener(this);
+
+        //getAttendanceHistory();
+        onResponseReceived(null, 0, 0);
         return view;
     }
 
+    private void getAttendanceHistory()
+    {
+        DashboardMiddleware dashboardMiddleware = new DashboardMiddleware(this);
+        try {
+            dashboardMiddleware.getDashboardData();
+        } catch (CustomException e) {
+            e.printStackTrace();
+        }
+
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -118,7 +149,49 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
 
+        LogUtil.print("onDismiss -  in parent fragment");
+
+        LocationMiddleware locationMiddleware = new LocationMiddleware(this);
+        try {
+            Date datetime = Calendar.getInstance().getTime();
+            //datetime.ee
+            String dateString = new SimpleDateFormat("yyyy-MM-dd").format(datetime);
+            String timeString = new SimpleDateFormat("HH:mm:ss").format(datetime);
+            if(checkInOut == LocationFragment.CHECK_IN)
+            {
+                locationMiddleware.checkin(dateString,"9505878984",timeString);
+            }
+            else if(checkInOut == LocationFragment.CHECK_OUT)
+            {
+                locationMiddleware.checkout(dateString,"9505878984",timeString);
+            }
+            
+        } catch (CustomException e) {
+            //TODO: show dialogbox
+        }
+
+
     }
+
+    @Override
+    public void onResponseReceived(Object response, int requestCode, int resultCode) {
+        LogUtil.print("onresponserecieved()"+this.isVisible());
+
+        //if(this.isVisible())
+        {
+//            AttendanceHistory attendanceHistory = (AttendanceHistory) response;
+//            AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getActivity(), R.layout.attendance_row, attendanceHistory.historyRecords);
+//            listView.setAdapter(attendanceAdapter);
+            LogUtil.print("roaster----------");
+            RoasterAdapter roasterAdapter = new RoasterAdapter(this.getActivity(), R.layout.attendance_row, RoasterData.getDummyData().roasterRecords);
+            listView.setAdapter(roasterAdapter);
+            Utils.setListViewHeightBasedOnChildren(listView);
+
+        }
+
+    }
+
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -135,7 +208,7 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         void onFragmentInteraction(Uri uri);
     }
 
-
+    private short checkInOut;
     void showLocationDialog(short checkin) {
         //mStackLevel++;
 
@@ -149,9 +222,20 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         }
         ft.addToBackStack(null);
 
-        // Create and show the dialog.
-        LocationFragment newFragment = LocationFragment.newInstance(checkin);
+        checkInOut = checkin;
+        LocationFragment newFragment = null;
 
+
+        // Create and show the dialog.
+        if(checkin == LocationFragment.CHECK_IN)
+        {
+            newFragment = LocationFragment.newInstance(LocationFragment.CHECK_IN);
+        }
+        else if(checkin == LocationFragment.CHECK_OUT)
+        {
+            newFragment = LocationFragment.newInstance(LocationFragment.CHECK_OUT);
+        }
+        newFragment.setTargetFragment(this,1);
         newFragment.show(ft, "dialog");
     }
 

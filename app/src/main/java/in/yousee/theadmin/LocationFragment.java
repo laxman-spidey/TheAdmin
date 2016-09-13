@@ -38,6 +38,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -68,6 +70,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
 
     private OnFragmentInteractionListener mListener;
+    DialogInterface.OnDismissListener onDismissListener;
 
     public LocationFragment() {
 
@@ -87,6 +90,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
         Bundle args = new Bundle();
         args.putShort(ARG_CHECK_IN, checkin);
+        //args.put
         fragment.setArguments(args);
         return fragment;
     }
@@ -153,6 +157,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
     @Override
     public void onStart() {
+        LogUtil.print("onStart()");
         //if(lm!=null)
 //        {
 //            implementLocationManager();
@@ -167,6 +172,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     @Override
     public void onStop() {
 
+        LogUtil.print("onStop()");
         mGoogleApiClient.disconnect();
         stopListeningToLocationUpdates();
         authenticationThread.stopThread();
@@ -175,11 +181,20 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     }
 
     public void stopListeningToLocationUpdates() {
-
+        LogUtil.print("stopListeningToLocationUpdates");
         checkPermission();
-        if (lm != null && listener != null) {
-            LogUtil.print("stopListeningToLocationUpdates()");
-            lm.removeUpdates(listener);
+        if(lm == null)
+        {
+            LogUtil.print("location manager is null");
+        }
+        if(locationListener == null)
+        {
+            LogUtil.print("listener is null");
+        }
+        if (lm != null && locationListener != null) {
+            LogUtil.print("stopping");
+            lm.removeUpdates(locationListener);
+            //lm =null;
 
         }
     }
@@ -248,6 +263,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 public void onClick(DialogInterface dialog, int which) {
                     //No location service, no Activity
 
+
                 }
             });
             builder.create().show();
@@ -266,7 +282,8 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         //mMap.setPadding(0,0,0,50);
 
         addPolyAreaOnMap();
-        authenticationThread =new AuthenticationThread(LocationFragment.this);
+        authenticationThread = AuthenticationThread.getInstance(LocationFragment.this);
+
 
         if (checkPermission()) {
             LogUtil.print("no permission");
@@ -287,6 +304,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         }
         else
         {
+            LogUtil.print("setLastKnownLocation");
             Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                     mGoogleApiClient);
             LogUtil.print("fused location");
@@ -297,9 +315,15 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
                 LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
                 mMap.animateCamera(cameraUpdate);
+                LogUtil.print("updating camera");
                 boolean inside = pointInPolygon(latLng, polygon);
+                AuthenticationThread.getInstance(this).insideWorkLocation = inside;
                 updateMessage(inside);
                 return latLng;
+            }
+            else
+            {
+                LogUtil.print("lastlocation is null");
             }
             return null;
         }
@@ -340,22 +364,8 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         }
         else {
             implementLocationManager();
-            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                    mGoogleApiClient);
-            LogUtil.print("got location");
-            if (mLastLocation != null) {
+            setLastKnownLocation();
 
-                LogUtil.print(String.valueOf(mLastLocation.getLatitude()));
-                LogUtil.print(String.valueOf(mLastLocation.getLongitude()));
-                LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
-                mMap.animateCamera(cameraUpdate);
-                boolean inside = pointInPolygon(latLng, polygon);
-                updateMessage(inside);
-                insideWorkLocation = pointInPolygon(latLng, polygon);
-
-
-            }
         }
     }
 
@@ -387,7 +397,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     }
 
     LocationManager lm;
-    LocationListenerImp listener;
+    LocationListenerImp locationListener;
     public void implementLocationManager()
     {
         LogUtil.print("implementLocationManager()");
@@ -399,8 +409,17 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         }
         else
         {
-            listener = new LocationListenerImp();
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
+            if(locationListener == null)
+            {
+                LogUtil.print("creating listener");
+                locationListener= new LocationListenerImp();
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
+            }
+            else
+            {
+                LogUtil.print("listener already added");
+            }
+
         }
 
     }
@@ -414,7 +433,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     }
 
     @Override
-    public void onResponseReceived(Object response, int requestCode) {
+    public void onResponseReceived(Object response, int requestCode, int resultCode) {
 
     }
 
@@ -439,11 +458,8 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
             mMap.animateCamera(cameraUpdate);
             currentLocation =  latLng;
             insideWorkLocation = pointInPolygon(latLng, polygon);
+            authenticationThread.insideWorkLocation = insideWorkLocation;
 
-            if(!insideWorkLocation) // if not inside location
-            {
-                authenticationThread.resetTimeWaited();
-            }
             updateMessage(insideWorkLocation);
 
         }
@@ -451,55 +467,71 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {
-
+            LogUtil.print("onStatusChanged()");
         }
 
         @Override
         public void onProviderEnabled(String s) {
+            LogUtil.print("onProviderEnabled()");
 
         }
 
         @Override
         public void onProviderDisabled(String s) {
+            LogUtil.print("onProviderDisabled()");
 
         }
     }
-    private class AuthenticationThread implements Runnable
+    /*
+    public class AuthenticationThread implements Runnable
     {
         Thread t;
 
-        private final static int TIME_TO_WAIT = 3; //in seconds
-        public  short timeWaited = 0;
+
+        private final static int TIME_TO_WAIT = 0; //in seconds
+        public  short timeWaited = 3;
         public boolean threadStoppedManually = false;
         Fragment fragment;
-        public  AuthenticationThread(Fragment fragment)
+        private AuthenticationThread(Fragment fragment)
         {
             t = new Thread(this);
             this.fragment = fragment;
             //isAuthenticationThreadStarted = true;
             t.start();
         }
+
+
         @Override
         public void run() {
-            while(timeWaited <= TIME_TO_WAIT && threadStoppedManually == false)
+            while(timeWaited >= 0 && threadStoppedManually == false)
             {
+                if(insideWorkLocation)
+                {
+                    fragment.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            testText.setText("authenticating in "+timeWaited+"s");
+                        }
+                    });
+
+                }
                 try {
                     //LogUtil.print("sleeping");
                     Thread.sleep(1000);
                     //LogUtil.print("waking");
-                    if(insideWorkLocation == false)
+                    if(insideWorkLocation)
                     {
-                        timeWaited = 0;
+                        timeWaited--;
                     }
                     else
                     {
-                        timeWaited++;
+                        timeWaited = 3;
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            if(timeWaited > 3)
+            if(timeWaited < 0)
             {
                 LogUtil.print("timeWaited > 3 - stopping service");
                 //after TIME_TO_WAIT seconds: authenticated
@@ -515,6 +547,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 
 
         }
+
         public void stopThread()
         {
             threadStoppedManually = true;
@@ -525,17 +558,18 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
             timeWaited = 0;
         }
     }
+    */
+    public void setMsgText(String text)
+    {
+        testText.setText(text);
+    }
 
     public  void authenticate()
     {
         LogUtil.print("authenticating");
         testText.setText("authenticating");
-        LocationMiddleware locationMiddleware = new LocationMiddleware(this);
-        try {
-            locationMiddleware.checkin(new Date(),"dsfa","sdfs");
-        } catch (CustomException e) {
-            //TODO: show dialogbox
-        }
+        onStop();
+        this.dismiss();
 
     }
     Polygon polygon;
@@ -555,33 +589,33 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 //                .fillColor(Color.argb(128, 255, 0, 0))
 //                ;
 //        //meerpet
-//        PolygonOptions rectOptions = new PolygonOptions()
-//                .add(new LatLng(17.319037, 78.527645),
-//                        new LatLng(17.319301, 78.527712),
-//                        new LatLng(17.319268, 78.527892),
-//                        new LatLng(17.319002, 78.527876)
-//                        )
-//                .strokeColor(Color.RED)
-//                .fillColor(Color.argb(128, 255, 0, 0))
-//                ;
-
-        //Yousee
-
         PolygonOptions rectOptions = new PolygonOptions()
-                .add(new LatLng(17.426084, 78.453917),
-                        new LatLng(17.426178, 78.454073),
-                        new LatLng(17.425977, 78.454150),
-                        new LatLng(17.425905, 78.453998)
-                )
+                .add(new LatLng(17.319037, 78.527645),
+                        new LatLng(17.319301, 78.527712),
+                        new LatLng(17.319268, 78.527892),
+                        new LatLng(17.319002, 78.527876)
+                        )
                 .strokeColor(Color.RED)
                 .fillColor(Color.argb(128, 255, 0, 0))
                 ;
+
+        //Yousee
+
+//        PolygonOptions rectOptions = new PolygonOptions()
+//                .add(new LatLng(17.426084, 78.453917),
+//                        new LatLng(17.426178, 78.454073),
+//                        new LatLng(17.425977, 78.454150),
+//                        new LatLng(17.425905, 78.453998)
+//                )
+//                .strokeColor(Color.RED)
+//                .fillColor(Color.argb(128, 255, 0, 0))
+//                ;
         //pochampally home
 //        PolygonOptions rectOptions = new PolygonOptions()
-//                .add(new LatLng(17.343039, 78.819420),
-//                        new LatLng(17.343073, 78.819514),
-//                        new LatLng(17.342953, 78.819593),
-//                        new LatLng(17.342871, 78.819406)
+//                .add(new LatLng(17.343694, 78.819272),
+//                        new LatLng(17.343444, 78.820225),
+//                        new LatLng(17.342682, 78.820006),
+//                        new LatLng(17.342902, 78.819088)
 //                )
 //                .strokeColor(Color.RED)
 //                .fillColor(Color.argb(128, 255, 0, 0))
@@ -710,6 +744,34 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         }
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        LogUtil.print("onDismiss()");
+        stopListeningToLocationUpdates();
+
+        if(onCancelled)
+        {
+            return;
+        }
+        else
+        {
+            DialogInterface.OnDismissListener parentFragment = (DialogInterface.OnDismissListener) this.getTargetFragment();
+            parentFragment.onDismiss(dialog);
+        }
+
+//        if (parentFragment instanceof DialogInterface.OnDismissListener) {
+//            LogUtil.print("if instance og fragment = Dismisslistner");
+//            ((DialogInterface.OnDismissListener) parentFragment).onDismiss(dialog);
+//        }
+    }
+
+    private boolean onCancelled = false;
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        onCancelled = true;
+        LogUtil.print("cancelling");
+        super.onCancel(dialog);
+    }
 
     /**
      * This interface must be implemented by activities that contain this

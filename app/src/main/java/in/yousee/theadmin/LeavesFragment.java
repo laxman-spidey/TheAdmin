@@ -28,7 +28,7 @@ import java.util.Calendar;
  * Use the {@link LeavesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LeavesFragment extends Fragment implements View.OnClickListener {
+public class LeavesFragment extends Fragment implements View.OnClickListener, OnResponseReceivedListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -157,10 +157,10 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
         ad.setPositiveButton(
                 button1String,
                 new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int arg1) {
-                        Toast.makeText(getActivity().getApplicationContext(),
-                                "You pressed proceed.",
-                                Toast.LENGTH_LONG).show();
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        LeavesMiddleware leavesMiddleware = new LeavesMiddleware(LeavesFragment.this);
+                        leavesMiddleware.applyLeave(fromDateEtxt.toString(), toDateEtxt.toString(), typeOfLeave.toString(),reasonForLeave.toString());
                     }
                 }
         );
@@ -170,7 +170,7 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
                 new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int arg1) {
                         Toast.makeText(getActivity().getApplicationContext(),
-                                "You pressed cancel button.",
+                                "Applying leave has been cancelled.",
                                 Toast.LENGTH_LONG).show();
                     }
                 }
@@ -233,6 +233,11 @@ public class LeavesFragment extends Fragment implements View.OnClickListener {
             toDateEtxt.setText(year + "-" + monthString +"-"+ day);
         }
     };
+
+    @Override
+    public void onResponseReceived(Object response, int requestCode, int resultCode) {
+
+    }
 
     /**
      * This interface must be implemented by activities that contain this

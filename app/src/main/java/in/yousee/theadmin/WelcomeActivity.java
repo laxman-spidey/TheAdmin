@@ -130,7 +130,7 @@ public class WelcomeActivity extends Activity implements OnResponseReceivedListe
 	}
 
 	@Override
-	public void onResponseReceived(Object response, int requestCode) {
+	public void onResponseReceived(Object response, int requestCode, int resultCode) {
 		finish();
 		if(requestCode == RequestCodes.NETWORK_REQUEST_SEND_GCM_ID)
 		{

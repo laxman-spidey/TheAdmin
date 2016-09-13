@@ -41,6 +41,8 @@
             android:layout_marginBottom="30dp"
             android:orientation="vertical"
             >
+            <!--android:drawableRight="@drawable/calendar"-->
+
             <EditText
                 android:id="@+id/fromdate"
                 android:layout_width="fill_parent"

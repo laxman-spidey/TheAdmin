@@ -43,6 +43,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.Bind;
 import in.yousee.theadmin.constants.RequestCodes;
+import in.yousee.theadmin.constants.ResultCodes;
 import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.util.LogUtil;
 
@@ -75,24 +76,36 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         startActivity(intent);
     }
 
-
-    public void onResponseReceived(Object response, int requestCode) {
+    @Override
+    public void onResponseReceived(Object response, int requestCode, int resultCode) {
         //showProgress(false);
         LogUtil.print("onressponse recieved " + requestCode + "  " + response.toString());
         if (requestCode == RequestCodes.NETWORK_REQUEST_VERIFY) {
-            if ((Boolean) response == true) {
+            if (resultCode == ResultCodes.NETWORK_VERIFY_PHONE_SUCCESS) {
                 promptOtp();
+                LogUtil.print("prompt otp");
                 //onLoginSuccess();
             } else {
                 mPhoneView.setError("Mobile number is not registered");
             }
         }
         if (requestCode == RequestCodes.NETWORK_REQUEST_OTP_SUBMIT) {
-            if ((Boolean) response == true) {
-                showMainActivity();
-                //onLoginSuccess();
-            } else {
-                mOtpView.setError("OTP invalid");
+            String msg = (String) response;
+            if(resultCode == ResultCodes.NETWORK_VALIDATE_OTP_SUCCESS)
+            {
+                LogUtil.print("success");
+                onLoginSuccess();
+                Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+            }
+            else if(resultCode == ResultCodes.NETWORK_VALIDATE_OTP_INVALID)
+            {
+                LogUtil.print("biscuit");
+                mOtpView.setText(msg);
+            }
+            else if(resultCode == ResultCodes.NETWORK_VALIDATE_OTP_UPDATE_FAILED)
+            {
+                LogUtil.print("biscuit 1");
+                Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -108,6 +121,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
 
     private void promptOtp() {
         mOtpLayout.setVisibility(View.VISIBLE);
+        mPhoneView.setEnabled(false);
 
     }
 
@@ -140,6 +154,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.phone);
         mPhoneView = (AutoCompleteTextView) findViewById(R.id.phone);
+        mPhoneView.setText("9505878984");
         populateAutoComplete();
 
         mOtpView = (EditText) findViewById(R.id.otp);
@@ -234,6 +249,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
             return;
         } else {
             //showProgress(true);
+            LogUtil.print("sending request");
             SessionHandler sessionHandler = new SessionHandler(this);
             try {
                 sessionHandler.verifyExec(phoneNumber, this);
@@ -256,7 +272,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
             mPhoneView.setError("Invalid Phone number");
             error = true;
         }
-        if (otp.length() != 4) {
+        if (otp.length() != 6) {
             mOtpView.setError("invlid OTP");
             error = true;
         }

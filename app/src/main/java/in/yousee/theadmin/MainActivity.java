@@ -18,7 +18,7 @@ import android.view.MenuItem;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, LocationFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, SwapsFragment.OnFragmentInteractionListener, LocationFragmentV2.OnFragmentInteractionListener  {
+        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, SwapsFragment.OnFragmentInteractionListener, LocationFragment.OnFragmentInteractionListener  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,10 +101,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.menu_attendance) {
             Fragment attendanceFragment = new AttendanceFragment();
             replaceFragmentOnMainContent(attendanceFragment , "My Attendance");
-
-
-//            Fragment locationFragment = new LocationFragment();
-//            replaceFragmentOnMainContent(locationFragment, "My location");
 
         } else if (id == R.id.menu_leave) {
             Fragment leavesFragment = new LeavesFragment();

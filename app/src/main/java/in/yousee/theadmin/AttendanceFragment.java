@@ -1,14 +1,29 @@
 package in.yousee.theadmin;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ListView;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import in.yousee.theadmin.model.AttendanceHistory;
+import in.yousee.theadmin.model.CustomException;
+import in.yousee.theadmin.util.LogUtil;
+import in.yousee.theadmin.util.Utils;
 
 
 /**
@@ -19,7 +34,7 @@ import android.widget.Button;
  * Use the {@link AttendanceFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AttendanceFragment extends Fragment {
+public class AttendanceFragment extends Fragment implements DialogInterface.OnDismissListener, OnResponseReceivedListener, View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -28,6 +43,15 @@ public class AttendanceFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private int checkType;
+
+    private EditText fromDateEtxt;
+    private EditText toDateEtxt;
+    ListView listView;
+
+    private Calendar fromDate;
+    private Calendar toDate;
 
     private OnFragmentInteractionListener mListener;
 
@@ -54,35 +78,54 @@ public class AttendanceFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public void onClick(View view) {
+        switch (view.getId())
+        {
+            case R.id.check_in:
+            {
+                showLocationDialog(LocationFragment.CHECK_IN);
+                break;
+            }
+            case R.id.check_out:
+            {
+                showLocationDialog(LocationFragment.CHECK_OUT);
+                break;
+            }
+            case R.id.fromdate:
+            {
+                showDatePickerDialog(fromDateListener, fromDate, true);
+                break;
+            }
+            case R.id.todate:
+            {
+                showDatePickerDialog(toDateListener, toDate, false);
+                break;
+            }
+            case R.id.getHistoryButton:
+            {
+                getAttendanceHistory();
+            }
         }
     }
+    DatePickerDialog.OnDateSetListener fromDateListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            fromDate.set(year,month,day);
+            fromDateEtxt.setText(Utils.getDisplayDateString(fromDate));
+        }
+    };
 
-    Button checkin;
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_attendance, container, false);
-        checkin = (Button) view.findViewById(R.id.checkin_button);
+    DatePickerDialog.OnDateSetListener toDateListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            toDate.set(year,month,day);
+            toDateEtxt.setText(Utils.getDisplayDateString(toDate));
+        }
+    };
 
-        checkin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //mapLayout.setVisibility(View.VISIBLE);
-                showDialog();
 
-            }
-        });
-        return view;
 
-    }
-
-    void showDialog() {
+    void showDatePickerDialog(DatePickerDialog.OnDateSetListener listener, Calendar selection, boolean fromto) {
         //mStackLevel++;
 
         // DialogFragment.show() will take care of adding the fragment
@@ -95,11 +138,144 @@ public class AttendanceFragment extends Fragment {
         }
         ft.addToBackStack(null);
 
-        // Create and show the dialog.
-        LocationFragment newFragment = LocationFragment.newInstance(LocationFragment.CHECK_IN);
+        Calendar calendar = Calendar.getInstance();
 
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this.getContext(),listener, selection.get(Calendar.YEAR), selection.get(Calendar.MONTH), selection.get(Calendar.DAY_OF_MONTH));
+        if(fromto == true)
+        {
+            datePickerDialog.getDatePicker().setMaxDate(toDate.getTimeInMillis());
+        }
+        else
+        {
+            datePickerDialog.getDatePicker().setMinDate(fromDate.getTimeInMillis());
+        }
+        datePickerDialog.show();
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
+
+    Button checkin;
+    Button checkout;
+    Button getDataButton;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_attendance, container, false);
+        checkin = (Button) view.findViewById(R.id.check_in);
+        checkout = (Button) view.findViewById(R.id.check_out);
+        getDataButton = (Button) view.findViewById(R.id.getHistoryButton);
+
+        checkin.setOnClickListener(this);
+        checkout.setOnClickListener(this);
+        getDataButton.setOnClickListener(this);
+
+        fromDateEtxt = (EditText) view.findViewById(R.id.fromdate);
+        fromDateEtxt.setInputType(InputType.TYPE_NULL);
+        fromDateEtxt.requestFocus();
+        fromDateEtxt.setOnClickListener(this);
+        fromDate = Utils.getFirstOfMonth();
+        fromDateEtxt.setText(Utils.getDisplayDateString(fromDate));
+
+        toDateEtxt = (EditText) view.findViewById(R.id.todate);
+        toDateEtxt.setInputType(InputType.TYPE_NULL);
+        toDateEtxt.setOnClickListener(this);
+        toDate = Calendar.getInstance();
+        toDateEtxt.setText(Utils.getDisplayDateString(toDate));
+        listView = (ListView) view.findViewById(R.id.attendanceListView);
+
+        getAttendanceHistory();
+
+
+
+        return view;
+
+    }
+
+
+
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+
+        LogUtil.print("onDismiss -  in parent fragment");
+
+        LocationMiddleware locationMiddleware = new LocationMiddleware(this);
+        try {
+            Date datetime = Calendar.getInstance().getTime();
+            //datetime.
+            String dateString = new SimpleDateFormat("yyyy-MM-dd").format(datetime);
+            String timeString = new SimpleDateFormat("HH:mm:ss").format(datetime);
+            locationMiddleware.checkin(dateString,"9505878984",timeString);
+        } catch (CustomException e) {
+            //TODO: show dialogbox
+        }
+
+
+    }
+
+
+    private void getAttendanceHistory()
+    {
+        AttendanceMiddleware attendanceMiddleware = new AttendanceMiddleware(this);
+        try {
+            attendanceMiddleware.getAttendanceHistoryData(fromDate, toDate);
+        } catch (CustomException e) {
+            e.printStackTrace();
+        }
+
+    }
+    @Override
+    public void onResponseReceived(Object response, int requestCode, int resultCode) {
+        LogUtil.print("onresponserecieved()");
+
+        if(this.isVisible())
+        {
+            AttendanceHistory attendanceHistory = (AttendanceHistory) response;
+            AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getActivity(), R.layout.attendance_row, attendanceHistory.historyRecords);
+            listView.setAdapter(attendanceAdapter);
+            Utils.setListViewHeightBasedOnChildren(listView);
+        }
+
+    }
+
+    void showLocationDialog(short checkin) {
+        //mStackLevel++;
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+
+        LocationFragment newFragment = null;
+
+        // Create and show the dialog.
+        if(checkin == LocationFragment.CHECK_IN)
+        {
+            newFragment = LocationFragment.newInstance(LocationFragment.CHECK_IN);
+        }
+        else if(checkin == LocationFragment.CHECK_OUT)
+        {
+            newFragment = LocationFragment.newInstance(LocationFragment.CHECK_OUT);
+        }
+        newFragment.setTargetFragment(this,1);
         newFragment.show(ft, "dialog");
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

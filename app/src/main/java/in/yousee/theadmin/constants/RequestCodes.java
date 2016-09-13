@@ -10,6 +10,9 @@ public class RequestCodes
 
 
 	public static final int NETWORK_REQUEST_LOGIN = 200;
+	public static final int NETWORK_REQUEST_DASHBOARD = 201;
+	public static final int NETWORK_REQUEST_ATTENDANCE_HISTORY = 202;
+	public static final int NETWORK_REQUEST_FUTURE_ROASTER = 202;
 
 	public static final int NETWORK_REQUEST_CHECKIN = 210;
 	public static final int NETWORK_REQUEST_OPPORTUNITY_SCHEDULE_LIST= 202;
@@ -23,5 +26,8 @@ public class RequestCodes
 	public static final int NETWORK_REQUEST_VERIFY = 207;
 	public static final int NETWORK_REQUEST_OTP_SUBMIT = 208;
 	public static final int NETWORK_REQUEST_GET_SUMMARY = 209;
+
+	public static final int ACTIVITY_LEAVE_APPLY = 211;
+	public static final int ACTIVITY_SWAP_DATE = 212;
 
 }
