@@ -4,6 +4,7 @@ import in.yousee.theadmin.constants.RequestCodes;
 import in.yousee.theadmin.constants.ServerFiles;
 import in.yousee.theadmin.model.AttendanceHistory;
 import in.yousee.theadmin.model.CustomException;
+import in.yousee.theadmin.model.Response;
 import in.yousee.theadmin.util.LogUtil;
 
 /**
@@ -41,12 +42,12 @@ public class DashboardMiddleware extends Middleware {
     }
 
     @Override
-    public void serveResponse(String result, int requestCode, int resultCode) {
-        LogUtil.print("serving response - "+requestCode);
-        if(requestCode == RequestCodes.NETWORK_REQUEST_DASHBOARD)
+    public void serveResponse(Response response) {
+        LogUtil.print("serving response - "+response.requestCode);
+        if(response.requestCode == RequestCodes.NETWORK_REQUEST_DASHBOARD)
         {
-            AttendanceHistory attendanceHistory = new AttendanceHistory(result);
-            listener.onResponseReceived(attendanceHistory, requestCode, resultCode);
+            AttendanceHistory attendanceHistory = new AttendanceHistory(response.responseString);
+            listener.onResponseReceived(attendanceHistory, response.requestCode, response.resultCode);
         }
 
     }

@@ -5,6 +5,7 @@ import java.util.Date;
 import in.yousee.theadmin.constants.RequestCodes;
 import in.yousee.theadmin.constants.ServerFiles;
 import in.yousee.theadmin.model.CustomException;
+import in.yousee.theadmin.model.Response;
 
 /**
  * Created by Laxman on 25-07-2016.
@@ -42,7 +43,7 @@ public class LocationMiddleware extends Middleware{
     }
 
     @Override
-    public void serveResponse(String result, int requestCode, int resultCode) {
+    public void serveResponse(Response response) {
 
     }
 }

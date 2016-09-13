@@ -74,6 +74,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         Intent intent = new Intent();
         intent.setClass(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -82,8 +83,8 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         LogUtil.print("onressponse recieved " + requestCode + "  " + response.toString());
         if (requestCode == RequestCodes.NETWORK_REQUEST_VERIFY) {
             if (resultCode == ResultCodes.NETWORK_VERIFY_PHONE_SUCCESS) {
-                promptOtp();
                 LogUtil.print("prompt otp");
+                promptOtp();
                 //onLoginSuccess();
             } else {
                 mPhoneView.setError("Mobile number is not registered");
@@ -117,10 +118,12 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         Intent intent = new Intent();
         intent.setClass(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void promptOtp() {
         mOtpLayout.setVisibility(View.VISIBLE);
+        mOtpView.setText("123456");
         mPhoneView.setEnabled(false);
 
     }

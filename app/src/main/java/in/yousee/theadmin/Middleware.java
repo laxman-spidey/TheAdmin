@@ -7,6 +7,7 @@ import android.content.Context;
 
 import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.model.Request;
+import in.yousee.theadmin.model.Response;
 import in.yousee.theadmin.util.LogUtil;
 
 public abstract class Middleware
@@ -78,7 +79,7 @@ public abstract class Middleware
 	}
 
 
-	public abstract void serveResponse(String result, int requestCode, int resultCode);
+	public abstract void serveResponse(Response response);
 
 	public Context getContext()
 	{

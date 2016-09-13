@@ -14,6 +14,7 @@ import in.yousee.theadmin.constants.RequestCodes;
 import in.yousee.theadmin.constants.ResultCodes;
 import in.yousee.theadmin.constants.ServerFiles;
 import in.yousee.theadmin.model.CustomException;
+import in.yousee.theadmin.model.Response;
 import in.yousee.theadmin.util.LogUtil;
 
 public class SessionHandler extends Middleware
@@ -286,25 +287,25 @@ public class SessionHandler extends Middleware
 	}
 
 	@Override
-	public void serveResponse(String result, int requestCode, int resultCode)
+	public void serveResponse(Response response)
 	{
 		//this.responseListner.onResponseRecieved(result, requestCode);
 		//this.loginFeatureClient.onLoginSuccess();
 		//Log.i(SESSION_DEBUG_TAG, result);
 
-		LogUtil.print("serving response ==---- " + requestCode);
+		LogUtil.print("serving response ==---- " + response.requestCode);
 
-		if (requestCode == RequestCodes.NETWORK_REQUEST_VERIFY)
+		if (response.requestCode == RequestCodes.NETWORK_REQUEST_VERIFY)
 		{
 			
 			//setPhoneNumber(this.phone);
-			LogUtil.print("request success -- " + result);
+			LogUtil.print("request success -- " + response.responseString);
 			try {
-				JSONObject json = new JSONObject(result);
+				JSONObject json = new JSONObject(response.responseString);
 
 				String msg = json.getString("msg");
 				LogUtil.print(msg);
-				listener.onResponseReceived(msg,requestCode, resultCode);
+				listener.onResponseReceived(msg,response.requestCode, response.resultCode);
 				//int statusCode = json.getInt("status_code");
 //				if (statusCode == 1) {
 //					LogUtil.print("success -------" );
@@ -320,23 +321,26 @@ public class SessionHandler extends Middleware
 				e.printStackTrace();
 			}
 		}
-		else if(requestCode == RequestCodes.NETWORK_REQUEST_OTP_SUBMIT)
+		else if(response.requestCode == RequestCodes.NETWORK_REQUEST_OTP_SUBMIT)
 		{
 			LogUtil.print("OTP submit");
 			JSONObject json;
 			int statusCode = 0;
 			String sessionId = "";
 			String msg = "";
+			String userDataString = "";
 			try
 			{
-				json = new JSONObject(result);
+				json = new JSONObject(response.responseString);
 				//statusCode = json.getInt("status_code");
 				msg = json.getString(TAG_RESPONSE_MSG);
+				//if(resultCode == )
+
 				LogUtil.print(msg);
 			} catch (Exception e) {
 				LogUtil.print(e.getMessage());
 			}
-			listener.onResponseReceived(msg,requestCode,resultCode);
+			listener.onResponseReceived(msg,response.requestCode,response.resultCode);
 		}
 		/*
 		else if (requestCode == RequestCodes.NETWORK_REQUEST_LOGOUT)
