@@ -15,6 +15,7 @@ import in.yousee.theadmin.constants.ResultCodes;
 import in.yousee.theadmin.constants.ServerFiles;
 import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.model.Response;
+import in.yousee.theadmin.model.UserData;
 import in.yousee.theadmin.util.LogUtil;
 
 public class SessionHandler extends Middleware
@@ -28,6 +29,7 @@ public class SessionHandler extends Middleware
 	private OnResponseReceivedListener responseListener;
 	private static final String SESSION_DEBUG_TAG = "session_tag";
 	private static final String TAG_RESPONSE_MSG= "msg";
+	public static final String TAG_USERDATA = "authorization";
 
 	public static boolean isLoggedIn = false;
 	private String username = "";
@@ -255,7 +257,6 @@ public class SessionHandler extends Middleware
 		request.put("otp", otp);
 		request.setRequestCode(RequestCodes.NETWORK_REQUEST_OTP_SUBMIT);
 		setPhoneNumber(phone);
-		this.loginFeatureClient = loginFeatureClient;
 		this.phone = phone;
 		sendRequest();
 	}
@@ -306,17 +307,6 @@ public class SessionHandler extends Middleware
 				String msg = json.getString("msg");
 				LogUtil.print(msg);
 				listener.onResponseReceived(msg,response.requestCode, response.resultCode);
-				//int statusCode = json.getInt("status_code");
-//				if (statusCode == 1) {
-//					LogUtil.print("success -------" );
-//					responseListener.onResponseReceived(new Boolean(true), requestCode);
-//					return;
-//				}
-//				else
-//				{
-//					responseListener.onResponseReceived(new Boolean(false), requestCode);
-//
-//				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -329,18 +319,28 @@ public class SessionHandler extends Middleware
 			String sessionId = "";
 			String msg = "";
 			String userDataString = "";
+			UserData userData = null;
 			try
 			{
 				json = new JSONObject(response.responseString);
 				//statusCode = json.getInt("status_code");
 				msg = json.getString(TAG_RESPONSE_MSG);
-				//if(resultCode == )
-
+				if(!json.isNull(TAG_USERDATA))
+				{
+					userDataString = json.getString(TAG_USERDATA);
+					userData = new UserData(userDataString);
+					LogUtil.print("user data -- ");
+					listener.onResponseReceived(userData,response.requestCode,response.resultCode);
+				}
+				else
+				{
+					listener.onResponseReceived(msg,response.requestCode,response.resultCode);
+				}
 				LogUtil.print(msg);
 			} catch (Exception e) {
 				LogUtil.print(e.getMessage());
 			}
-			listener.onResponseReceived(msg,response.requestCode,response.resultCode);
+
 		}
 		/*
 		else if (requestCode == RequestCodes.NETWORK_REQUEST_LOGOUT)

@@ -45,11 +45,12 @@ import butterknife.Bind;
 import in.yousee.theadmin.constants.RequestCodes;
 import in.yousee.theadmin.constants.ResultCodes;
 import in.yousee.theadmin.model.CustomException;
+import in.yousee.theadmin.model.UserData;
 import in.yousee.theadmin.util.LogUtil;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-public class LoginActivity extends AppCompatActivity implements OnResponseReceivedListener, UsesLoginFeature {
+public class LoginActivity extends AppCompatActivity implements OnResponseReceivedListener {
 
     private static final int REQUEST_READ_CONTACTS = 0;
     /**
@@ -63,15 +64,11 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
     //}
 
 
-    @Override
-    public void onLoginFailed() {
-        LogUtil.print("login failed");
-        mOtpView.setError("invalid OTP");
-    }
 
-    public void onLoginSuccess() {
+    public void onLoginSuccess(UserData userData) {
         LogUtil.print("in Show main activity");
         Intent intent = new Intent();
+        intent.putExtra(SessionHandler.TAG_USERDATA, userData.string);
         intent.setClass(this, MainActivity.class);
         startActivity(intent);
         finish();
@@ -91,20 +88,22 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
             }
         }
         if (requestCode == RequestCodes.NETWORK_REQUEST_OTP_SUBMIT) {
-            String msg = (String) response;
             if(resultCode == ResultCodes.NETWORK_VALIDATE_OTP_SUCCESS)
             {
+                UserData userData = (UserData) response;
                 LogUtil.print("success");
-                onLoginSuccess();
-                Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+                onLoginSuccess(userData);
+                Toast.makeText(this,"Logging in..",Toast.LENGTH_SHORT).show();
             }
             else if(resultCode == ResultCodes.NETWORK_VALIDATE_OTP_INVALID)
             {
+                String msg = (String) response;
                 LogUtil.print("biscuit");
                 mOtpView.setText(msg);
             }
             else if(resultCode == ResultCodes.NETWORK_VALIDATE_OTP_UPDATE_FAILED)
             {
+                String msg = (String) response;
                 LogUtil.print("biscuit 1");
                 Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
             }

@@ -15,11 +15,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import in.yousee.theadmin.model.UserData;
+import in.yousee.theadmin.util.LogUtil;
 
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, SwapsFragment.OnFragmentInteractionListener, LocationFragment.OnFragmentInteractionListener  {
 
+    TextView nameView;
+    TextView phoneView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,12 +50,33 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        instantiateViews(navigationView);
 
         Fragment dashboardFragment = new DashboardFragment();
         replaceFragmentOnMainContent(dashboardFragment, "JeevanDaan");
     }
 
 
+    private void instantiateViews(NavigationView navigationView)
+    {
+        UserData userData = retrieveUserDataFromBundle(getIntent().getExtras());
+        LogUtil.print(userData.toString());
+
+        View view = navigationView.getHeaderView(0);
+        nameView = (TextView) view.findViewById(R.id.navHeaderText);
+        phoneView = (TextView) view.findViewById(R.id.navSubHeaderText);
+
+        nameView.setText(userData.name);
+        phoneView.setText(userData.phone);
+
+
+    }
+    private UserData retrieveUserDataFromBundle(Bundle bundle)
+    {
+        String userString = bundle.getString(SessionHandler.TAG_USERDATA);
+        LogUtil.print(userString);
+        return new UserData(userString);
+    }
     public void replaceFragmentOnMainContent(Fragment fragment, String title) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_view, fragment).commit();
