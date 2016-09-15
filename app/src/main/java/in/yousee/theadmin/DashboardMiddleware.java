@@ -5,6 +5,7 @@ import in.yousee.theadmin.constants.ServerFiles;
 import in.yousee.theadmin.model.AttendanceHistory;
 import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.model.Response;
+import in.yousee.theadmin.model.RoasterData;
 import in.yousee.theadmin.util.LogUtil;
 
 /**
@@ -22,9 +23,9 @@ public class DashboardMiddleware extends Middleware {
 
     public void getDashboardData() throws CustomException
     {
-        request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.GET_DASHBOARD_DATA);
+        request.setUrl(NetworkConnectionHandler.DOMAIN_2 + ServerFiles.GET_DASHBOARD_DATA);
         setRequestCode(RequestCodes.NETWORK_REQUEST_DASHBOARD);
-        request.put("staffId", "6");
+        request.put("staffId", "1");
         request.put("limit", "3");
         LogUtil.print("request code---"+request.getRequestCode());
         sendRequest();
@@ -35,8 +36,8 @@ public class DashboardMiddleware extends Middleware {
 
         request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.GET_FUTURE_ROASTER);
         setRequestCode(RequestCodes.NETWORK_REQUEST_FUTURE_ROASTER);
-        request.put("staffId", "6");
-        request.put("limit", "3");
+        request.put("staffId", "1");
+        //request.put("limit", "3");
         LogUtil.print("request code---"+request.getRequestCode());
         sendRequest();
     }
@@ -46,8 +47,8 @@ public class DashboardMiddleware extends Middleware {
         LogUtil.print("serving response - "+response.requestCode);
         if(response.requestCode == RequestCodes.NETWORK_REQUEST_DASHBOARD)
         {
-            AttendanceHistory attendanceHistory = new AttendanceHistory(response.responseString);
-            listener.onResponseReceived(attendanceHistory, response.requestCode, response.resultCode);
+            RoasterData roasterData= new RoasterData(response.responseString);
+            listener.onResponseReceived(roasterData, response.requestCode, response.resultCode);
         }
 
     }

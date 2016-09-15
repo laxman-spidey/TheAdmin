@@ -35,6 +35,7 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, Response>
 	// web service URL
 	//public static final String DOMAIN = "https://jeevandaan-mittu-spidey.c9users.io/index.php";
 	public static final String DOMAIN = "https://phpmysql-mittu-spidey.c9users.io/TheAdmin-server/index.php/";
+	public static final String DOMAIN_2 = "https://lamp-stack-rashmitha.c9users.io/TheAdmin-server/index.php/";
 	//public static  String DOMAIN;
 	// DownloadWebpageTask downloadwebContent;
 	Request postRequest;

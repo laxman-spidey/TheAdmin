@@ -89,8 +89,8 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
         checkinButton.setOnClickListener(this);
         checkoutButton.setOnClickListener(this);
 
-        //getAttendanceHistory();
-        onResponseReceived(null, 0, 0);
+        getAttendanceHistory();
+        //onResponseReceived(null, 0, 0);
         return view;
     }
 
@@ -183,7 +183,8 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
 //            AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getActivity(), R.layout.attendance_row, attendanceHistory.historyRecords);
 //            listView.setAdapter(attendanceAdapter);
             LogUtil.print("roaster----------");
-            RoasterAdapter roasterAdapter = new RoasterAdapter(this.getActivity(), R.layout.attendance_row, RoasterData.getDummyData().roasterRecords);
+            RoasterData data = (RoasterData)response;
+            RoasterAdapter roasterAdapter = new RoasterAdapter(this.getActivity(), R.layout.attendance_row, data.roasterRecords);
             listView.setAdapter(roasterAdapter);
             Utils.setListViewHeightBasedOnChildren(listView);
 

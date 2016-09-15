@@ -1,5 +1,6 @@
 package in.yousee.theadmin.model;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,8 +13,11 @@ import in.yousee.theadmin.util.LogUtil;
  */
 public class RoasterData extends ModelObject {
 
-    public ArrayList<Record> roasterRecords = new ArrayList<>();
+    public static final String TAG_COUNT = "count";
+    public static final String TAG_ROASTER_DETAILS = "roasterDetails";
 
+    public int count;
+    public ArrayList<Record> roasterRecords;
 
     public RoasterData(String string) {
         super(string);
@@ -29,7 +33,26 @@ public class RoasterData extends ModelObject {
 
     @Override
     public void parseJSON(JSONObject JSONObject) {
+        JSONArray array;
+        try
+        {
+            this.count = JSONObject.getInt(TAG_COUNT);
+            if(count > 0)
+            {
+                this.roasterRecords = new ArrayList<>();
+                array = JSONObject.getJSONArray(TAG_ROASTER_DETAILS);
+                for(int i=0; i< array.length(); i++)
+                {
+                    JSONObject item = (JSONObject) array.get(i);
+                    this.roasterRecords.add(new Record(item));
+                    LogUtil.print("adding "+i);
+                }
+            }
 
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public static RoasterData getDummyData()
@@ -61,6 +84,7 @@ public class RoasterData extends ModelObject {
         public String shiftTimeOut;
         public String timeIn;
         public String timeOut;
+        public String leaveStatus;
 
         public static final String TAG_ROASTER_ID = "roasterId";
         public static final String TAG_DATE = "date";
@@ -71,11 +95,16 @@ public class RoasterData extends ModelObject {
         public static final String TAG_SHIFT_TIME_OUT = "shiftTimeOut";
         public static final String TAG_TIME_IN = "timeIn";
         public static final String TAG_TIME_OUT = "timeOut";
+        public static final String TAG_LEAVE_STATUS = "leaveStatus";
 
 
         public Record(String string) {
             super(string);
         }
+        public Record(JSONObject obj) {
+            parseJSON(obj);
+        }
+
         public Record()
         {
 
@@ -87,13 +116,14 @@ public class RoasterData extends ModelObject {
             {
                 this.roasterId = JSONObject.getInt(TAG_ROASTER_ID);
                 this.date = JSONObject.getString(TAG_DATE);
-                this.shiftId = JSONObject.getString(TAG_SHIFT_ID);
+                    this.shiftId = JSONObject.getString(TAG_SHIFT_ID);
                 this.shift = JSONObject.getString(TAG_SHIFT);
                 this.shiftDesc = JSONObject.getString(TAG_DESCRIPTION);
                 this.shiftTimeIn = JSONObject.getString(TAG_SHIFT_TIME_IN);
                 this.shiftTimeOut = JSONObject.getString(TAG_SHIFT_TIME_OUT);
                 this.timeIn = JSONObject.getString(TAG_TIME_IN);
                 this.timeOut = JSONObject.getString(TAG_TIME_OUT);
+                this.leaveStatus = JSONObject.getString(TAG_LEAVE_STATUS);
 
             } catch (JSONException e)
             {
