@@ -1,8 +1,11 @@
 package in.yousee.theadmin.model;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import in.yousee.theadmin.util.LogUtil;
 
 /**
  * Created by mittu on 24-08-2016.
@@ -48,12 +51,27 @@ public class RoasterData extends ModelObject {
 
     public static class Record extends ModelObject
     {
+
         public int roasterId;
         public String date;
         public String shiftId;
+        public String shift;
         public String shiftDesc;
+        public String shiftTimeIn;
+        public String shiftTimeOut;
         public String timeIn;
         public String timeOut;
+
+        public static final String TAG_ROASTER_ID = "roasterId";
+        public static final String TAG_DATE = "date";
+        public static final String TAG_SHIFT_ID = "shiftId";
+        public static final String TAG_SHIFT = "shift";
+        public static final String TAG_DESCRIPTION = "description";
+        public static final String TAG_SHIFT_TIME_IN = "shiftTimeIn";
+        public static final String TAG_SHIFT_TIME_OUT = "shiftTimeOut";
+        public static final String TAG_TIME_IN = "timeIn";
+        public static final String TAG_TIME_OUT = "timeOut";
+
 
         public Record(String string) {
             super(string);
@@ -65,7 +83,23 @@ public class RoasterData extends ModelObject {
 
         @Override
         public void parseJSON(JSONObject JSONObject) {
+            try
+            {
+                this.roasterId = JSONObject.getInt(TAG_ROASTER_ID);
+                this.date = JSONObject.getString(TAG_DATE);
+                this.shiftId = JSONObject.getString(TAG_SHIFT_ID);
+                this.shift = JSONObject.getString(TAG_SHIFT);
+                this.shiftDesc = JSONObject.getString(TAG_DESCRIPTION);
+                this.shiftTimeIn = JSONObject.getString(TAG_SHIFT_TIME_IN);
+                this.shiftTimeOut = JSONObject.getString(TAG_SHIFT_TIME_OUT);
+                this.timeIn = JSONObject.getString(TAG_TIME_IN);
+                this.timeOut = JSONObject.getString(TAG_TIME_OUT);
 
+            } catch (JSONException e)
+            {
+                LogUtil.print("parse failed");
+                e.printStackTrace();
+            }
         }
     }
 }

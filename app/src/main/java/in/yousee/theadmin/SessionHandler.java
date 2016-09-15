@@ -29,7 +29,7 @@ public class SessionHandler extends Middleware
 	private OnResponseReceivedListener responseListener;
 	private static final String SESSION_DEBUG_TAG = "session_tag";
 	private static final String TAG_RESPONSE_MSG= "msg";
-	public static final String TAG_USERDATA = "authorization";
+	public static final String TAG_USERDATA = "userdata";
 
 	public static boolean isLoggedIn = false;
 	private String username = "";
@@ -323,9 +323,7 @@ public class SessionHandler extends Middleware
 			try
 			{
 				json = new JSONObject(response.responseString);
-				//statusCode = json.getInt("status_code");
-				msg = json.getString(TAG_RESPONSE_MSG);
-				if(!json.isNull(TAG_USERDATA))
+				if(response.resultCode == ResultCodes.LOGIN_SUCCESS)
 				{
 					userDataString = json.getString(TAG_USERDATA);
 					userData = new UserData(userDataString);
@@ -334,9 +332,10 @@ public class SessionHandler extends Middleware
 				}
 				else
 				{
+					msg = json.getString(TAG_RESPONSE_MSG);
 					listener.onResponseReceived(msg,response.requestCode,response.resultCode);
+
 				}
-				LogUtil.print(msg);
 			} catch (Exception e) {
 				LogUtil.print(e.getMessage());
 			}

@@ -79,7 +79,8 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         //showProgress(false);
         LogUtil.print("onressponse recieved " + requestCode + "  " + response.toString());
         if (requestCode == RequestCodes.NETWORK_REQUEST_VERIFY) {
-            if (resultCode == ResultCodes.NETWORK_VERIFY_PHONE_SUCCESS) {
+            LogUtil.print("result code : "+resultCode +" = "+ ResultCodes.CHECK_AUTHORIZATION_SUCCESS);
+            if (resultCode == ResultCodes.CHECK_AUTHORIZATION_SUCCESS) {
                 LogUtil.print("prompt otp");
                 promptOtp();
                 //onLoginSuccess();
@@ -88,20 +89,20 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
             }
         }
         if (requestCode == RequestCodes.NETWORK_REQUEST_OTP_SUBMIT) {
-            if(resultCode == ResultCodes.NETWORK_VALIDATE_OTP_SUCCESS)
+            if(resultCode == ResultCodes.LOGIN_SUCCESS)
             {
                 UserData userData = (UserData) response;
                 LogUtil.print("success");
                 onLoginSuccess(userData);
                 Toast.makeText(this,"Logging in..",Toast.LENGTH_SHORT).show();
             }
-            else if(resultCode == ResultCodes.NETWORK_VALIDATE_OTP_INVALID)
+            else if(resultCode == ResultCodes.INVALID_OTP)
             {
                 String msg = (String) response;
                 LogUtil.print("biscuit");
                 mOtpView.setText(msg);
             }
-            else if(resultCode == ResultCodes.NETWORK_VALIDATE_OTP_UPDATE_FAILED)
+            else if(resultCode == ResultCodes.VALIDATE_OTP_STATUS_UPDATE_FAIL)
             {
                 String msg = (String) response;
                 LogUtil.print("biscuit 1");
