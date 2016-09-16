@@ -57,9 +57,9 @@ public class WelcomeActivity extends Activity implements OnResponseReceivedListe
 
 	public void showLoginActivity()
 	{
-		Log.i("tag", "in Show menu activity");
+		Log.i("tag", "in Show login activity");
 		Intent intent = new Intent();
-		intent.putExtra("sessionId", sessionId);
+		//intent.putExtra("sessionId", sessionId);
 		intent.setClass(this, LoginActivity.class);
 		startActivity(intent);
 	}
@@ -105,9 +105,11 @@ public class WelcomeActivity extends Activity implements OnResponseReceivedListe
 				} finally
 				{
 					finish();
-					if(SessionHandler.isSessionIdExists(WelcomeActivity.this))
+					if(SessionHandler.isUserDataExists(WelcomeActivity.this))
 					{
+
 						showMainActivity();
+
 					}
 					else {
 						showLoginActivity();
@@ -124,7 +126,8 @@ public class WelcomeActivity extends Activity implements OnResponseReceivedListe
 
 		Log.i("tag", "in Show menu activity");
 		Intent intent = new Intent();
-		intent.putExtra("sessionId", sessionId);
+		String userDataString = SessionHandler.getUserData(this);
+		intent.putExtra(SessionHandler.TAG_USERDATA, userDataString);
 		intent.setClass(this, MainActivity.class);
 		startActivity(intent);
 	}

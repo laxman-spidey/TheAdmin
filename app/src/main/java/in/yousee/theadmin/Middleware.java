@@ -47,13 +47,7 @@ public abstract class Middleware
 			addKeyValue(TAG_PHONE_NUMBER, "" + SessionHandler.getPhoneNumber(getContext()));
 		}
 	}
-	protected void addUserIdToPost()
-	{
-		if (SessionHandler.isSessionIdExists(getContext()))
-		{
-			addKeyValue(TAG_USER_ID, "" + SessionHandler.getUserId(getContext()));
-		}
-	}
+	
 	protected void addSessionIdToPost()
 	{
 		if (SessionHandler.isSessionIdExists(getContext()))

@@ -42,4 +42,9 @@ public class UserData extends ModelObject {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public String toString() {
+        return string;
+    }
 }
