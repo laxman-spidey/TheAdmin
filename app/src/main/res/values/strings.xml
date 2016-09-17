@@ -8,6 +8,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_main">Admin</string>
+    <string name="title_activity_retry">Retry</string>
     <string name="permission_rationale" />
 
     <string name="hello_blank_fragment">Leaves fragment</string>

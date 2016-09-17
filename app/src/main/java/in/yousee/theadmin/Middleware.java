@@ -69,6 +69,10 @@ public abstract class Middleware
 			connectionHandler.execute(request);
 
 		}
+		else
+		{
+			throw new CustomException(CustomException.ERROR_NETWORK_NOT_FOUND);
+		}
 
 	}
 

@@ -21,17 +21,16 @@ public class DashboardMiddleware extends Middleware {
 
     }
 
-    public void getDashboardData() throws CustomException
+    public void getDashboardData()
     {
         request.setUrl(NetworkConnectionHandler.DOMAIN_2 + ServerFiles.GET_DASHBOARD_DATA);
         setRequestCode(RequestCodes.NETWORK_REQUEST_DASHBOARD);
         request.put("staffId", "1");
         request.put("limit", "3");
         LogUtil.print("request code---"+request.getRequestCode());
-        sendRequest();
     }
 
-    public void getFutureRoaster(int staffId, int limit) throws CustomException
+    public void getFutureRoaster(int staffId, int limit)
     {
 
         request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.GET_FUTURE_ROASTER);
@@ -39,7 +38,6 @@ public class DashboardMiddleware extends Middleware {
         request.put("staffId", "1");
         //request.put("limit", "3");
         LogUtil.print("request code---"+request.getRequestCode());
-        sendRequest();
     }
 
     @Override

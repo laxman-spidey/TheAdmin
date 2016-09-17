@@ -1,5 +1,6 @@
 package in.yousee.theadmin;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -589,27 +590,27 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 //                .fillColor(Color.argb(128, 255, 0, 0))
 //                ;
 //        //meerpet
-        PolygonOptions rectOptions = new PolygonOptions()
-                .add(new LatLng(17.319037, 78.527645),
-                        new LatLng(17.319301, 78.527712),
-                        new LatLng(17.319268, 78.527892),
-                        new LatLng(17.319002, 78.527876)
-                        )
-                .strokeColor(Color.RED)
-                .fillColor(Color.argb(128, 255, 0, 0))
-                ;
-
-        //Yousee
-
 //        PolygonOptions rectOptions = new PolygonOptions()
-//                .add(new LatLng(17.426084, 78.453917),
-//                        new LatLng(17.426178, 78.454073),
-//                        new LatLng(17.425977, 78.454150),
-//                        new LatLng(17.425905, 78.453998)
-//                )
+//                .add(new LatLng(17.319037, 78.527645),
+//                        new LatLng(17.319301, 78.527712),
+//                        new LatLng(17.319268, 78.527892),
+//                        new LatLng(17.319002, 78.527876)
+//                        )
 //                .strokeColor(Color.RED)
 //                .fillColor(Color.argb(128, 255, 0, 0))
 //                ;
+
+        //Yousee
+
+        PolygonOptions rectOptions = new PolygonOptions()
+                .add(new LatLng(17.426084, 78.453917),
+                        new LatLng(17.426178, 78.454073),
+                        new LatLng(17.425977, 78.454150),
+                        new LatLng(17.425905, 78.453998)
+                )
+                .strokeColor(Color.RED)
+                .fillColor(Color.argb(128, 255, 0, 0))
+                ;
         //pochampally home
 //        PolygonOptions rectOptions = new PolygonOptions()
 //                .add(new LatLng(17.343694, 78.819272),
@@ -745,7 +746,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     }
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
+    public void onDismiss(DialogInterface dialogInterface) {
         LogUtil.print("onDismiss()");
         stopListeningToLocationUpdates();
 
@@ -756,7 +757,11 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         else
         {
             DialogInterface.OnDismissListener parentFragment = (DialogInterface.OnDismissListener) this.getTargetFragment();
-            parentFragment.onDismiss(dialog);
+            parentFragment.onDismiss(dialogInterface);
+        }
+        Dialog dialog = this.getDialog();
+        if (this.getDialog()!= null && this.getDialog().isShowing()) {
+            this.getDialog().dismiss();
         }
 
 //        if (parentFragment instanceof DialogInterface.OnDismissListener) {

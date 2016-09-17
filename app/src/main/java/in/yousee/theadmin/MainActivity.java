@@ -17,12 +17,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.model.UserData;
 import in.yousee.theadmin.util.LogUtil;
 
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, SwapsFragment.OnFragmentInteractionListener, LocationFragment.OnFragmentInteractionListener  {
+public class MainActivity extends YouseeCustomActivity
+        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, SwapsFragment.OnFragmentInteractionListener, LocationFragment.OnFragmentInteractionListener {
 
     TextView nameView;
     TextView phoneView;

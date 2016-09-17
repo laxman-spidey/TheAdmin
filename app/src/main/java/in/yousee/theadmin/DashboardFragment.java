@@ -31,7 +31,7 @@ import in.yousee.theadmin.util.Utils;
  * Use the {@link DashboardFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DashboardFragment extends Fragment  implements View.OnClickListener, DialogInterface.OnDismissListener, OnResponseReceivedListener {
+public class DashboardFragment extends CustomFragment  implements View.OnClickListener, DialogInterface.OnDismissListener, OnResponseReceivedListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -97,12 +97,9 @@ public class DashboardFragment extends Fragment  implements View.OnClickListener
     private void getAttendanceHistory()
     {
         DashboardMiddleware dashboardMiddleware = new DashboardMiddleware(this);
-        try {
-            dashboardMiddleware.getDashboardData();
-        } catch (CustomException e) {
-            e.printStackTrace();
-        }
-
+        dashboardMiddleware.getDashboardData();
+        requestSenderMiddleware = dashboardMiddleware;
+        sendRequest();
     }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
