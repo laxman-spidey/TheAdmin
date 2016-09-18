@@ -1,11 +1,16 @@
 package in.yousee.theadmin;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
+import android.view.View;
 import android.view.Window;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -24,20 +29,44 @@ public class YouseeCustomActivity extends AppCompatActivity implements CustomFra
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        setWindowProgressBar();
         super.onCreate(savedInstanceState);
     }
+    ProgressBar progressBar;
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        //progressBar.setVisibility(ProgressBar.VISIBLE);
+    }
+//    @Override
+//    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
+//    {
+//
+//        if(parent != null)
+//        {
+//            LogUtil.print("--------------------------------------------------------------setting progress----------------------------------------------------------------------------------------------------------");
+//            progressBar = (ProgressBar) findViewById(R.id.toolbarProgress);
+//            progressBar.setIndeterminate(true);
+//            progressBar.setVisibility(ProgressBar.VISIBLE);
+//        }
+//        else
+//        {
+//            LogUtil.print("--------------------------------------------------------------buiscuit aindhi rooo----------------------------------------------------------------------------------------------------------");
+//        }
+//        return parent;
+//    }
+
     protected void setWindowProgressBar()
     {
+
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setSupportProgressBarIndeterminate(true);
-        setSupportProgressBarIndeterminateVisibility(false);
+        setSupportProgressBarIndeterminateVisibility(true);
     }
     public boolean refresh = false;
 
     protected Middleware requestSenderMiddleware;
-
-
 
     public void sendRequest()
     {
@@ -80,7 +109,6 @@ public class YouseeCustomActivity extends AppCompatActivity implements CustomFra
 
             }
         }
-        setSupportProgressBarIndeterminateVisibility(false);
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -125,6 +153,24 @@ public class YouseeCustomActivity extends AppCompatActivity implements CustomFra
         intent.setClass(this, RetryActivity.class);
         intent.putExtra("errorMsg", msg);
         startActivityForResult(intent, RequestCodes.ACTIVITY_REQUEST_RETRY);
+    }
+
+    @Override
+    public void setProgressVisible(boolean visible)
+    {
+        progressBar = (ProgressBar) findViewById(R.id.toolbarProgress);
+        progressBar.setIndeterminate(true);
+        if(visible)
+        {
+            LogUtil.print("progressbar - visible");
+            progressBar.setVisibility(ProgressBar.VISIBLE);
+        }
+        else
+        {
+            LogUtil.print("progressbar - gone");
+            progressBar.setVisibility(ProgressBar.GONE);
+        }
+
     }
 
 }

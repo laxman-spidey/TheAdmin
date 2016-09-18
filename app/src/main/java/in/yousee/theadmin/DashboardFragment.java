@@ -174,7 +174,7 @@ public class DashboardFragment extends CustomFragment  implements View.OnClickLi
     @Override
     public void onResponseReceived(Object response, int requestCode, int resultCode) {
         LogUtil.print("onresponserecieved()"+this.isVisible());
-
+        stopProgress();
         if(this.isVisible())
         {
             LogUtil.print("roaster----------");

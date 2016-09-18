@@ -26,11 +26,20 @@ public class CustomFragment extends Fragment {
         mListener.promptRetry(msg);
     }
 
+    public void startProgress()
+    {
+        mListener.setProgressVisible(true);
+    }
+    public void stopProgress()
+    {
+        mListener.setProgressVisible(false);
+    }
+
 
     public void sendRequest()
     {
         //setSupportProgressBarIndeterminateVisibility(true);
-
+        startProgress();
         if (NetworkConnectionHandler.isExecuting == false)
         {
             try
@@ -62,6 +71,7 @@ public class CustomFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
         void promptRetry(String msg);
+        void setProgressVisible(boolean visible);
     }
 
     private OnFragmentInteractionListener mListener;

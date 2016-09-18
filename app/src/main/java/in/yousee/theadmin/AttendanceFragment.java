@@ -242,7 +242,7 @@ public class AttendanceFragment extends CustomFragment implements DialogInterfac
     @Override
     public void onResponseReceived(Object response, int requestCode, int resultCode) {
         LogUtil.print("onresponserecieved()");
-
+        stopProgress();
         if(this.isVisible())
         {
             if(resultCode == ResultCodes.ATTENDANCE_HISTORY_EXIST)
