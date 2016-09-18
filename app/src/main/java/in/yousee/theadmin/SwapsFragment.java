@@ -94,6 +94,11 @@ public class SwapsFragment extends Fragment implements View.OnClickListener, OnR
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_swaps, container, false);
+
+        //under construction
+        TextView underConstructionText = (TextView) view.findViewById(R.id.underConstructionText);
+        underConstructionText.setText("This guy again.. He never completes it..!!");
+
         DateEtxt = (EditText) view.findViewById(R.id.date);
         DateEtxt.setInputType(InputType.TYPE_NULL);
         DateEtxt.requestFocus();

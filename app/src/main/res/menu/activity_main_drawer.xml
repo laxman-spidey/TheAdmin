@@ -10,6 +10,7 @@
             android:id="@+id/menu_attendance"
             android:icon="@drawable/ic_menu_attendance"
             android:title="Attendance " />
+
         <item
             android:id="@+id/menu_leave"
             android:icon="@drawable/ic_menu_leave"

@@ -18,6 +18,8 @@ public class CustomException extends Exception implements JSONParsable
 
 	public static final int ERROR_NETWORK_NOT_FOUND = 13;
 	public static final int ERROR_NO_INTERNET_CONNECTIVITY = 14;
+	public static final int ERROR_SERVER = 18;
+
 	public static final int ERROR_INVALID_URL = 15;
 	public static final int ERROR_LOGIN_ERROR = 16;
 	public static final int ERROR_CUSTOM = 17;
@@ -44,6 +46,11 @@ public class CustomException extends Exception implements JSONParsable
 	public CustomException(String errorMsg)
 	{
 		setErrorCode(ERROR_CUSTOM);
+		setErrorMsg(errorMsg);
+	}
+	public CustomException(String errorMsg, int errorCode)
+	{
+		setErrorCode(errorCode);
 		setErrorMsg(errorMsg);
 	}
 

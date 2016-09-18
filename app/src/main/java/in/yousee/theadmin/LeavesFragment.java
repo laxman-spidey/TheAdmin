@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -85,6 +86,12 @@ public class LeavesFragment extends Fragment implements View.OnClickListener, On
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_leaves, container, false);
+
+        //under construction
+        TextView underConstructionText = (TextView) view.findViewById(R.id.underConstructionText);
+        underConstructionText.setText("This guy again.. He never completes it..!!");
+
+
         fromDateEtxt = (EditText) view.findViewById(R.id.fromdate);
         fromDateEtxt.setInputType(InputType.TYPE_NULL);
         fromDateEtxt.requestFocus();

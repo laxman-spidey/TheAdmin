@@ -116,6 +116,7 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, Response>
 		if (toastString != null)
 		{
 			Toast.makeText(context, toastString, Toast.LENGTH_LONG).show();
+
 		}
 		LogUtil.print("onPostExecute()");
 		if (response != null) {
@@ -174,9 +175,11 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, Response>
 			}
 			else
 			{
+
 				toastString = "error: 101 - Something went wrong, Please Report the issue to the developer.";
 				LogUtil.print(toastString);
 			}
+
 		}
 		else
 		{
@@ -194,7 +197,6 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, Response>
 			LogUtil.print(toastString);
 		}
 		return null;
-
 	}
 
 	// Reads an InputStream and converts it to a String.

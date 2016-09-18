@@ -130,7 +130,8 @@ public class MainActivity extends YouseeCustomActivity
             Fragment attendanceFragment = new AttendanceFragment();
             replaceFragmentOnMainContent(attendanceFragment , "My Attendance");
 
-        } else if (id == R.id.menu_leave) {
+        }
+        else if (id == R.id.menu_leave) {
             Fragment leavesFragment = new LeavesFragment();
             replaceFragmentOnMainContent(leavesFragment, "My Leaves");
 

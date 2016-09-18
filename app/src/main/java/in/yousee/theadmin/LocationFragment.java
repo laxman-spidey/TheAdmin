@@ -119,6 +119,8 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
         // Inflate the layout for this fragment
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_location, container, false);
+
+
         mapView = (MapView) view.findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
         testText = (TextView) view.findViewById(R.id.testText);
@@ -590,27 +592,27 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
 //                .fillColor(Color.argb(128, 255, 0, 0))
 //                ;
 //        //meerpet
-//        PolygonOptions rectOptions = new PolygonOptions()
-//                .add(new LatLng(17.319037, 78.527645),
-//                        new LatLng(17.319301, 78.527712),
-//                        new LatLng(17.319268, 78.527892),
-//                        new LatLng(17.319002, 78.527876)
-//                        )
-//                .strokeColor(Color.RED)
-//                .fillColor(Color.argb(128, 255, 0, 0))
-//                ;
-
-        //Yousee
-
         PolygonOptions rectOptions = new PolygonOptions()
-                .add(new LatLng(17.426084, 78.453917),
-                        new LatLng(17.426178, 78.454073),
-                        new LatLng(17.425977, 78.454150),
-                        new LatLng(17.425905, 78.453998)
-                )
+                .add(new LatLng(17.319037, 78.527645),
+                        new LatLng(17.319301, 78.527712),
+                        new LatLng(17.319268, 78.527892),
+                        new LatLng(17.319002, 78.527876)
+                        )
                 .strokeColor(Color.RED)
                 .fillColor(Color.argb(128, 255, 0, 0))
                 ;
+
+        //Yousee
+
+//        PolygonOptions rectOptions = new PolygonOptions()
+//                .add(new LatLng(17.426084, 78.453917),
+//                        new LatLng(17.426178, 78.454073),
+//                        new LatLng(17.425977, 78.454150),
+//                        new LatLng(17.425905, 78.453998)
+//                )
+//                .strokeColor(Color.RED)
+//                .fillColor(Color.argb(128, 255, 0, 0))
+//                ;
         //pochampally home
 //        PolygonOptions rectOptions = new PolygonOptions()
 //                .add(new LatLng(17.343694, 78.819272),
