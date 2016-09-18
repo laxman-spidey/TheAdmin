@@ -36,10 +36,19 @@ public class Utils {
         listView.requestLayout();
     }
 
-    public static String getTimeFromDateTime(Date date)
+    public static String getTimeFromDateTime(String dateString)
     {
-        SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
-        return format.format(date);
+        String timeString = null;
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            Date date = format.parse(dateString);
+            SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
+            timeString= timeFormat.format(date);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return timeString;
     }
 
     public static String getDisplayDateString(Calendar calendar)

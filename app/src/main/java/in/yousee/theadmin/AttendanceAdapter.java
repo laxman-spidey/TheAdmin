@@ -11,9 +11,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import in.yousee.theadmin.model.AttendanceHistoryRecord;
 import in.yousee.theadmin.util.LogUtil;
+import in.yousee.theadmin.util.Utils;
 
 /**
  * Created by mittu on 14-08-2016.
@@ -86,8 +88,8 @@ public class AttendanceAdapter extends ArrayAdapter<AttendanceHistoryRecord> {
         }
         AttendanceHistoryRecord record = historyRecords.get(position);
         holder.date.setText(record.date);
-        holder.timeIn.setText(record.timeIn);
-        holder.timeOut.setText(record.timeOut);
+        holder.timeIn.setText(Utils.getTimeFromDateTime(record.timeIn));
+        holder.timeOut.setText(Utils.getTimeFromDateTime(record.timeOut));
 
         return convertView;
 

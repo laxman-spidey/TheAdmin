@@ -196,6 +196,10 @@ public class AttendanceFragment extends CustomFragment implements DialogInterfac
         toDateEtxt.setText(Utils.getDisplayDateString(toDate));
         listView = (ListView) view.findViewById(R.id.attendanceListView);
 
+        View header = inflater.inflate(R.layout.attendance_listview_header, null);
+        listView.addHeaderView(header);
+        getAttendanceHistory();
+
         attendanceListErrorView = (TextView) view.findViewById(R.id.attendanceListError);
         //LogUtil.print(attendanceListErrorView.);
         getAttendanceHistory();

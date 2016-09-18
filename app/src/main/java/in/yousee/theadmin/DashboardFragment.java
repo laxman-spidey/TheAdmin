@@ -175,11 +175,8 @@ public class DashboardFragment extends CustomFragment  implements View.OnClickLi
     public void onResponseReceived(Object response, int requestCode, int resultCode) {
         LogUtil.print("onresponserecieved()"+this.isVisible());
 
-        //if(this.isVisible())
+        if(this.isVisible())
         {
-//            AttendanceHistory attendanceHistory = (AttendanceHistory) response;
-//            AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getActivity(), R.layout.attendance_row, attendanceHistory.historyRecords);
-//            listView.setAdapter(attendanceAdapter);
             LogUtil.print("roaster----------");
             RoasterData data = (RoasterData)response;
             RoasterAdapter roasterAdapter = new RoasterAdapter(this.getActivity(), R.layout.attendance_row, data.roasterRecords);
