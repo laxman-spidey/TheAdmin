@@ -88,7 +88,8 @@ public class DashboardFragment extends CustomFragment  implements View.OnClickLi
         listView = (ListView) view.findViewById(R.id.attendanceListView);
         checkinButton.setOnClickListener(this);
         checkoutButton.setOnClickListener(this);
-
+        View header = inflater.inflate(R.layout.roaster_listview_header, null);
+        listView.addHeaderView(header);
         getAttendanceHistory();
         //onResponseReceived(null, 0, 0);
         return view;

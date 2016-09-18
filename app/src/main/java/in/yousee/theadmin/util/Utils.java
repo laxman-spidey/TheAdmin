@@ -36,6 +36,12 @@ public class Utils {
         listView.requestLayout();
     }
 
+    public static String getTimeFromDateTime(Date date)
+    {
+        SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
+        return format.format(date);
+    }
+
     public static String getDisplayDateString(Calendar calendar)
     {
         SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");

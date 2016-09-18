@@ -180,9 +180,16 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, Response>
 		}
 		else
 		{
-			InputStream inputStream = connection.getInputStream();
-			String contentAsString = readIt(inputStream);
-			LogUtil.print(contentAsString);
+			try
+			{
+				InputStream inputStream = connection.getInputStream();
+				String contentAsString = readIt(inputStream);
+				LogUtil.print(contentAsString);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
 			toastString = "error: 102 - Something went wrong, Please report the issue to the developer. - "+ responseCode;
 			LogUtil.print(toastString);
 		}

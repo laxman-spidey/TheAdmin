@@ -7,23 +7,14 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text=""
-        android:layout_weight="1"
-        android:id="@+id/attendance_date" />
+        android:text="Date"
+        android:layout_weight="1" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text=""
         android:gravity="center"
-        android:layout_weight="1"
-        android:id="@+id/attendance_timeIn" />
+        android:text="Shift Timings"
+        android:layout_weight="2" />
 
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:gravity="center"
-        android:layout_weight="1"
-        android:id="@+id/attendance_timeOut" />
 </LinearLayout>

@@ -23,7 +23,7 @@ public class DashboardMiddleware extends Middleware {
 
     public void getDashboardData()
     {
-        request.setUrl(NetworkConnectionHandler.DOMAIN_2 + ServerFiles.GET_DASHBOARD_DATA);
+        request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.GET_DASHBOARD_DATA);
         setRequestCode(RequestCodes.NETWORK_REQUEST_DASHBOARD);
         request.put("staffId", "1");
         request.put("limit", "3");

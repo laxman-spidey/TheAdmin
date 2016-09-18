@@ -15,11 +15,13 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import in.yousee.theadmin.constants.ResultCodes;
 import in.yousee.theadmin.model.AttendanceHistory;
 import in.yousee.theadmin.model.CustomException;
 import in.yousee.theadmin.util.LogUtil;
@@ -34,7 +36,7 @@ import in.yousee.theadmin.util.Utils;
  * Use the {@link AttendanceFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AttendanceFragment extends Fragment implements DialogInterface.OnDismissListener, OnResponseReceivedListener, View.OnClickListener {
+public class AttendanceFragment extends CustomFragment implements DialogInterface.OnDismissListener, OnResponseReceivedListener, View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -166,6 +168,7 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
     Button checkin;
     Button checkout;
     Button getDataButton;
+    TextView attendanceListErrorView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -193,6 +196,8 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
         toDateEtxt.setText(Utils.getDisplayDateString(toDate));
         listView = (ListView) view.findViewById(R.id.attendanceListView);
 
+        attendanceListErrorView = (TextView) view.findViewById(R.id.attendanceListError);
+        //LogUtil.print(attendanceListErrorView.);
         getAttendanceHistory();
 
 
@@ -226,12 +231,9 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
     private void getAttendanceHistory()
     {
         AttendanceMiddleware attendanceMiddleware = new AttendanceMiddleware(this);
-        try {
-            attendanceMiddleware.getAttendanceHistoryData(fromDate, toDate);
-        } catch (CustomException e) {
-            e.printStackTrace();
-        }
-
+        attendanceMiddleware.getAttendanceHistoryData(fromDate, toDate);
+        requestSenderMiddleware = attendanceMiddleware;
+        sendRequest();
     }
     @Override
     public void onResponseReceived(Object response, int requestCode, int resultCode) {
@@ -239,10 +241,19 @@ public class AttendanceFragment extends Fragment implements DialogInterface.OnDi
 
         if(this.isVisible())
         {
-            AttendanceHistory attendanceHistory = (AttendanceHistory) response;
-            AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getActivity(), R.layout.attendance_row, attendanceHistory.historyRecords);
-            listView.setAdapter(attendanceAdapter);
-            Utils.setListViewHeightBasedOnChildren(listView);
+            if(resultCode == ResultCodes.ATTENDANCE_HISTORY_EXIST)
+            {
+                AttendanceHistory attendanceHistory = (AttendanceHistory) response;
+                AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getActivity(), R.layout.attendance_row, attendanceHistory.historyRecords);
+                listView.setAdapter(attendanceAdapter);
+                Utils.setListViewHeightBasedOnChildren(listView);
+                attendanceListErrorView.setVisibility(View.GONE);
+            }
+            else
+            {
+                attendanceListErrorView.setVisibility(View.VISIBLE);
+            }
+
         }
 
     }

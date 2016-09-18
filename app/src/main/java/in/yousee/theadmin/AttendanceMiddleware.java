@@ -3,6 +3,7 @@ package in.yousee.theadmin;
 import java.util.Calendar;
 
 import in.yousee.theadmin.constants.RequestCodes;
+import in.yousee.theadmin.constants.ResultCodes;
 import in.yousee.theadmin.constants.ServerFiles;
 import in.yousee.theadmin.model.AttendanceHistory;
 import in.yousee.theadmin.model.CustomException;
@@ -24,7 +25,7 @@ public class AttendanceMiddleware extends Middleware {
 
     }
 
-    public void getAttendanceHistoryData(Calendar from, Calendar to) throws CustomException
+    public void getAttendanceHistoryData(Calendar from, Calendar to)
     {
         request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.GET_ATTENDANCE_HISTORY);
         setRequestCode(RequestCodes.NETWORK_REQUEST_ATTENDANCE_HISTORY);
@@ -32,7 +33,6 @@ public class AttendanceMiddleware extends Middleware {
         request.put("limit", "10");
         request.put("from", Utils.getSqlDateString(from));
         request.put("to",Utils.getSqlDateString(to));
-        sendRequest();
     }
 
 
@@ -41,8 +41,17 @@ public class AttendanceMiddleware extends Middleware {
         LogUtil.print("serving response - "+response.requestCode);
         if(response.requestCode == RequestCodes.NETWORK_REQUEST_ATTENDANCE_HISTORY)
         {
-            AttendanceHistory attendanceHistory = new AttendanceHistory(response.responseString);
-            listener.onResponseReceived(attendanceHistory, response.requestCode, response.resultCode);
+            if(response.resultCode == ResultCodes.ATTENDANCE_HISTORY_EXIST)
+            {
+                LogUtil.print("ATTENDANCE_HISTORY_EXIST");
+                AttendanceHistory attendanceHistory = new AttendanceHistory(response.responseString);
+                listener.onResponseReceived(attendanceHistory, response.requestCode, response.resultCode);
+            }
+            else
+            {
+                LogUtil.print("ATTENDANCE_HISTORY_NOT_EXIST");
+                listener.onResponseReceived(null, response.requestCode, response.resultCode);
+            }
         }
 
     }
