@@ -41,7 +41,7 @@ public class SessionHandler extends Middleware
 	private static final String KEY_USERNAME = "username";
 	private static final String KEY_PASSWORD = "password";
 	//private static final String KEY_USER_ID = "userId";
-	private static final String KEY_STAFF_ID = "staffId";
+	public static final String KEY_STAFF_ID = "staffId";
 	private static final String KEY_USER_DATA = "userData";
 
 	public static final String KEY_SESSION_ID = "sessionID";

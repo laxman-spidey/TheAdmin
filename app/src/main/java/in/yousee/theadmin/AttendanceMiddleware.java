@@ -29,7 +29,7 @@ public class AttendanceMiddleware extends Middleware {
     {
         request.setUrl(NetworkConnectionHandler.DOMAIN + ServerFiles.GET_ATTENDANCE_HISTORY);
         setRequestCode(RequestCodes.NETWORK_REQUEST_ATTENDANCE_HISTORY);
-        request.put("staffId", "6");
+        request.put("staffId", ""+SessionHandler.getStaffId(getContext()));
         request.put("limit", "10");
         request.put("from", Utils.getSqlDateString(from));
         request.put("to",Utils.getSqlDateString(to));

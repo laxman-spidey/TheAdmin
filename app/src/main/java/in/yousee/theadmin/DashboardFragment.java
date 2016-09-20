@@ -11,14 +11,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import in.yousee.theadmin.constants.RequestCodes;
+import in.yousee.theadmin.constants.ResultCodes;
 import in.yousee.theadmin.model.AttendanceHistory;
 import in.yousee.theadmin.model.CustomException;
+import in.yousee.theadmin.model.Request;
 import in.yousee.theadmin.model.RoasterData;
+import in.yousee.theadmin.model.StringResponse;
 import in.yousee.theadmin.util.LogUtil;
 import in.yousee.theadmin.util.Utils;
 
@@ -44,6 +50,7 @@ public class DashboardFragment extends CustomFragment  implements View.OnClickLi
 
     private OnFragmentInteractionListener mListener;
     ListView listView;
+    TextView attendanceListErrorView;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -90,6 +97,8 @@ public class DashboardFragment extends CustomFragment  implements View.OnClickLi
         checkoutButton.setOnClickListener(this);
         View header = inflater.inflate(R.layout.roaster_listview_header, null);
         listView.addHeaderView(header);
+        attendanceListErrorView = (TextView) view.findViewById(R.id.attendanceListError);
+
         getAttendanceHistory();
         //onResponseReceived(null, 0, 0);
         return view;
@@ -155,13 +164,14 @@ public class DashboardFragment extends CustomFragment  implements View.OnClickLi
             //datetime.ee
             String dateString = new SimpleDateFormat("yyyy-MM-dd").format(datetime);
             String timeString = new SimpleDateFormat("HH:mm:ss").format(datetime);
+            String dateTime = Utils.getDateTimeInSQLFormat(Calendar.getInstance());
             if(checkInOut == LocationFragment.CHECK_IN)
             {
-                locationMiddleware.checkin(dateString,"9505878984",timeString);
+                locationMiddleware.checkin(dateString,"9505878984",dateTime);
             }
             else if(checkInOut == LocationFragment.CHECK_OUT)
             {
-                locationMiddleware.checkout(dateString,"9505878984",timeString);
+                locationMiddleware.checkout(dateString,"9505878984",dateTime);
             }
             
         } catch (CustomException e) {
@@ -177,12 +187,28 @@ public class DashboardFragment extends CustomFragment  implements View.OnClickLi
         stopProgress();
         if(this.isVisible())
         {
-            LogUtil.print("roaster----------");
-            RoasterData data = (RoasterData)response;
-            RoasterAdapter roasterAdapter = new RoasterAdapter(this.getActivity(), R.layout.attendance_row, data.roasterRecords);
-            listView.setAdapter(roasterAdapter);
-            Utils.setListViewHeightBasedOnChildren(listView);
-
+            if(requestCode == RequestCodes.NETWORK_REQUEST_DASHBOARD) {
+                if (resultCode == ResultCodes.ROASTER_DETAILS_EXIST) {
+                    LogUtil.print("roaster----------");
+                    RoasterData data = (RoasterData) response;
+                    RoasterAdapter roasterAdapter = new RoasterAdapter(this.getActivity(), R.layout.attendance_row, data.roasterRecords);
+                    listView.setAdapter(roasterAdapter);
+                    Utils.setListViewHeightBasedOnChildren(listView);
+                    attendanceListErrorView.setVisibility(View.GONE);
+                } else {
+                    attendanceListErrorView.setVisibility(View.VISIBLE);
+                }
+            }
+            else if(requestCode == RequestCodes.NETWORK_REQUEST_CHECK_IN)
+            {
+                StringResponse stringResponse = (StringResponse) response;
+                Toast.makeText(this.getContext(), stringResponse.msg,Toast.LENGTH_LONG).show();
+            }
+            else if(requestCode == RequestCodes.NETWORK_REQUEST_CHECK_OUT)
+            {
+                StringResponse stringResponse = (StringResponse) response;
+                Toast.makeText(this.getContext(), stringResponse.msg,Toast.LENGTH_LONG).show();
+            }
         }
 
     }

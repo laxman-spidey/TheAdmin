@@ -17,6 +17,8 @@ public abstract class Middleware
 	public static final String TAG_USER_ID = "userId";
 	public static final String TAG_PHONE_NUMBER = "phone";
 	public static final String TAG_SESSION_ID = "session_id";
+
+
 	protected ContentValues nameValuePairs = new ContentValues();
 
 	protected void addKeyValue(String key, String value)
@@ -44,10 +46,17 @@ public abstract class Middleware
 	{
 		if(SessionHandler.isSessionIdExists(getContext()))
 		{
-			addKeyValue(TAG_PHONE_NUMBER, "" + SessionHandler.getPhoneNumber(getContext()));
+			addKeyValue(SessionHandler.TAG_PHONE_NUMBER, "" + SessionHandler.getPhoneNumber(getContext()));
 		}
 	}
-	
+
+	protected void addStaffIdToPost()
+	{
+		if (SessionHandler.isStaffIdExists(getContext()))
+		{
+			request.put(SessionHandler.KEY_STAFF_ID, "" + SessionHandler.getStaffId(getContext()));
+		}
+	}
 	protected void addSessionIdToPost()
 	{
 		if (SessionHandler.isSessionIdExists(getContext()))

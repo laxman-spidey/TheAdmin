@@ -63,6 +63,12 @@ public class Utils {
         Date date = calendar.getTime();
         return format.format(date);
     }
+    public static String getDateTimeInSQLFormat(Calendar calendar)
+    {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Date date = calendar.getTime();
+        return format.format(date);
+    }
     public static Date getEncodedDateFromDisplayString(String date)
     {
         SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
