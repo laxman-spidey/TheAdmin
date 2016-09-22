@@ -294,7 +294,7 @@ public class SessionHandler extends Middleware
 		sendRequest();
 	}
 
-	public void logout(OnResponseReceivedListener listener) throws CustomException
+	public void logout(OnResponseReceivedListener listener)
 	{
 
 		Log.i(SESSION_DEBUG_TAG, "logging out");
@@ -302,6 +302,8 @@ public class SessionHandler extends Middleware
 		SharedPreferences.Editor editor = sharedPrefs.edit();
 		editor.remove(KEY_SESSION_ID);
 		editor.remove(KEY_PHONE);
+		editor.remove(KEY_STAFF_ID);
+		editor.remove(KEY_USER_DATA);
 		editor.apply();
 
 	}

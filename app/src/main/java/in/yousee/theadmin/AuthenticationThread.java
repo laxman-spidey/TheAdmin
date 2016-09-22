@@ -11,7 +11,7 @@ public class AuthenticationThread implements Runnable {
     Thread t;
 
     private static AuthenticationThread instance = null;
-    private static final short MAX_TIME_TO_WAIT = 3;
+    private static final short MAX_TIME_TO_WAIT = 5;
     public  short timeWaited;
     public boolean threadStoppedManually = false;
 

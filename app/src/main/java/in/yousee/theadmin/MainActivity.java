@@ -1,5 +1,6 @@
 package in.yousee.theadmin;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -23,7 +24,7 @@ import in.yousee.theadmin.util.LogUtil;
 
 
 public class MainActivity extends YouseeCustomActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, SwapsFragment.OnFragmentInteractionListener, LocationFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener, LeavesFragment.OnFragmentInteractionListener, AttendanceFragment.OnFragmentInteractionListener, SwapsFragment.OnFragmentInteractionListener, LocationFragment.OnFragmentInteractionListener, OnResponseReceivedListener {
 
     TextView nameView;
     TextView phoneView;
@@ -139,10 +140,29 @@ public class MainActivity extends YouseeCustomActivity
             Fragment swapsFragment = new SwapsFragment();
             replaceFragmentOnMainContent(swapsFragment, "My Swaps");
         }
+        else if (id == R.id.menu_logout) {
+            this.logout();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void logout()
+    {
+        SessionHandler sessionHandler = new SessionHandler(this);
+        requestSenderMiddleware = sessionHandler;
+        sessionHandler.logout(this);
+        finish();
+        //sendRequest();
+
+    }
+
+    @Override
+    public void reloadActivity()
+    {
+        sendRequest();
     }
 
     @Override
@@ -159,4 +179,13 @@ public class MainActivity extends YouseeCustomActivity
         super.onStop();
     }
 
+    @Override
+    public void onResponseReceived(Object response, int requestCode, int resultCode) {
+
+    }
+
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
+    }
 }
