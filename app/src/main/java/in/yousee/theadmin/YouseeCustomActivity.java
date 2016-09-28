@@ -1,13 +1,17 @@
 package in.yousee.theadmin;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ProgressBar;
@@ -37,29 +41,12 @@ public class YouseeCustomActivity extends AppCompatActivity implements CustomFra
     protected void onStart()
     {
         super.onStart();
+        //setWindowProgressBar();
         //progressBar.setVisibility(ProgressBar.VISIBLE);
     }
-//    @Override
-//    public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-//    {
-//
-//        if(parent != null)
-//        {
-//            LogUtil.print("--------------------------------------------------------------setting progress----------------------------------------------------------------------------------------------------------");
-//            progressBar = (ProgressBar) findViewById(R.id.toolbarProgress);
-//            progressBar.setIndeterminate(true);
-//            progressBar.setVisibility(ProgressBar.VISIBLE);
-//        }
-//        else
-//        {
-//            LogUtil.print("--------------------------------------------------------------buiscuit aindhi rooo----------------------------------------------------------------------------------------------------------");
-//        }
-//        return parent;
-//    }
 
     protected void setWindowProgressBar()
     {
-
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setSupportProgressBarIndeterminate(true);
         setSupportProgressBarIndeterminateVisibility(true);
@@ -70,13 +57,12 @@ public class YouseeCustomActivity extends AppCompatActivity implements CustomFra
 
     public void sendRequest()
     {
-        setSupportProgressBarIndeterminateVisibility(true);
-
         if (NetworkConnectionHandler.isExecuting == false)
         {
             try
             {
                 requestSenderMiddleware.sendRequest();
+                setProgressVisible(this,true);
             }
             catch (CustomException e)
             {
@@ -155,22 +141,33 @@ public class YouseeCustomActivity extends AppCompatActivity implements CustomFra
         startActivityForResult(intent, RequestCodes.ACTIVITY_REQUEST_RETRY);
     }
 
-    @Override
-    public void setProgressVisible(boolean visible)
+    public static ProgressDialog progressDialog;
+
+    public static void setProgressVisible(Context context, boolean visible)
     {
-        progressBar = (ProgressBar) findViewById(R.id.toolbarProgress);
-        progressBar.setIndeterminate(true);
+        setProgressVisible(context,visible,"Loading..");
+    }
+    public static void setProgressVisible(Context context, boolean visible, String msg)
+    {
         if(visible)
         {
-            LogUtil.print("progressbar - visible");
-            progressBar.setVisibility(ProgressBar.VISIBLE);
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage(msg);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setCancelable(false);
+            progressDialog.setIndeterminate(true);
+            LogUtil.print("PROGRESS", "showing");
+            progressDialog.show();
         }
         else
         {
-            LogUtil.print("progressbar - gone");
-            progressBar.setVisibility(ProgressBar.GONE);
+            if(progressDialog != null)
+            {
+                progressDialog.hide();
+                progressDialog.dismiss();
+                LogUtil.print("PROGRESS", "hiding");
+            }
         }
 
     }
-
 }

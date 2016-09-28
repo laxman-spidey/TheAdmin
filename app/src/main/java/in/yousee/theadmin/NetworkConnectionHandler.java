@@ -116,6 +116,7 @@ public class NetworkConnectionHandler extends AsyncTask<Request, Void, Response>
 		if (toastString != null)
 		{
 			Toast.makeText(context, toastString, Toast.LENGTH_LONG).show();
+			YouseeCustomActivity.setProgressVisible(this.context,false);
 
 		}
 		LogUtil.print("onPostExecute()");

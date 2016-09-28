@@ -108,7 +108,8 @@ public class WelcomeActivity extends Activity implements OnResponseReceivedListe
 					if(SessionHandler.isUserDataExists(WelcomeActivity.this))
 					{
 
-						showMainActivity();
+						//showMainActivity();
+						showLoginActivity();
 
 					}
 					else {

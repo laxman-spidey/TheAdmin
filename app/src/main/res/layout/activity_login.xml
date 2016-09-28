@@ -2,81 +2,100 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimaryDark"
     android:fitsSystemWindows="true">
-
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="56dp"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center">
+        <!--<android.support.v7.widget.AppCompatTextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:text="LOGIN"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:id="@+id/loginTextview"-->
+            <!--android:textSize="30sp"/>-->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
 
-        <ImageView android:src="@drawable/login"
-            android:layout_width="wrap_content"
-            android:layout_height="72dp"
-            android:layout_marginBottom="24dp"
-            android:layout_gravity="center_horizontal" />
+            <ImageView android:src="@mipmap/ic_launcher"
+                android:layout_width="wrap_content"
+                android:layout_height="72dp"
+                android:layout_marginBottom="24dp"
+                android:id="@+id/loginText"
+                android:layout_gravity="center_horizontal" />
 
-        <!-- Login progress -->
-        <ProgressBar
-            android:id="@+id/login_progress"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
+
+            <AutoCompleteTextView
+                android:id="@+id/phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:inputType="phone"
+                android:maxLength="15"
+                android:minWidth="150dp"
+                android:textColor="@color/white"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center_horizontal"
+                android:maxLines="1"
+                android:singleLine="true" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_gravity="center_horizontal"
+                android:text="verify"
+                android:textColor="@color/colorPrimaryDark"
+                android:background="@drawable/button"
+
+                android:id="@+id/button_verify"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:visibility="gone" />
+            android:orientation="vertical"
+            android:id="@+id/otpLayout"
+            android:visibility="gone">
 
-                    <AutoCompleteTextView
-                        android:id="@+id/phone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                        android:inputType="phone"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-
-
-                <Button
+                <EditText
+                    android:id="@+id/otp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:imeActionId="@+id/login"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="number"
                     android:layout_gravity="center_horizontal"
-                    android:text="verify"
-                    android:id="@+id/button_verify"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:id="@+id/otpLayout"
-                    android:visibility="gone">
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                    android:gravity="center_horizontal"
+                    android:maxLength="6"
+                    android:minWidth="150dp"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:singleLine="true" />
 
-                        <EditText
-                            android:id="@+id/otp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+            </android.support.design.widget.TextInputLayout>
 
-                            android:imeActionId="@+id/login"
+            <Button
+                android:id="@+id/sign_in_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:background="@drawable/button"
+                android:text="Submit"
+                />
+        </LinearLayout>
+    </LinearLayout>
 
-                            android:imeOptions="actionUnspecified"
-                            android:inputType="number"
-                            android:maxLength="6"
-                            android:maxLines="1"
-                            android:singleLine="true" />
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <Button
-                        android:id="@+id/sign_in_button"
-                        style="?android:textAppearanceSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="16dp"
-
-                        android:textStyle="bold"/>
-                </LinearLayout>
-            </LinearLayout>
 </ScrollView>

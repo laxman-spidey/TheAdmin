@@ -50,7 +50,7 @@ import in.yousee.theadmin.util.LogUtil;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-public class LoginActivity extends AppCompatActivity implements OnResponseReceivedListener {
+public class LoginActivity extends YouseeCustomActivity implements OnResponseReceivedListener {
 
     private static final int REQUEST_READ_CONTACTS = 0;
     /**
@@ -71,12 +71,15 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         intent.putExtra(SessionHandler.TAG_USERDATA, userData.string);
         intent.setClass(this, MainActivity.class);
         startActivity(intent);
+        setProgressVisible(this,false);
         finish();
     }
 
     @Override
     public void onResponseReceived(Object response, int requestCode, int resultCode) {
         //showProgress(false);
+        LogUtil.print("calling progress bar -  false");
+
         LogUtil.print("onressponse recieved " + requestCode + "  " + response.toString());
         if (requestCode == RequestCodes.NETWORK_REQUEST_VERIFY) {
             LogUtil.print("result code : "+resultCode +" = "+ ResultCodes.CHECK_AUTHORIZATION_SUCCESS);
@@ -87,13 +90,17 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
             } else {
                 mPhoneView.setError("Mobile number is not registered");
             }
+            setProgressVisible(this,false);
         }
         if (requestCode == RequestCodes.NETWORK_REQUEST_OTP_SUBMIT) {
-            if(resultCode == ResultCodes.LOGIN_SUCCESS)
+            LogUtil.print("otp submission");
+            if(resultCode == ResultCodes.USER_DATA_SUCCESS)
             {
                 UserData userData = (UserData) response;
                 LogUtil.print("success");
                 onLoginSuccess(userData);
+                mOtpView.setEnabled(false);
+                mEmailSignInButton.setEnabled(false);
                 Toast.makeText(this,"Logging in..",Toast.LENGTH_SHORT).show();
             }
             else if(resultCode == ResultCodes.INVALID_OTP)
@@ -109,6 +116,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
                 Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 
 
@@ -125,6 +133,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         mOtpLayout.setVisibility(View.VISIBLE);
         mOtpView.setText("123456");
         mPhoneView.setEnabled(false);
+        verifyButton.setEnabled(false);
 
     }
 
@@ -148,7 +157,8 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
     private View mProgressView;
     private View mLoginFormView;
     private LinearLayout mOtpLayout;
-
+    private Button verifyButton;
+    private Button mEmailSignInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,7 +184,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
             }
         });
 
-        Button verifyButton = (Button) findViewById(R.id.button_verify);
+        verifyButton = (Button) findViewById(R.id.button_verify);
         verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,7 +192,7 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.sign_in_button);
+        mEmailSignInButton = (Button) findViewById(R.id.sign_in_button);
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -191,7 +201,6 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         });
 
         // mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -244,18 +253,18 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         // Reset errors.
         //onLoginSuccess();
         //return;
-
         mPhoneView.setError(null);
         String phoneNumber = mPhoneView.getText().toString();
         if (phoneNumber.length() != 10) {
             mPhoneView.setError("Invalid Phone number");
             return;
         } else {
-            //showProgress(true);
             LogUtil.print("sending request");
             SessionHandler sessionHandler = new SessionHandler(this);
+            requestSenderMiddleware = sessionHandler;
             try {
                 sessionHandler.verifyExec(phoneNumber, this);
+                sendRequest();
             } catch (CustomException e) {
                 LogUtil.print(e.getErrorMsg());
             }
@@ -281,8 +290,10 @@ public class LoginActivity extends AppCompatActivity implements OnResponseReceiv
         }
         if (error == false) {
             SessionHandler sessionHandler = new SessionHandler(this);
+            requestSenderMiddleware = sessionHandler;
             try {
                 sessionHandler.submitOTP(phoneNumber, otp, this);
+                sendRequest();
             } catch (CustomException e) {
                 LogUtil.print(e.getErrorMsg());
             }

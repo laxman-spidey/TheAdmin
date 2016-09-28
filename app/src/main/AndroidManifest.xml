@@ -29,13 +29,15 @@
         </activity>
         <activity
             android:name="in.yousee.theadmin.MainActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/MyTheme"
+
+            android:label="@string/title_activity_main">
 
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
 
         </activity>
         <activity

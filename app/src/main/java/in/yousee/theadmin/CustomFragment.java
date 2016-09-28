@@ -28,22 +28,23 @@ public class CustomFragment extends Fragment {
 
     public void startProgress()
     {
-        mListener.setProgressVisible(true);
+        YouseeCustomActivity.setProgressVisible(this.getContext(),true,"loading..");
     }
     public void stopProgress()
     {
-        mListener.setProgressVisible(false);
+        YouseeCustomActivity.setProgressVisible(this.getContext(),false);
     }
 
 
     public void sendRequest()
     {
         //setSupportProgressBarIndeterminateVisibility(true);
-        startProgress();
+
         if (NetworkConnectionHandler.isExecuting == false)
         {
             try
             {
+                startProgress();
                 requestSenderMiddleware.sendRequest();
             }
             catch (CustomException e)
@@ -71,7 +72,6 @@ public class CustomFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
         void promptRetry(String msg);
-        void setProgressVisible(boolean visible);
     }
 
     private OnFragmentInteractionListener mListener;

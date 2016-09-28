@@ -202,7 +202,7 @@ public class AttendanceFragment extends CustomFragment implements DialogInterfac
 
         attendanceListErrorView = (TextView) view.findViewById(R.id.attendanceListError);
         //LogUtil.print(attendanceListErrorView.);
-        getAttendanceHistory();
+
 
 
 
@@ -237,11 +237,12 @@ public class AttendanceFragment extends CustomFragment implements DialogInterfac
         AttendanceMiddleware attendanceMiddleware = new AttendanceMiddleware(this);
         attendanceMiddleware.getAttendanceHistoryData(fromDate, toDate);
         requestSenderMiddleware = attendanceMiddleware;
+        LogUtil.print("PROGRESS","get attendance hostory");
         sendRequest();
     }
     @Override
     public void onResponseReceived(Object response, int requestCode, int resultCode) {
-        LogUtil.print("onresponserecieved()");
+        LogUtil.print("PROGRESS","onresponserecieved() - get attendance hostory");
         stopProgress();
         if(this.isVisible())
         {

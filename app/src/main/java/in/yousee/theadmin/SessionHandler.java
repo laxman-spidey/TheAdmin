@@ -279,8 +279,6 @@ public class SessionHandler extends Middleware
 		request.put("phoneNumber", phone);
 		this.phone = phone;
 		setPhoneNumber(phone);
-		sendRequest();
-
 	}
 
 	public void submitOTP(String phone, String otp, LoginActivity loginFeatureClient) throws CustomException
@@ -291,7 +289,6 @@ public class SessionHandler extends Middleware
 		request.setRequestCode(RequestCodes.NETWORK_REQUEST_OTP_SUBMIT);
 		setPhoneNumber(phone);
 		this.phone = phone;
-		sendRequest();
 	}
 
 	public void logout(OnResponseReceivedListener listener)
@@ -337,7 +334,7 @@ public class SessionHandler extends Middleware
 			try
 			{
 				json = new JSONObject(response.responseString);
-				if(response.resultCode == ResultCodes.LOGIN_SUCCESS)
+				if(response.resultCode == ResultCodes.USER_DATA_SUCCESS)
 				{
 					userDataString = json.getString(TAG_USERDATA);
 					userData = new UserData(userDataString);

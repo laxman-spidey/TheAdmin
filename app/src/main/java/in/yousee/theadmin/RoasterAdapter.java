@@ -45,8 +45,6 @@ public class RoasterAdapter extends ArrayAdapter{
         {
             count = roasterRecords.size();
         }
-
-        LogUtil.print("count = "+count);
         return count;
 
     }

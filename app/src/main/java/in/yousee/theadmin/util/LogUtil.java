@@ -7,12 +7,18 @@ import android.util.Log;
  */
 public class LogUtil {
 
+    static String TAG_DEBUG = "TAG_DEBUG";
+
     static boolean debugMode = true;
     public static void print(String text)
     {
+        print(TAG_DEBUG,text);
+    }
+    public static void print(String tag, String text)
+    {
 
         if(debugMode == true) {
-            Log.i("bloodbank_tag", text);
+            Log.i(tag, text);
         }
     }
 }
