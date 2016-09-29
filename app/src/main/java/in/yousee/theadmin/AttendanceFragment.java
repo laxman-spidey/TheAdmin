@@ -256,6 +256,7 @@ public class AttendanceFragment extends CustomFragment implements DialogInterfac
             }
             else
             {
+                listView.setVisibility(View.GONE);
                 attendanceListErrorView.setVisibility(View.VISIBLE);
             }
 

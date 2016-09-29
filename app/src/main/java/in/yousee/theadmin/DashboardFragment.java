@@ -196,6 +196,7 @@ public class DashboardFragment extends CustomFragment  implements View.OnClickLi
                     Utils.setListViewHeightBasedOnChildren(listView);
                     attendanceListErrorView.setVisibility(View.GONE);
                 } else {
+                    listView.setVisibility(View.GONE);
                     attendanceListErrorView.setVisibility(View.VISIBLE);
                 }
             }

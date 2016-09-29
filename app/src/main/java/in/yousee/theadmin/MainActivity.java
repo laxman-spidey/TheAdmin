@@ -1,12 +1,14 @@
 package in.yousee.theadmin;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -155,10 +157,20 @@ public class MainActivity extends YouseeCustomActivity
         SessionHandler sessionHandler = new SessionHandler(this);
         requestSenderMiddleware = sessionHandler;
         sessionHandler.logout(this);
+        showLoginActivity();
         finish();
         //sendRequest();
 
     }
+    public void showLoginActivity()
+    {
+        Log.i("tag", "in Show login activity");
+        Intent intent = new Intent();
+        //intent.putExtra("sessionId", sessionId);
+        intent.setClass(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
 
     @Override
     public void reloadActivity()
