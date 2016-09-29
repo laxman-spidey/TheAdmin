@@ -65,22 +65,20 @@
                 android:weightSum="1">
                 <Button
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="32dp"
                     android:text="CHECK IN"
                     android:id="@+id/check_in"
-                    android:textColor="#585aff"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/button"
-                    />
+                    style="@style/Widget.AppCompat.Button.blueish"
+                    android:layout_weight="0.5" />
 
                 <!--style="@style/Widget.AppCompat.Button.white"-->
                 <Button
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="32dp"
                     android:text="Check OUT"
+                    style="@style/Widget.AppCompat.Button.blueish"
                     android:id="@+id/check_out"
                     android:layout_weight="0.5"
-                    android:background="@drawable/button"
                     />
             </LinearLayout>
             <ListView
@@ -143,11 +141,10 @@
 
                 <Button
                     android:layout_width="wrap_content"
-                    android:layout_height="28dp"
+                    android:layout_height="32dp"
                     android:text="apply"
                     android:id="@+id/button3"
                     android:background="@drawable/button"
-
                     android:layout_gravity="end"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true" />

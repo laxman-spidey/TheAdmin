@@ -151,11 +151,12 @@ public class YouseeCustomActivity extends AppCompatActivity implements CustomFra
     {
         if(visible)
         {
-            progressDialog = new ProgressDialog(context);
+            progressDialog = new ProgressDialog(context, R.style.AppCompat_ProgressDialog);
             progressDialog.setMessage(msg);
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setCancelable(false);
             progressDialog.setIndeterminate(true);
+
             LogUtil.print("PROGRESS", "showing");
             progressDialog.show();
         }

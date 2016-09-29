@@ -4,7 +4,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="black">#62aeff</color>
+    <color name="Cyan">#00BCD4</color>
+    <color name="Cyan_900">#006064</color>
+    <color name="Cyan_700">#0097A7</color>
+    <color name="Teal_A400">#1DE9B6</color>
+
+    <color name="Blue_A400">#2979FF</color>
+    <color name="black">#000000</color>
     <color name="jet">#57a3ff</color>
     <color name="oil">#44c1ff</color>
     <color name="monsoon">#40e6ff</color>

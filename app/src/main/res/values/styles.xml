@@ -5,7 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/white</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -18,7 +18,7 @@
         <item name="windowActionBar">false</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/white</item>
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -32,6 +32,22 @@
         <item name="android:color">@color/black</item>
         <item name="colorAccent">@color/white</item>
         <item name="colorButtonNormal">@color/white</item>
+    </style>
+
+    <style name="Widget.AppCompat.Button.blueish" parent="Widget.AppCompat.Button">
+        <item name="android:color">@color/Blue_A400</item>
+        <item name="colorAccent">@color/Blue_A400</item>
+        <item name="android:background">#3F51B5</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:height">32dp</item>
+
+    </style>
+
+    <style name="AppCompat.ProgressDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:indeterminateProgressStyle">@color/colorPrimary</item>
+        <item name="android:indeterminateDrawable">@color/colorPrimary</item>
+
     </style>
 
 
