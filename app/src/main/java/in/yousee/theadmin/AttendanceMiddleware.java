@@ -31,8 +31,8 @@ public class AttendanceMiddleware extends Middleware {
         setRequestCode(RequestCodes.NETWORK_REQUEST_ATTENDANCE_HISTORY);
         request.put("staffId", ""+SessionHandler.getStaffId(getContext()));
         request.put("limit", "10");
-        request.put("from", Utils.getSqlDateString(from));
-        request.put("to",Utils.getSqlDateString(to));
+        request.put("fromDate", Utils.getSqlDateString(from));
+        request.put("toDate",Utils.getSqlDateString(to));
     }
 
 

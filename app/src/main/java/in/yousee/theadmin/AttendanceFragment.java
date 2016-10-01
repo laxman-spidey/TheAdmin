@@ -252,6 +252,7 @@ public class AttendanceFragment extends CustomFragment implements DialogInterfac
                 AttendanceAdapter attendanceAdapter = new AttendanceAdapter(this.getActivity(), R.layout.attendance_row, attendanceHistory.historyRecords);
                 listView.setAdapter(attendanceAdapter);
                 Utils.setListViewHeightBasedOnChildren(listView);
+                listView.setVisibility(View.VISIBLE);
                 attendanceListErrorView.setVisibility(View.GONE);
             }
             else

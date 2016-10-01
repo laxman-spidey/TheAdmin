@@ -3,7 +3,7 @@ package in.yousee.theadmin.constants;
 public class ServerFiles
 {
 	public static final String LOGIN_EXEC = "Authorization/validateotp";
-	public static final String VERIFY_EXEC = "Authorization/checkauthorization";
+	public static final String VERIFY_EXEC = "Authorization/verifyPhone";
 	public static final String CHECK_IN = "Welcome/checkin";
 	public static final String CHECK_OUT = "Welcome/checkout";
 	public static final String GET_DASHBOARD_DATA = "Welcome/getRoasterDetails";

@@ -46,6 +46,7 @@ public class Utils {
             timeString= timeFormat.format(date);
 
         } catch (ParseException e) {
+            timeString = "";
             e.printStackTrace();
         }
         return timeString;
