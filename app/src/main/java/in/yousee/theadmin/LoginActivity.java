@@ -165,19 +165,17 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.phone);
         mPhoneView = (AutoCompleteTextView) findViewById(R.id.phone);
         mPhoneView.setText("9505878984");
         populateAutoComplete();
 
         mOtpView = (EditText) findViewById(R.id.otp);
-        mPasswordView = (EditText) findViewById(R.id.otp);
         mOtpLayout = (LinearLayout) findViewById(R.id.otpLayout);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mOtpView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
+                    submitOtp();
                     return true;
                 }
                 return false;
@@ -274,6 +272,7 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
     }
 
     private void submitOtp() {
+        LogUtil.print("in submit OTP");
         // Reset errors.
         mOtpView.setError(null);
         mPhoneView.setError(null);

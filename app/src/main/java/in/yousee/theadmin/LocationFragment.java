@@ -18,12 +18,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -387,6 +389,8 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
             polygon.setFillColor(Color.argb(128, 0, 255, 0));
             textViewString = "Registering your attendance";
             messageBackground.setBackgroundResource(R.color.green);
+
+
         }
         else
         {
@@ -395,6 +399,7 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
             textViewString = "Please walk into the work location, your attendance will be registered automatically";
             messageBackground.setBackgroundResource(R.color.red);
         }
+        messageBackground.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, testText.getHeight()));
         testText.setText(""+textViewString);
 
     }
