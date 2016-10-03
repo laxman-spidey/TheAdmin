@@ -68,6 +68,7 @@ public class YouseeCustomActivity extends AppCompatActivity implements CustomFra
             {
 
                 LogUtil.print("network not connected exception found");
+                setProgressVisible(this, false);
                 promptRetry(e.getErrorMsg());
                 e.printStackTrace();
             }
@@ -109,7 +110,6 @@ public class YouseeCustomActivity extends AppCompatActivity implements CustomFra
         }
 
     }
-
     public ArrayList<Fragment> getVisibleFragments()
     {
         List<Fragment> fragments = getSupportFragmentManager().getFragments();

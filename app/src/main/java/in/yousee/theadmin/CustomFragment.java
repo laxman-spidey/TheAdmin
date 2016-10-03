@@ -49,7 +49,7 @@ public class CustomFragment extends Fragment {
             }
             catch (CustomException e)
             {
-
+                stopProgress();
                 LogUtil.print("network not connected exception found");
                 promptRetry(e.getErrorMsg());
                 e.printStackTrace();

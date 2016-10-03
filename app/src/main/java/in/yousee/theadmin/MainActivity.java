@@ -164,11 +164,6 @@ public class MainActivity extends YouseeCustomActivity
     }
 
 
-    @Override
-    public void reloadActivity()
-    {
-        sendRequest();
-    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
