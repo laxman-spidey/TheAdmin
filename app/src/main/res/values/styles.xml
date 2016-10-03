@@ -36,6 +36,7 @@
         <item name="android:color">@color/white</item>
         <item name="colorAccent">@color/white</item>
         <item name="colorButtonNormal">@color/white</item>
+        <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
     <style name="Widget.AppCompat.Button.blueish" parent="Widget.AppCompat.Button">
@@ -59,6 +60,8 @@
         <item name="android:indeterminateDrawable">@color/colorPrimary</item>
 
     </style>
-
+    <style name="NoTitleDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowNoTitle">true</item>
+    </style>
 
 </resources>

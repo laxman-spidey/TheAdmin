@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="5dp"
         android:paddingLeft="5dp" >
 
         <ImageView
@@ -19,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:src="@mipmap/ic_close" />
+            android:src="@mipmap/error" />
 
         <TextView
             android:id="@+id/textView1"
@@ -28,6 +27,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_toRightOf="@+id/errorIcon"
             android:paddingLeft="5dp"
+            android:layout_marginLeft="10dp"
             android:text="Error"
             android:textColor="@android:color/tertiary_text_light"
             android:textSize="30sp" />

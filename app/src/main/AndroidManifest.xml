@@ -44,7 +44,7 @@
             android:name="in.yousee.theadmin.RetryActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_retry"
-            android:theme="@style/Theme.AppCompat.Dialog" >
+            android:theme="@style/NoTitleDialog" >
         </activity>
 
         <meta-data
