@@ -56,23 +56,17 @@ public class MainActivity extends YouseeCustomActivity
 
     private void instantiateViews(NavigationView navigationView)
     {
-        UserData userData = retrieveUserDataFromBundle(getIntent().getExtras());
+        UserData userData = SessionHandler.getUserData(this);
         LogUtil.print(userData.toString());
 
         View view = navigationView.getHeaderView(0);
         nameView = (TextView) view.findViewById(R.id.navHeaderText);
         phoneView = (TextView) view.findViewById(R.id.navSubHeaderText);
 
-        nameView.setText(userData.name);
+        nameView.setText(userData.firstName+ " " +userData.lastName);
         phoneView.setText(userData.phone);
 
 
-    }
-    private UserData retrieveUserDataFromBundle(Bundle bundle)
-    {
-        String userString = bundle.getString(SessionHandler.TAG_USERDATA);
-        LogUtil.print(userString);
-        return new UserData(userString);
     }
     public void replaceFragmentOnMainContent(Fragment fragment, String title) {
         FragmentManager fragmentManager = getSupportFragmentManager();

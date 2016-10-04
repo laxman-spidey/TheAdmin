@@ -91,7 +91,7 @@ public class SessionHandler extends Middleware
 
 	}
 
-	public static String getUserData(Context context)
+	public static String getUserDataString(Context context)
 	{
 		Log.i(SESSION_DEBUG_TAG, "getUserData()");
 		SharedPreferences sharedPrefs = getLoginSharedPrefs(context);
@@ -106,6 +106,24 @@ public class SessionHandler extends Middleware
 		return null;
 
 	}
+
+	public static UserData getUserData(Context context)
+	{
+		Log.i(SESSION_DEBUG_TAG, "getUserData()");
+		SharedPreferences sharedPrefs = getLoginSharedPrefs(context);
+		if (isUserDataExists(context))
+		{
+
+			String userData = sharedPrefs.getString(KEY_USER_DATA, "");
+			Log.i(SESSION_DEBUG_TAG, "Userdata = " + userData);
+			return new UserData(userData);
+		}
+		Log.i(SESSION_DEBUG_TAG, "phone false");
+		return null;
+
+	}
+
+
 	private void storeUserData(String userdata)
 	{
 		SharedPreferences sharedPrefs = getLoginSharedPrefs(context);

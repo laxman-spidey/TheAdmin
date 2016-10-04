@@ -127,8 +127,6 @@ public class WelcomeActivity extends Activity implements OnResponseReceivedListe
 
 		Log.i("tag", "in Show menu activity");
 		Intent intent = new Intent();
-		String userDataString = SessionHandler.getUserData(this);
-		intent.putExtra(SessionHandler.TAG_USERDATA, userDataString);
 		intent.setClass(this, MainActivity.class);
 		startActivity(intent);
 	}

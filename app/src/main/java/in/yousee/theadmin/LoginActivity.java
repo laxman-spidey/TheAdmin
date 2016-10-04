@@ -65,10 +65,9 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
 
 
 
-    public void onLoginSuccess(UserData userData) {
+    public void onLoginSuccess() {
         LogUtil.print("in Show main activity");
         Intent intent = new Intent();
-        intent.putExtra(SessionHandler.TAG_USERDATA, userData.string);
         intent.setClass(this, MainActivity.class);
         startActivity(intent);
         setProgressVisible(this,false);
@@ -98,7 +97,7 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
             {
                 UserData userData = (UserData) response;
                 LogUtil.print("success");
-                onLoginSuccess(userData);
+                onLoginSuccess();
                 mOtpView.setEnabled(false);
                 mEmailSignInButton.setEnabled(false);
                 Toast.makeText(this,"Logging in..",Toast.LENGTH_SHORT).show();
