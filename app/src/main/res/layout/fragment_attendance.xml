@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/attendanceButtonsLayout"
+            android:visibility="gone"
             android:weightSum="1">
             <Button
                 android:layout_width="0dp"
@@ -95,6 +96,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="32dp"
                         android:text="GET >"
+                        android:textColor="@color/primary"
                         android:id="@+id/getHistoryButton"
                         android:background="@drawable/button"
                         />

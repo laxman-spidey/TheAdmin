@@ -32,7 +32,7 @@ public class LocationMiddleware extends Middleware{
         request.put("date", date);
         request.put("phone", phone);
         request.put("timeIn",time);
-        sendRequest();
+        //sendRequest();
     }
 
     public void checkout(String date, String phone, String time) throws  CustomException
@@ -43,7 +43,7 @@ public class LocationMiddleware extends Middleware{
         request.put("date", date);
         request.put("phone", phone);
         request.put("timeOut",time);
-        sendRequest();
+        //sendRequest();
     }
 
     @Override

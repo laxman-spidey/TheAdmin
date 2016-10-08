@@ -106,13 +106,16 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
             {
                 String msg = (String) response;
                 LogUtil.print("biscuit");
-                mOtpView.setText(msg);
+                mOtpView.setError(msg);
+                mOtpView.requestFocus();
+                setProgressVisible(this,false);
             }
             else if(resultCode == ResultCodes.VALIDATE_OTP_STATUS_UPDATE_FAIL)
             {
                 String msg = (String) response;
                 LogUtil.print("biscuit 1");
                 Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+                setProgressVisible(this,false);
             }
         }
 
@@ -130,7 +133,7 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
 
     private void promptOtp() {
         mOtpLayout.setVisibility(View.VISIBLE);
-        mOtpView.setText("123456");
+//        mOtpView.setText("123456");
         mPhoneView.setEnabled(false);
         verifyButton.setEnabled(false);
 
@@ -165,7 +168,7 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mPhoneView = (AutoCompleteTextView) findViewById(R.id.phone);
-        mPhoneView.setText("9505878984");
+        //mPhoneView.setText("9505878984");
         populateAutoComplete();
 
         mOtpView = (EditText) findViewById(R.id.otp);
@@ -407,47 +410,8 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
     }
 
 
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
 
 
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
-            cursor.moveToNext();
-        }
-
-        addEmailsToAutoComplete(emails);
-    }
-
-
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
-    }
 
     @Override
     public void onStart() {

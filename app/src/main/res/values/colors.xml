@@ -9,6 +9,9 @@
     <color name="Cyan_700">#0097A7</color>
     <color name="Teal_A400">#1DE9B6</color>
 
+    <color name="button_primary">#3F51B5</color>
+    <color name="button_disabled">#9FA8DA</color>
+
     <color name="Blue_A400">#2979FF</color>
     <color name="black">#000000</color>
     <color name="jet">#57a3ff</color>

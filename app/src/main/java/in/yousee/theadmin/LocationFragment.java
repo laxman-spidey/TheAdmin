@@ -585,35 +585,35 @@ public class LocationFragment extends DialogFragment implements OnMapReadyCallba
     {
         // Instantiates a new Polygon object and adds points to define a rectangle
         //gandhi
-//        PolygonOptions rectOptions = new PolygonOptions()
-//                .add(new LatLng(17.422535, 78.501770),
-//                        new LatLng(17.424829, 78.502028),
-//                        new LatLng(17.424727, 78.503605),
-//                        new LatLng(17.426063, 78.504042),
-//                        new LatLng(17.423995, 78.505869),
-//                        new LatLng(17.422245, 78.504238)
-//                )
-//                .strokeColor(Color.RED)
-//                .fillColor(Color.argb(128, 255, 0, 0))
-//                ;
-//        //meerpet
         PolygonOptions rectOptions = new PolygonOptions()
-                .add(new LatLng(17.319037, 78.527645),
-                        new LatLng(17.319301, 78.527712),
-                        new LatLng(17.319268, 78.527892),
-                        new LatLng(17.319002, 78.527876)
-                        )
+                .add(new LatLng(17.422535, 78.501770),
+                        new LatLng(17.424829, 78.502028),
+                        new LatLng(17.424727, 78.503605),
+                        new LatLng(17.426063, 78.504042),
+                        new LatLng(17.423995, 78.505869),
+                        new LatLng(17.422245, 78.504238)
+                )
                 .strokeColor(Color.RED)
                 .fillColor(Color.argb(128, 255, 0, 0))
                 ;
+//        //meerpet
+//        PolygonOptions rectOptions = new PolygonOptions()
+//                .add(new LatLng(17.319037, 78.527645),
+//                        new LatLng(17.319301, 78.527712),
+//                        new LatLng(17.319268, 78.527892),
+//                        new LatLng(17.319002, 78.527876)
+//                        )
+//                .strokeColor(Color.RED)
+//                .fillColor(Color.argb(128, 255, 0, 0))
+//                ;
 
         //Yousee
 
 //        PolygonOptions rectOptions = new PolygonOptions()
-//                .add(new LatLng(17.426084, 78.453917),
-//                        new LatLng(17.426178, 78.454073),
+//                .add(new LatLng(17.426076, 78.453766),
+//                        new LatLng(17.425876, 78.453814),
 //                        new LatLng(17.425977, 78.454150),
-//                        new LatLng(17.425905, 78.453998)
+//                        new LatLng(17.426009, 78.454168)
 //                )
 //                .strokeColor(Color.RED)
 //                .fillColor(Color.argb(128, 255, 0, 0))

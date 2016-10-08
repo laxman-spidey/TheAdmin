@@ -65,28 +65,42 @@
                 android:weightSum="1">
                 <Button
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="wrap_content"
                     android:text="CHECK IN"
                     android:id="@+id/check_in"
-                    style="@style/Widget.AppCompat.Button.blueish"
-                    android:layout_weight="0.5" />
+                    android:layout_weight="0.5"
+                    android:layout_margin="5dp"
+                    android:textColor="@color/white"
+                    />
 
                 <!--style="@style/Widget.AppCompat.Button.white"-->
                 <Button
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
-                    android:text="Check OUT"
-                    style="@style/Widget.AppCompat.Button.blueish"
+                    android:layout_height="wrap_content"
+                    android:text="CHECK OUT"
+                    android:layout_margin="5dp"
                     android:id="@+id/check_out"
+                    android:textColor="@color/white"
                     android:layout_weight="0.5"
                     />
             </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:layout_margin="5dp"
+                android:text="Note: Checkin or Checkout only 20 min before or after the Shift Timings"
+                android:textColor="@color/red"
+                android:layout_below="@id/attendanceButtonsLayout"
+                android:id="@+id/noteMsg" />
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:headerDividersEnabled="true"
                 android:layout_below="@id/attendanceButtonsLayout"
                 android:id="@+id/attendanceListView"
+                android:visibility="gone"
                 >
             </ListView>
             <TextView

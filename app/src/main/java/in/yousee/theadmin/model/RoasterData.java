@@ -5,8 +5,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import in.yousee.theadmin.util.LogUtil;
+import in.yousee.theadmin.util.Utils;
 
 /**
  * Created by mittu on 24-08-2016.
@@ -71,6 +74,22 @@ public class RoasterData extends ModelObject {
         roasterData.roasterRecords.get(2).date = "Day after Tomorrow";
         return roasterData;
     }
+    public Record getTodayData()
+    {
+
+        String today = Utils.getSqlDateString(Calendar.getInstance());
+        LogUtil.print("today  -- " + today);
+        for(Record record : roasterRecords)
+        {
+            LogUtil.print(record.date);
+            if(today.equals(record.date))
+            {
+                return record;
+            }
+        }
+        return null;
+
+    }
 
     public static class Record extends ModelObject
     {
@@ -85,6 +104,9 @@ public class RoasterData extends ModelObject {
         public String timeIn;
         public String timeOut;
         public String leaveStatus;
+
+        public Date dateTimeIn;
+        public Date dateTimeOut;
 
         public static final String TAG_ROASTER_ID = "roasterId";
         public static final String TAG_DATE = "date";
@@ -116,7 +138,7 @@ public class RoasterData extends ModelObject {
             {
                 this.roasterId = JSONObject.getInt(TAG_ROASTER_ID);
                 this.date = JSONObject.getString(TAG_DATE);
-                    this.shiftId = JSONObject.getString(TAG_SHIFT_ID);
+                this.shiftId = JSONObject.getString(TAG_SHIFT_ID);
                 this.shift = JSONObject.getString(TAG_SHIFT);
                 this.shiftDesc = JSONObject.getString(TAG_DESCRIPTION);
                 this.shiftTimeIn = JSONObject.getString(TAG_SHIFT_TIME_IN);
@@ -125,6 +147,8 @@ public class RoasterData extends ModelObject {
                 this.timeOut = JSONObject.getString(TAG_TIME_OUT);
                 this.leaveStatus = JSONObject.getString(TAG_LEAVE_STATUS);
 
+                dateTimeIn = Utils.getEncodedDateFromSqlString(date, shiftTimeIn);
+                dateTimeOut = Utils.getEncodedDateFromSqlString(date, shiftTimeOut);
             } catch (JSONException e)
             {
                 LogUtil.print("parse failed");

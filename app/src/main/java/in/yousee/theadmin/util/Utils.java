@@ -82,6 +82,18 @@ public class Utils {
         return newDate;
 
     }
+    public static Date getEncodedDateFromSqlString(String date, String time)
+    {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Date newDate = null;
+        try {
+            newDate = format.parse(date+ " "+time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return newDate;
+
+    }
     public static Calendar getFirstOfMonth()
     {
         Calendar calendar = Calendar.getInstance();

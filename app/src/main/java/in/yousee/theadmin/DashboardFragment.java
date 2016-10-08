@@ -84,13 +84,20 @@ public class DashboardFragment extends CustomFragment  implements View.OnClickLi
     }
 
 
+    Button checkinButton;
+    Button checkoutButton;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_dashboard, container, false);
-        Button checkinButton = (Button) view.findViewById(R.id.check_in);
-        Button checkoutButton = (Button) view.findViewById(R.id.check_out);
+        checkinButton = (Button) view.findViewById(R.id.check_in);
+        checkoutButton = (Button) view.findViewById(R.id.check_out);
+        checkinButton.setEnabled(false);
+        checkoutButton.setEnabled(false);
+        checkinButton.setBackgroundResource(R.color.button_disabled);
+        checkoutButton.setBackgroundResource(R.color.button_disabled);
 
         listView = (ListView) view.findViewById(R.id.attendanceListView);
         checkinButton.setOnClickListener(this);
@@ -141,11 +148,16 @@ public class DashboardFragment extends CustomFragment  implements View.OnClickLi
         {
             case R.id.check_in:
             {
+
+                checkinButton.setEnabled(false);
+                checkinButton.setBackgroundResource(R.color.button_disabled);
                 showLocationDialog(LocationFragment.CHECK_IN);
                 break;
             }
             case R.id.check_out:
             {
+                checkoutButton.setEnabled(false);
+                checkoutButton.setBackgroundResource(R.color.button_disabled);
                 showLocationDialog(LocationFragment.CHECK_OUT);
                 break;
 
@@ -165,14 +177,18 @@ public class DashboardFragment extends CustomFragment  implements View.OnClickLi
             String dateString = new SimpleDateFormat("yyyy-MM-dd").format(datetime);
             String timeString = new SimpleDateFormat("HH:mm:ss").format(datetime);
             String dateTime = Utils.getDateTimeInSQLFormat(Calendar.getInstance());
+            //startProgress();
+            requestSenderMiddleware = locationMiddleware;
             if(checkInOut == LocationFragment.CHECK_IN)
             {
                 locationMiddleware.checkin(dateString,"9505878984",dateTime);
+
             }
             else if(checkInOut == LocationFragment.CHECK_OUT)
             {
                 locationMiddleware.checkout(dateString,"9505878984",dateTime);
             }
+            sendRequest();
             
         } catch (CustomException e) {
             //TODO: show dialogbox
@@ -187,17 +203,50 @@ public class DashboardFragment extends CustomFragment  implements View.OnClickLi
         stopProgress();
         if(this.isVisible())
         {
+
             if(requestCode == RequestCodes.NETWORK_REQUEST_DASHBOARD) {
-                if (resultCode == ResultCodes.ROASTER_DETAILS_EXIST) {
+                if (resultCode == ResultCodes.ROASTER_DETAILS_EXIST)
+                {
                     LogUtil.print("roaster----------");
                     RoasterData data = (RoasterData) response;
-                    RoasterAdapter roasterAdapter = new RoasterAdapter(this.getActivity(), R.layout.attendance_row, data.roasterRecords);
-                    listView.setAdapter(roasterAdapter);
-                    Utils.setListViewHeightBasedOnChildren(listView);
-                    attendanceListErrorView.setVisibility(View.GONE);
+
+                    //record details
+                    RoasterData.Record todayRecord = data.getTodayData();
+                    //if the user is not in roaster
+                    if(todayRecord != null)
+                    {
+                        Date now = new Date();
+                        LogUtil.print("Now it is -- "+now.toString());
+                        int timeInDiff = (int) ((now.getTime() - todayRecord.dateTimeIn.getTime())/(60*1000));
+                        int timeOutDiff = (int) ((now.getTime() - todayRecord.dateTimeOut.getTime())/(60*1000));
+                        LogUtil.print(todayRecord.dateTimeIn.toString() +" --- " + timeInDiff);
+
+                        LogUtil.print(todayRecord.dateTimeOut.toString() +" --- " + timeOutDiff);
+
+
+                        //if the checkin time is around 20 minutes from now (before or after)
+                        if (timeInDiff < 20 && timeInDiff > -20) {
+                            checkinButton.setEnabled(true);
+                            checkinButton.setBackgroundResource(R.color.button_primary);
+
+                        }
+                        //if the checkOut time is around 20 minutes from now (before or after)
+                        if (timeOutDiff < 20 && timeOutDiff > -20) {
+                            checkoutButton.setEnabled(true);
+                            checkoutButton.setBackgroundResource(R.color.button_primary);
+                        }
+                    }
+                    else
+                    {
+                        Toast.makeText(this.getContext(),"You are not in the Roaster, Please contact admin to add",Toast.LENGTH_LONG).show();
+                    }
+//                    RoasterAdapter roasterAdapter = new RoasterAdapter(this.getActivity(), R.layout.attendance_row, data.roasterRecords);
+//                    listView.setAdapter(roasterAdapter);
+//                    Utils.setListViewHeightBasedOnChildren(listView);
+//                    attendanceListErrorView.setVisibility(View.GONE);
                 } else {
-                    listView.setVisibility(View.GONE);
-                    attendanceListErrorView.setVisibility(View.VISIBLE);
+//                    listView.setVisibility(View.GONE);
+//                    attendanceListErrorView.setVisibility(View.VISIBLE);
                 }
             }
             else if(requestCode == RequestCodes.NETWORK_REQUEST_CHECK_IN)
