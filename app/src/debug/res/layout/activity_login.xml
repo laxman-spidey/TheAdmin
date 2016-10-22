@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:fitsSystemWindows="true">
+    <ImageView
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginRight="-75dp"
+        android:rotation="-70"
+        android:layout_marginBottom="50dp"
+        android:id="@+id/clockRight"
+        android:src="@mipmap/clock6"
+        android:layout_gravity="top"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"/>
+    <ImageView
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginLeft="-100dp"
+        android:layout_marginBottom="50dp"
+        android:id="@+id/clockImage"
+        android:src="@mipmap/clock6"
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <ImageView android:src="@mipmap/ic_yousee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="72dp"
+                    android:layout_marginBottom="24dp"
+                    android:id="@+id/loginText"
+                    android:layout_gravity="center_horizontal" />
+
+                <TextView
+                    android:text="Enter your Phone Number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/phoneLabel"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal"
+                    />
+
+
+                <AutoCompleteTextView
+                    android:id="@+id/phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:inputType="phone"
+                    android:maxLength="15"
+                    android:minWidth="150dp"
+                    android:textColor="@color/colorPrimary"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal"
+                    android:maxLines="1"
+                    android:text="9505878984"
+                    android:singleLine="true" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="verify"
+                    android:textColor="@color/white"
+                    style="@style/Widget.AppCompat.Button.white"
+                    android:id="@+id/button_verify"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/otpLayout">
+                <TextView
+                    android:text="Enter your OTP:"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/otpLabel"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal"
+                    />
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/otp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:imeActionId="@+id/login"
+                        android:imeOptions="actionUnspecified"
+                        android:inputType="number"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_horizontal"
+                        android:maxLength="6"
+                        android:minWidth="150dp"
+                        android:maxLines="1"
+                        android:text="123456"
+                        android:textColor="@color/colorPrimary"
+                        android:singleLine="true" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:id="@+id/sign_in_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/white"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:text="Submit"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
+

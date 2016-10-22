@@ -8,15 +8,10 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="in.yousee.theadmin.LeavesFragment">
 
-    <include
-        layout="@layout/under_construction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#d9dddf"
-        android:visibility="gone"
         android:orientation="vertical"
         >
         <LinearLayout

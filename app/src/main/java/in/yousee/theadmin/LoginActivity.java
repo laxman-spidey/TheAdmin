@@ -57,7 +57,7 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private GoogleApiClient client;
+    //private GoogleApiClient client;
 
     // public void onLoginFailed() {
     // super.onLoginFailed();
@@ -203,7 +203,7 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
         // mLoginFormView = findViewById(R.id.login_form);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        //client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void populateAutoComplete() {
@@ -258,7 +258,9 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
         if (phoneNumber.length() != 10) {
             mPhoneView.setError("Invalid Phone number");
             return;
-        } else {
+        }
+        else
+        {
             LogUtil.print("sending request");
             SessionHandler sessionHandler = new SessionHandler(this);
             requestSenderMiddleware = sessionHandler;
@@ -419,7 +421,7 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
+        //client.connect();
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "Login Page", // TODO: Define a title for the content shown.
@@ -430,7 +432,7 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
                 // TODO: Make sure this auto-generated app URL is correct.
                 Uri.parse("android-app://in.yousee.theadmin/http/host/path")
         );
-        AppIndex.AppIndexApi.start(client, viewAction);
+        //AppIndex.AppIndexApi.start(client, viewAction);
     }
 
     @Override
@@ -449,8 +451,8 @@ public class LoginActivity extends YouseeCustomActivity implements OnResponseRec
                 // TODO: Make sure this auto-generated app URL is correct.
                 Uri.parse("android-app://in.yousee.theadmin/http/host/path")
         );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
+        //AppIndex.AppIndexApi.end(client, viewAction);
+        //client.disconnect();
     }
 
 
