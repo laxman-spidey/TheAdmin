@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">InTime-Debug</string>
+
+    <string name="SERVER_DOMAIN">https://lamp-stack-rashmitha.c9users.io/TheAdmin-server/index.php/</string>
+
+
+    <!-- Google maps debug key-->
+    <string name="google_maps_key_debug" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyBN8qDqU63X_Ram_QQGfBtxpO1DMwH4dQk
+    </string>
+</resources>
